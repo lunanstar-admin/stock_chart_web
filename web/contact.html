@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — 차트 연구소</title>
+  <script src="/assets/nav.js"></script>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-contact">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <h1>차트 연구소</h1>
+      <span class="subtitle">Contact</span>
+    </div>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content">
+    <h2>Contact Us</h2>
+    <p class="lead">
+      의견, 버그 제보, 회원 가입 문의는 아래 채널로 남겨 주세요.
+    </p>
+
+    <section>
+      <h3>관리자 이메일</h3>
+      <ul>
+        <li>회원 가입 / 제휴 문의: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a></li>
+        <li>Website: <a href="https://secomdal.com" target="_blank" rel="noopener">secomdal.com (세콤달.콤)</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>의견을 남겨주세요</h3>
+      <p>익명으로도 남기실 수 있습니다. 이메일을 남겨주시면 답변이 필요할 때 회신드립니다.</p>
+
+      <form id="feedbackForm" class="feedback-form" onsubmit="return submitFeedback(event)">
+        <div class="field">
+          <label for="fbEmail">이메일 <span class="opt">(선택)</span></label>
+          <input id="fbEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="fbMessage">메시지 <span class="req">*</span></label>
+          <textarea id="fbMessage" name="message" rows="6" required minlength="5" maxlength="2000" placeholder="의견이나 제보를 자유롭게 남겨주세요 (최소 5자)"></textarea>
+          <div class="hint"><span id="fbCount">0</span> / 2000</div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="cta" id="fbSubmit">보내기</button>
+          <span class="status" id="fbStatus"></span>
+        </div>
+      </form>
+    </section>
+  </article>
+
+  <!-- ── 광고 영역 (Google AdSense 승인 후 아래 스크립트/슬롯 활성화) ── -->
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <!-- AdSense 스크립트는 각 페이지 <head>에 한 번만 삽입.
+         승인 후 ca-pub-XXXXXXXXXXXXXXXX 로 교체.
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="YYYYYYYYYY"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    -->
+    <span class="ad-placeholder">광고 (Google AdSense 승인 후 노출)</span>
+  </div>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/about">About</a>
+</footer>
+
+<script src="/assets/contact.js"></script>
+</body>
+</html>

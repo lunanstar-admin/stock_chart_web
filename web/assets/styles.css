@@ -508,6 +508,92 @@ footer {
 }
 
 /* ─────────────────────────────────────────────
+   Contact Us 페이지 — 피드백 폼
+   ───────────────────────────────────────────── */
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 18px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.feedback-form .field { display: flex; flex-direction: column; gap: 4px; }
+.feedback-form label {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.feedback-form label .opt { color: var(--text-secondary); font-weight: 400; font-size: 11px; }
+.feedback-form label .req { color: var(--red); font-weight: 700; }
+.feedback-form input,
+.feedback-form textarea {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.feedback-form input:focus,
+.feedback-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.feedback-form .hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+.feedback-form .actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+.feedback-form .actions .cta {
+  padding: 9px 22px;
+  font-size: 13px;
+}
+.feedback-form .actions .cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.feedback-form .actions .status {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.feedback-form .actions .status.ok { color: var(--green); }
+.feedback-form .actions .status.err { color: var(--red); }
+
+/* ─────────────────────────────────────────────
+   AdSense 배너 영역
+   ───────────────────────────────────────────── */
+.ad-slot {
+  margin: 24px auto 8px;
+  max-width: 960px;
+  min-height: 90px;
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+}
+.ad-slot .ad-placeholder {
+  color: var(--text-secondary);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.ad-slot ins.adsbygoogle { width: 100%; }
+
+/* ─────────────────────────────────────────────
    모바일 가로보기 (orientation: landscape, 작은 폰)
    - 종목 + 업종/PER/시총 → 한 컬럼으로 합침 (종목 위, 메타 아래)
    - 차트와 수급 폭을 넓힘
