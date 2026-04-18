@@ -1,0 +1,9 @@
+batch/
+.github/
+.venv/
+__pycache__/
+*.pyc
+requirements.txt
+README.md
+.env
+.gitignore
