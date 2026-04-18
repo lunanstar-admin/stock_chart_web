@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — 차트 연구소</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-about">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <h1>차트 연구소</h1>
+      <span class="subtitle">About</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/about">About</a>
+  <a href="mailto:my.lunanstar@gmail.com">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content">
+    <h2>secomdal</h2>
+    <p class="lead">
+      secomdal은 개인 투자자와 데이터 애호가를 위한 금융 데이터 분석 도구를 만드는 프로젝트입니다.
+    </p>
+
+    <section>
+      <h3>차트 연구소란?</h3>
+      <p>
+        차트 연구소는 secomdal의 공개 프로젝트로, 한국 주식 시장(KOSPI · KOSDAQ)
+        전종목의 120일 캔들 차트, 기술적 지표, 투자자 수급 누적을 <strong>무료로</strong>
+        제공합니다. 회원 가입·광고 없이 공개 데이터를 기반으로 운영됩니다.
+      </p>
+    </section>
+
+    <section>
+      <h3>데이터 출처</h3>
+      <ul>
+        <li><strong>OHLCV</strong> — FinanceDataReader (한국거래소 공시)</li>
+        <li><strong>투자자 수급</strong> — Naver Finance (외국인 · 기관 · 개인 순매매)</li>
+        <li><strong>재무지표 · 섹터</strong> — Naver Finance 종목 메타</li>
+      </ul>
+      <p>모든 데이터는 매일 장마감 후 1회 배치로 업데이트되며, 실시간이 아닙니다.</p>
+    </section>
+
+    <section>
+      <h3>면책 조항</h3>
+      <p class="disclaimer">
+        본 서비스가 제공하는 모든 정보는 참고용이며, 투자 권유가 아닙니다.
+        투자 판단과 그 책임은 전적으로 이용자 본인에게 있습니다.
+      </p>
+    </section>
+
+    <section>
+      <h3>연락처</h3>
+      <ul>
+        <li>Website: <a href="https://secomdal.com" target="_blank" rel="noopener">secomdal.com</a></li>
+        <li>Email: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a></li>
+      </ul>
+    </section>
+  </article>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="mailto:my.lunanstar@gmail.com">Contact</a>
+</footer>
+
+<script src="/assets/nav.js"></script>
+</body>
+</html>

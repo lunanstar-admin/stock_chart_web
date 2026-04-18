@@ -37,13 +37,82 @@ header {
   padding: 14px 24px;
   border-bottom: 1px solid var(--border);
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
   background: var(--bg-card);
 }
 header h1 { margin: 0; font-size: 16px; font-weight: 700; }
-header .subtitle { color: var(--text-secondary); font-size: 12px; }
-header .meta { margin-left: auto; color: var(--text-secondary); font-size: 11px; }
+header .subtitle { color: var(--text-secondary); font-size: 12px; margin-left: 8px; }
+header .meta { color: var(--text-secondary); font-size: 11px; }
+header .nav-left { display: flex; align-items: baseline; gap: 0; min-width: 0; }
+header .nav-right { display: flex; align-items: center; gap: 14px; }
+
+/* ── 햄버거 버튼 ── */
+.nav-toggle {
+  width: 32px;
+  height: 28px;
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+}
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+.nav-toggle:hover span { background: var(--accent); }
+
+/* ── 네비게이션 드로어 ── */
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 260px;
+  height: 100vh;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.4);
+  z-index: 200;
+  padding: 72px 0 24px;
+  transition: right 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nav-drawer.open { right: 0; }
+.nav-drawer a {
+  display: block;
+  padding: 14px 24px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.nav-drawer a:hover { background: var(--bg-hover); }
+.nav-drawer a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: rgba(79, 140, 255, 0.08);
+}
+
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 150;
+  display: none;
+}
+.nav-backdrop.show { display: block; }
 
 .filter-bar {
   display: flex;
@@ -172,14 +241,19 @@ main { padding: 12px 24px 24px; }
 .modal-header code { color: var(--text-secondary); font-size: 13px; }
 .modal-header .close {
   margin-left: auto;
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
+  background: var(--red);
+  color: #fff;
+  border: 0;
   border-radius: 6px;
-  padding: 4px 10px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+  transition: background 0.15s, transform 0.1s;
 }
-.modal-header .close:hover { color: var(--text-primary); background: var(--bg-hover); }
+.modal-header .close:hover { background: #dc2626; }
+.modal-header .close:active { transform: translateY(1px); }
 
 .section { margin-top: 16px; }
 .section h3 { margin: 0 0 8px; font-size: 14px; }
@@ -259,20 +333,205 @@ footer {
 }
 
 /* ─────────────────────────────────────────────
-   모바일 세로보기 (폭 ≤ 640px)
+   Home / About 공용 정적 페이지
+   ───────────────────────────────────────────── */
+.home-main, .static-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+}
+
+/* Home: Hero */
+.hero {
+  text-align: center;
+  padding: 48px 16px 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+.hero h2 {
+  margin: 0 0 14px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-primary);
+}
+.hero .hero-sub {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin: 0 0 28px;
+}
+.hero .hero-sub strong { color: var(--orange); }
+
+.cta {
+  display: inline-block;
+  padding: 12px 28px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(79, 140, 255, 0.35);
+}
+.cta:hover { background: #3b77e6; }
+.cta:active { transform: translateY(1px); }
+.cta.cta-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: none;
+}
+.cta.cta-secondary:hover { background: rgba(79, 140, 255, 0.1); }
+
+/* Home: Features */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.feature {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 20px;
+  text-align: center;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.feature:hover { border-color: var(--accent); transform: translateY(-2px); }
+.feature .feature-icon { font-size: 30px; margin-bottom: 10px; }
+.feature h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.feature p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.cta-block {
+  text-align: center;
+  padding: 32px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.cta-block p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* About 페이지 */
+.about-content h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: var(--accent);
+}
+.about-content .lead {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.7;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.about-content section { margin-top: 28px; }
+.about-content h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+.about-content p, .about-content li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.about-content ul { padding-left: 20px; margin: 8px 0; }
+.about-content li { margin-bottom: 4px; }
+.about-content strong { color: var(--text-primary); }
+.about-content a { color: var(--accent); text-decoration: none; }
+.about-content a:hover { text-decoration: underline; }
+.about-content .disclaimer {
+  padding: 12px 14px;
+  background: rgba(245, 158, 11, 0.08);
+  border-left: 3px solid var(--orange);
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   모바일 가로보기 (orientation: landscape, 작은 폰)
+   - 종목 + 업종/PER/시총 → 한 컬럼으로 합침 (종목 위, 메타 아래)
+   - 차트와 수급 폭을 넓힘
+   ───────────────────────────────────────────── */
+@media (orientation: landscape) and (max-width: 950px) and (max-height: 500px) {
+  header { padding: 8px 14px; }
+  header h1 { font-size: 14px; }
+  header .subtitle { font-size: 10px; }
+  header .meta { font-size: 10px; }
+
+  .filter-bar { padding: 6px 14px; gap: 6px; }
+  .filter-bar input { width: 160px; }
+  .filter-bar .status { display: none; }
+
+  main { padding: 8px 12px 20px; }
+
+  /* 컬럼 라벨 — 가로보기에서는 숨김 */
+  .cl-header { display: none; }
+
+  /* info + meta 한 컬럼으로 합치고 차트/수급을 넓힘 */
+  .cl-row {
+    grid-template-columns: minmax(110px, 1.2fr) minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-areas:
+      "info  chart supply"
+      "meta  chart supply";
+    row-gap: 4px;
+    column-gap: 8px;
+    padding: 8px 10px;
+    align-items: start;
+  }
+  .cl-row .cl-info { grid-area: info; }
+  .cl-row .cl-meta {
+    grid-area: meta;
+    font-size: 10px;
+    line-height: 1.5;
+    padding-top: 4px;
+    border-top: 1px dashed var(--border);
+  }
+  .cl-row .cl-meta span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cl-row .cl-info .cl-name { font-size: 12px; }
+  .cl-row .cl-info .cl-code { font-size: 10px; }
+
+  /* 수급 컬럼은 표시하고 폭을 키움 */
+  .cl-row .cl-supply {
+    display: flex !important;
+    grid-area: supply;
+    align-self: stretch;
+    justify-content: center;
+  }
+  .cl-row .cl-supply canvas { height: 80px; }
+  .cl-row .cl-chart { grid-area: chart; align-self: stretch; }
+  .cl-row .cl-chart canvas { height: 120px; }
+}
+
+/* ─────────────────────────────────────────────
+   모바일 세로보기 (orientation: portrait, 폭 ≤ 640px)
    - 종목명/가격/업종·PER·시총 → 1줄
    - 캔들 차트 → 2줄
    - 수급 컬럼 숨김
    ───────────────────────────────────────────── */
-@media (max-width: 640px) {
+@media (max-width: 640px) and (orientation: portrait) {
   header {
     padding: 10px 14px;
     gap: 8px;
-    flex-wrap: wrap;
   }
   header h1 { font-size: 15px; }
-  header .subtitle { font-size: 11px; }
-  header .meta { font-size: 10px; width: 100%; margin-left: 0; }
+  header .subtitle { font-size: 10px; margin-left: 6px; }
+  header .meta { display: none; }
+  header .nav-right { gap: 10px; }
 
   .filter-bar {
     padding: 8px 14px;
@@ -321,4 +580,18 @@ footer {
   .snapshot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .snapshot-cell { padding: 6px 8px; }
   .snapshot-cell .value { font-size: 13px; }
+
+  /* Home/About 페이지 모바일 축소 */
+  .home-main, .static-main { padding: 20px 16px 32px; }
+  .hero { padding: 24px 8px 28px; margin-bottom: 28px; }
+  .hero h2 { font-size: 20px; }
+  .hero .hero-sub { font-size: 13px; }
+  .features { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .feature { padding: 16px 12px; }
+  .feature .feature-icon { font-size: 24px; }
+  .feature h3 { font-size: 13px; }
+  .feature p { font-size: 11px; }
+  .cta-block { padding: 22px 12px; }
+  .about-content h2 { font-size: 20px; }
+  .about-content h3 { font-size: 14px; }
 }

@@ -3,65 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>차트 연구소 — KOSPI / KOSDAQ</title>
+  <title>차트 연구소 — KOSPI · KOSDAQ 무료 차트 분석</title>
+  <meta name="description" content="KOSPI · KOSDAQ 전종목 120일 캔들, 이평선, 수급 누적을 무료로 제공합니다." />
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
-<body>
+<body class="page-home">
 
 <div class="topbar">
   <header>
-    <h1>차트 연구소</h1>
-    <span class="subtitle">KOSPI / KOSDAQ · 전일 종가 기준</span>
-    <span class="meta" id="metaInfo">로딩중...</span>
+    <div class="nav-left">
+      <h1>차트 연구소</h1>
+      <span class="subtitle">KOSPI · KOSDAQ</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </header>
-
-  <div class="filter-bar">
-    <select id="fMarket">
-      <option value="ALL">전체</option>
-      <option value="KOSPI">KOSPI</option>
-      <option value="KOSDAQ">KOSDAQ</option>
-    </select>
-    <select id="fSort">
-      <option value="marketCap">시가총액순</option>
-      <option value="volume">거래량순</option>
-      <option value="changeRate">등락률순</option>
-    </select>
-    <input id="fSearch" type="text" placeholder="종목명 / 코드 검색" autocomplete="off" />
-    <span class="status" id="statusLabel"></span>
-  </div>
-
-  <div class="cl-header">
-    <div>종목</div>
-    <div>차트 (최근 120일)</div>
-    <div>수급 누적</div>
-    <div>업종 · PER · 시총</div>
-  </div>
 </div>
 
-<main>
-  <div id="stockList">
-    <div class="loading"><div class="spinner"></div></div>
-  </div>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/about">About</a>
+  <a href="mailto:my.lunanstar@gmail.com">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="home-main">
+  <section class="hero">
+    <h2>한눈에 보는 KOSPI · KOSDAQ 전종목 차트</h2>
+    <p class="hero-sub">4,256개 종목의 120일 캔들, 이평선, 수급 누적을 <strong>무료로</strong></p>
+    <a class="cta" href="/chart">차트 보러가기 →</a>
+  </section>
+
+  <section class="features">
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h3>전종목 스크롤</h3>
+      <p>KOSPI 2,435 · KOSDAQ 1,821 종목 모두를 미니차트로 한눈에.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📈</div>
+      <h3>기술적 지표</h3>
+      <p>MACD · RSI · OBV · MFI · 볼린저밴드 + 이평선.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🏦</div>
+      <h3>투자자 수급</h3>
+      <p>외국인 · 기관 · 개인 60일 누적 순매매 추이.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🌙</div>
+      <h3>매일 자동 업데이트</h3>
+      <p>장 마감 후 1회 배치, 전일 종가 기준.</p>
+    </div>
+  </section>
+
+  <section class="cta-block">
+    <p>회원가입 없이 바로 이용하세요.</p>
+    <a class="cta cta-secondary" href="/chart">지금 시작하기</a>
+  </section>
 </main>
 
 <footer>
   데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
-  매일 장마감 후 1회 배치 업데이트
+  매일 장마감 후 1회 배치 업데이트 &nbsp;|&nbsp;
+  <a href="/about">About</a> &middot; <a href="mailto:my.lunanstar@gmail.com">Contact</a>
 </footer>
 
-<!-- 상세 모달 -->
-<div class="modal-backdrop" id="detailModal" onclick="onBackdropClick(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <h2 id="detailTitle">종목명</h2>
-      <code id="detailCode">000000</code>
-      <button class="close" onclick="closeDetail()">닫기 (Esc)</button>
-    </div>
-    <div id="detailBody"></div>
-  </div>
-</div>
-
-<script src="/assets/chart.js"></script>
-<script src="/assets/app.js"></script>
+<script src="/assets/nav.js"></script>
 </body>
 </html>
