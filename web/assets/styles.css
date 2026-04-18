@@ -10,6 +10,31 @@
   --green: #22c55e;
   --orange: #f59e0b;
   --purple: #a855f7;
+  --shadow-drawer: -4px 0 16px rgba(0, 0, 0, 0.4);
+  --shadow-cta: 0 2px 8px rgba(79, 140, 255, 0.35);
+  --shadow-close: 0 2px 6px rgba(239, 68, 68, 0.3);
+  --active-tint: rgba(79, 140, 255, 0.08);
+  --disclaimer-tint: rgba(245, 158, 11, 0.08);
+}
+
+/* ── 라이트(크림) 테마 ── */
+html[data-theme="light"] {
+  --bg-primary: #f6efe0;
+  --bg-card: #fdf9ed;
+  --bg-hover: #ebe2c9;
+  --border: #d4c8aa;
+  --text-primary: #2a2318;
+  --text-secondary: #7a6f5a;
+  --accent: #2563eb;
+  --red: #dc2626;
+  --green: #16a34a;
+  --orange: #b45309;
+  --purple: #7c3aed;
+  --shadow-drawer: -4px 0 16px rgba(80, 60, 20, 0.18);
+  --shadow-cta: 0 2px 8px rgba(37, 99, 235, 0.28);
+  --shadow-close: 0 2px 6px rgba(220, 38, 38, 0.28);
+  --active-tint: rgba(37, 99, 235, 0.08);
+  --disclaimer-tint: rgba(180, 83, 9, 0.1);
 }
 
 * { box-sizing: border-box; }
@@ -48,13 +73,13 @@ header .meta { color: var(--text-secondary); font-size: 11px; }
 header .nav-left { display: flex; align-items: baseline; gap: 0; min-width: 0; }
 header .nav-right { display: flex; align-items: center; gap: 14px; }
 
-/* ── 햄버거 버튼 ── */
+/* ── 햄버거 버튼 (20% 축소) ── */
 .nav-toggle {
-  width: 32px;
-  height: 28px;
+  width: 26px;
+  height: 22px;
   background: transparent;
   border: 0;
-  padding: 4px 0;
+  padding: 3px 0;
   cursor: pointer;
   display: inline-flex;
   flex-direction: column;
@@ -70,6 +95,26 @@ header .nav-right { display: flex; align-items: center; gap: 14px; }
 }
 .nav-toggle:hover span { background: var(--accent); }
 
+/* ── 테마 토글 버튼 ── */
+.theme-toggle {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-primary);
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.theme-toggle:hover { background: var(--bg-hover); border-color: var(--accent); }
+.theme-toggle:active { transform: scale(0.92); }
+
 /* ── 네비게이션 드로어 ── */
 .nav-drawer {
   position: fixed;
@@ -79,7 +124,7 @@ header .nav-right { display: flex; align-items: center; gap: 14px; }
   height: 100vh;
   background: var(--bg-card);
   border-left: 1px solid var(--border);
-  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-drawer);
   z-index: 200;
   padding: 72px 0 24px;
   transition: right 0.25s ease;
@@ -102,7 +147,7 @@ header .nav-right { display: flex; align-items: center; gap: 14px; }
 .nav-drawer a.active {
   color: var(--accent);
   border-left-color: var(--accent);
-  background: rgba(79, 140, 255, 0.08);
+  background: var(--active-tint);
 }
 
 .nav-backdrop {
@@ -249,7 +294,7 @@ main { padding: 12px 24px 24px; }
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+  box-shadow: var(--shadow-close);
   transition: background 0.15s, transform 0.1s;
 }
 .modal-header .close:hover { background: #dc2626; }
@@ -371,10 +416,10 @@ footer {
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
-  transition: background 0.15s, transform 0.1s;
-  box-shadow: 0 2px 8px rgba(79, 140, 255, 0.35);
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  box-shadow: var(--shadow-cta);
 }
-.cta:hover { background: #3b77e6; }
+.cta:hover { opacity: 0.9; }
 .cta:active { transform: translateY(1px); }
 .cta.cta-secondary {
   background: transparent;
@@ -382,7 +427,7 @@ footer {
   border: 1px solid var(--accent);
   box-shadow: none;
 }
-.cta.cta-secondary:hover { background: rgba(79, 140, 255, 0.1); }
+.cta.cta-secondary:hover { background: var(--active-tint); }
 
 /* Home: Features */
 .features {
@@ -457,7 +502,7 @@ footer {
 .about-content a:hover { text-decoration: underline; }
 .about-content .disclaimer {
   padding: 12px 14px;
-  background: rgba(245, 158, 11, 0.08);
+  background: var(--disclaimer-tint);
   border-left: 3px solid var(--orange);
   border-radius: 4px;
 }
