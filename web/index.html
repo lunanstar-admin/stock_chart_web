@@ -8,34 +8,37 @@
 </head>
 <body>
 
-<header>
-  <h1>차트 연구소</h1>
-  <span class="subtitle">KOSPI / KOSDAQ · 전일 종가 기준</span>
-  <span class="meta" id="metaInfo">로딩중...</span>
-</header>
+<div class="topbar">
+  <header>
+    <h1>차트 연구소</h1>
+    <span class="subtitle">KOSPI / KOSDAQ · 전일 종가 기준</span>
+    <span class="meta" id="metaInfo">로딩중...</span>
+  </header>
 
-<div class="filter-bar">
-  <select id="fMarket">
-    <option value="ALL">전체</option>
-    <option value="KOSPI">KOSPI</option>
-    <option value="KOSDAQ">KOSDAQ</option>
-  </select>
-  <select id="fSort">
-    <option value="marketCap">시가총액순</option>
-    <option value="volume">거래량순</option>
-    <option value="changeRate">등락률순</option>
-  </select>
-  <input id="fSearch" type="text" placeholder="종목명 / 코드 검색" autocomplete="off" />
-  <span class="status" id="statusLabel"></span>
-</div>
+  <div class="filter-bar">
+    <select id="fMarket">
+      <option value="ALL">전체</option>
+      <option value="KOSPI">KOSPI</option>
+      <option value="KOSDAQ">KOSDAQ</option>
+    </select>
+    <select id="fSort">
+      <option value="marketCap">시가총액순</option>
+      <option value="volume">거래량순</option>
+      <option value="changeRate">등락률순</option>
+    </select>
+    <input id="fSearch" type="text" placeholder="종목명 / 코드 검색" autocomplete="off" />
+    <span class="status" id="statusLabel"></span>
+  </div>
 
-<main>
   <div class="cl-header">
     <div>종목</div>
     <div>차트 (최근 120일)</div>
     <div>수급 누적</div>
     <div>업종 · PER · 시총</div>
   </div>
+</div>
+
+<main>
   <div id="stockList">
     <div class="loading"><div class="spinner"></div></div>
   </div>

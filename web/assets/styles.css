@@ -24,6 +24,15 @@ html, body {
   font-size: 13px;
 }
 
+/* ── 상단 고정 영역 (header + filter + 컬럼 라벨 묶음) ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+}
+
 header {
   padding: 14px 24px;
   border-bottom: 1px solid var(--border);
@@ -62,15 +71,11 @@ main { padding: 12px 24px 24px; }
   display: grid;
   grid-template-columns: 110px minmax(0, 9fr) minmax(0, 4fr) 160px;
   gap: 6px;
-  padding: 6px 8px;
+  padding: 6px 32px;
   font-size: 11px;
   color: var(--text-secondary);
   font-weight: 600;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
   background: var(--bg-primary);
-  z-index: 5;
 }
 
 #stockList {
@@ -83,6 +88,7 @@ main { padding: 12px 24px 24px; }
 .cl-row {
   display: grid;
   grid-template-columns: 110px minmax(0, 9fr) minmax(0, 4fr) 160px;
+  grid-template-areas: "info chart supply meta";
   align-items: center;
   gap: 6px;
   padding: 12px 8px;
@@ -93,6 +99,10 @@ main { padding: 12px 24px 24px; }
   transition: background 0.15s;
   min-width: 0;
 }
+.cl-row .cl-info { grid-area: info; }
+.cl-row .cl-chart { grid-area: chart; }
+.cl-row .cl-supply { grid-area: supply; }
+.cl-row .cl-meta { grid-area: meta; }
 .cl-row:hover { background: var(--bg-hover); }
 .cl-row .cl-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .cl-row .cl-info .cl-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -246,4 +256,69 @@ footer {
   font-size: 11px;
   border-top: 1px solid var(--border);
   margin-top: 40px;
+}
+
+/* ─────────────────────────────────────────────
+   모바일 세로보기 (폭 ≤ 640px)
+   - 종목명/가격/업종·PER·시총 → 1줄
+   - 캔들 차트 → 2줄
+   - 수급 컬럼 숨김
+   ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  header {
+    padding: 10px 14px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  header h1 { font-size: 15px; }
+  header .subtitle { font-size: 11px; }
+  header .meta { font-size: 10px; width: 100%; margin-left: 0; }
+
+  .filter-bar {
+    padding: 8px 14px;
+    gap: 6px;
+  }
+  .filter-bar input { width: 100%; min-width: 140px; flex: 1; }
+  .filter-bar .status { display: none; }
+
+  main { padding: 8px 12px 20px; }
+
+  /* 컬럼 라벨은 모바일에서 의미 없음 → 숨김 */
+  .cl-header { display: none; }
+
+  /* 행 레이아웃 재배치: info+meta 한 줄 → 차트 한 줄 */
+  .cl-row {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-areas:
+      "info meta"
+      "chart chart";
+    row-gap: 8px;
+    padding: 10px 10px;
+    align-items: start;
+  }
+  /* 수급 컬럼 숨김 */
+  .cl-row .cl-supply { display: none; }
+
+  /* 종목 정보 축소 */
+  .cl-row .cl-info .cl-name { font-size: 13px; }
+  .cl-row .cl-info .cl-code { font-size: 10px; }
+
+  /* 메타(업종·PER·시총) 오른쪽 정렬 + 압축 */
+  .cl-row .cl-meta {
+    font-size: 11px;
+    line-height: 1.45;
+    text-align: right;
+  }
+  .cl-row .cl-meta span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* 캔들 차트 풀폭 + 높이 축소 */
+  .cl-row .cl-chart canvas { height: 140px; }
+
+  /* 모달 여백 */
+  .modal-backdrop { padding: 12px 8px; }
+  .modal { padding: 14px 14px; border-radius: 8px; }
+  .modal-header h2 { font-size: 16px; }
+  .snapshot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .snapshot-cell { padding: 6px 8px; }
+  .snapshot-cell .value { font-size: 13px; }
 }
