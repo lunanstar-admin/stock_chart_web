@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact Us — 차트 연구소</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
   <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js"></script>
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body class="page-contact">
@@ -12,10 +15,16 @@
 <div class="topbar">
   <header>
     <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈">
+        <svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+        </svg>
+      </a>
       <h1>차트 연구소</h1>
       <span class="subtitle">Contact</span>
     </div>
     <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div>
       <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
       <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
         <span></span><span></span><span></span>
@@ -27,8 +36,10 @@
 <nav class="nav-drawer" id="navDrawer">
   <a href="/">Home</a>
   <a href="/chart">Stock Chart</a>
+  <a href="/blog">Blog</a>
   <a href="/about">About</a>
   <a href="/contact">Contact Us</a>
+  <a href="/privacy">Privacy</a>
 </nav>
 <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
 
@@ -45,6 +56,11 @@
         <li>회원 가입 / 제휴 문의: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a></li>
         <li>Website: <a href="https://secomdal.com" target="_blank" rel="noopener">secomdal.com (세콤달.콤)</a></li>
       </ul>
+      <p style="margin-top: 12px;">또는 카카오톡으로 바로 가입할 수 있습니다.</p>
+      <button type="button" class="kakao-btn kakao-btn--lg" onclick="window.signInKakao && window.signInKakao()">
+        <span class="kakao-icon" aria-hidden="true"></span>
+        <span class="kakao-btn-label">카카오로 시작하기</span>
+      </button>
     </section>
 
     <section>
@@ -82,13 +98,13 @@
          data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     -->
-    <span class="ad-placeholder">광고 (Google AdSense 승인 후 노출)</span>
+    <span class="ad-placeholder">광고</span>
   </div>
 </main>
 
 <footer>
   데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
-  <a href="/">Home</a> &middot; <a href="/about">About</a>
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/privacy">Privacy</a>
 </footer>
 
 <script src="/assets/contact.js"></script>
