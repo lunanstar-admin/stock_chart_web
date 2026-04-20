@@ -911,6 +911,47 @@ footer {
   border-radius: 4px;
 }
 
+/* ── 개인정보처리방침 — 수탁사(제3자) 표 ── */
+.vendor-table-wrap {
+  margin-top: 10px;
+  overflow-x: auto;               /* 모바일 가로 스크롤 */
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+}
+.vendor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  min-width: 620px;               /* 너무 좁아지면 자동으로 스크롤 활성화 */
+}
+.vendor-table thead th {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-weight: 700;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1.5px solid var(--border);
+  white-space: nowrap;
+}
+.vendor-table tbody td {
+  padding: 10px 12px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.vendor-table tbody tr:last-child td { border-bottom: 0; }
+.vendor-table tbody strong { color: var(--text-primary); }
+.vendor-table a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 11.5px;
+}
+.vendor-table a:hover { text-decoration: underline; }
+
 /* ─────────────────────────────────────────────
    Contact Us 페이지 — 피드백 폼
    ───────────────────────────────────────────── */
