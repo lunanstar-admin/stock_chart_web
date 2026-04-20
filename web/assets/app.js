@@ -53,6 +53,28 @@ function formatSupplyBig(n) {
   return sign + n;
 }
 
+// 전일 대비 금액 (예: 스냅샷의 change 필드)를 "+1,500" / "-1,500" 형태로.
+// Naver 스냅샷에선 이미 "-1,500" 형태로 들어올 수 있으나, 숫자만 올 때도 대비해
+// changeDir ("RISING" / "FALLING" / "EVEN") 를 부호 힌트로 사용.
+function formatSignedNum(v, dir) {
+  if (v == null || v === "") return "-";
+  const str = String(v).trim();
+  if (/^[+-]/.test(str)) return str;              // 이미 부호가 붙어 있음
+  const n = parseNum(str);
+  if (!n) return "0";
+  if (dir === "FALLING") return "-" + n.toLocaleString("ko-KR");
+  if (dir === "RISING") return "+" + n.toLocaleString("ko-KR");
+  return n.toLocaleString("ko-KR");
+}
+
+// 값의 부호 색상 클래스 (한국 증시 관행: 양수=빨강, 음수=파랑).
+function signClass(v, dir) {
+  if (dir === "RISING") return "val-up";
+  if (dir === "FALLING") return "val-dn";
+  const n = parseNum(v);
+  return n > 0 ? "val-up" : n < 0 ? "val-dn" : "";
+}
+
 /* ── 데이터 로드 ────────────────────────────────── */
 
 async function loadMeta() {
@@ -400,19 +422,20 @@ function makeRow(s) {
   row.onclick = () => openDetail(s);
 
   const rate = parseNum(s.changeRate);
-  const rateClass = rate > 0 ? "sup-pos" : rate < 0 ? "sup-neg" : "";
+  const rateClass = rate > 0 ? "val-up" : rate < 0 ? "val-dn" : "";
   const rateTxt = s.changeRate
     ? `${rate > 0 ? "+" : ""}${s.changeRate}%`
     : "";
 
   const starOn = !!(window.Watchlist && Watchlist.has(s.code));
-  const starChar = starOn ? "★" : "☆";
-  const starCls = starOn ? "star-btn star-btn--on" : "star-btn";
+  const starLabel = starOn ? "★ 담김" : "☆ 관심종목 추가";
+  const starTitle = starOn ? "관심종목에서 빼기" : "관심종목에 추가";
+  const starCls = starOn ? "star-btn star-btn--pill star-btn--on" : "star-btn star-btn--pill";
 
   row.innerHTML = `
-    <button type="button" class="${starCls}" data-role="star" data-code="${s.code}"
-      aria-pressed="${starOn}" title="관심종목 담기/빼기">${starChar}</button>
     <div class="cl-info">
+      <button type="button" class="${starCls}" data-role="star" data-code="${s.code}"
+        aria-pressed="${starOn}" title="${starTitle}">${starLabel}</button>
       <span class="cl-name" title="${s.name}">${s.name}</span>
       <span class="cl-code">${s.code} · ${s.market}</span>
       <span style="font-size:11px;font-weight:600;margin-top:2px">${formatNum(s.price)}</span>
@@ -444,17 +467,24 @@ function makeRow(s) {
 function refreshStars() {
   document.querySelectorAll('[data-role="star"]').forEach((btn) => {
     const on = !!(window.Watchlist && Watchlist.has(btn.dataset.code));
-    btn.textContent = on ? "★" : "☆";
-    btn.setAttribute("aria-pressed", on ? "true" : "false");
-    btn.classList.toggle("star-btn--on", on);
+    applyStarState(btn, on, { isModal: false });
   });
   const dStar = $("detailStar");
   if (dStar && _activeDetailCode) {
     const on = !!(window.Watchlist && Watchlist.has(_activeDetailCode));
-    dStar.textContent = on ? "★" : "☆";
-    dStar.setAttribute("aria-pressed", on ? "true" : "false");
-    dStar.classList.toggle("star-btn--on", on);
+    applyStarState(dStar, on, { isModal: true });
   }
+}
+
+// star 버튼(행/모달 공용) 의 텍스트·aria·클래스를 on/off 상태에 맞춰 세팅.
+function applyStarState(btn, on, opts) {
+  const isModal = !!(opts && opts.isModal);
+  btn.textContent = on
+    ? (isModal ? "★ 관심 담김" : "★ 담김")
+    : (isModal ? "☆ 관심종목 추가" : "☆ 관심종목 추가");
+  btn.setAttribute("aria-pressed", on ? "true" : "false");
+  btn.setAttribute("title", on ? "관심종목에서 빼기" : "관심종목에 추가");
+  btn.classList.toggle("star-btn--on", on);
 }
 
 function observeVisibleCharts() {
@@ -530,9 +560,10 @@ async function openDetail(stock) {
   const dStar = $("detailStar");
   if (dStar) {
     const on = !!(window.Watchlist && Watchlist.has(stock.code));
-    dStar.textContent = on ? "★" : "☆";
-    dStar.setAttribute("aria-pressed", on ? "true" : "false");
-    dStar.classList.toggle("star-btn--on", on);
+    // 모달용 pill 스타일 보장 (HTML 에 하드코딩된 기본 class 덮어쓰기)
+    dStar.classList.add("star-btn", "star-btn--pill");
+    dStar.classList.remove("star-btn--lg");
+    applyStarState(dStar, on, { isModal: true });
     dStar.onclick = (ev) => {
       ev.stopPropagation();
       if (window.Watchlist) Watchlist.toggle(stock.code);
@@ -582,14 +613,36 @@ function buildDetailHTML(stock, payload) {
   const hasInvestor = !!(inv && inv.data && inv.data.length);
   const tf = state.timeframe || "D";
   const tfLbl = tfLabel(tf);
+
+  // 스냅샷 원본 값 — stocks.json 우선, 없으면 chart/{code}.json 의 meta 로 폴백
+  const priceRaw = stock.price || meta.price || latest.close;
+  const changeRaw = stock.change || meta.change;
+  const dirRaw = stock.changeDir || meta.changeDir;
+  const rateRaw = stock.changeRate || meta.changeRate || "0";
+  const rateNum = parseNum(rateRaw);
+  const volRaw = stock.volume || meta.volume;
+  const mcapRaw = meta.marketValue || stock.marketCap || meta.marketCap;
+  const baseDate =
+    latest.date ||
+    (state.meta && state.meta.updated ? String(state.meta.updated).slice(0, 10) : "");
+
+  const changeCls = signClass(changeRaw, dirRaw);
+  const rateCls = rateNum > 0 ? "val-up" : rateNum < 0 ? "val-dn" : "";
+  const rateStr = (rateNum > 0 ? "+" : "") + (rateRaw || "0") + "%";
+
   const snapshotCells = [
-    { label: "현재가", value: formatNum(stock.price || latest.close) },
-    { label: "등락률", value: (parseNum(stock.changeRate) > 0 ? "+" : "") + (stock.changeRate || "0") + "%" },
-    { label: "거래량", value: formatNum(stock.volume) },
-    { label: "시가총액", value: formatMcap(stock.marketCap) },
+    { label: "현재가", value: formatNum(priceRaw) },
+    { label: "전일대비", value: formatSignedNum(changeRaw, dirRaw), cls: changeCls },
+    { label: "등락률", value: rateStr, cls: rateCls },
+    { label: "거래량", value: formatNum(volRaw) },
+    { label: "시가총액", value: formatMcap(mcapRaw) },
     { label: "PER", value: meta.per || "-" },
+    { label: "PBR", value: meta.pbr || "-" },
+    { label: "EPS", value: meta.eps || "-" },
+    { label: "BPS", value: meta.bps || "-" },
     { label: "외국인비율", value: meta.foreignRate ? String(meta.foreignRate).replace(/%$/, "") + "%" : "-" },
     { label: "섹터", value: meta.sector || "-" },
+    { label: "기준일자", value: baseDate || "-" },
   ];
 
   const tfBtn = (v, label) =>
@@ -600,7 +653,7 @@ function buildDetailHTML(stock, payload) {
       ${snapshotCells.map((c) => `
         <div class="snapshot-cell">
           <div class="label">${c.label}</div>
-          <div class="value">${c.value}</div>
+          <div class="value${c.cls ? " " + c.cls : ""}">${c.value}</div>
         </div>`).join("")}
     </div>
 

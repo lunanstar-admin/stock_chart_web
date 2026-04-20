@@ -57,24 +57,24 @@ html[data-theme="sweet"] {
   --disclaimer-tint: rgba(245, 167, 66, 0.12);
 }
 
-/* ── 골드/브라운 테마 (럭셔리 다크) ── */
+/* ── 골드/브라운 테마 (옅은 샴페인 골드 + 밝은 브라운) ── */
 html[data-theme="gold"] {
-  --bg-primary: #1a1410;
-  --bg-card: #241a12;
-  --bg-hover: #3b2a1b;
-  --border: #5a4023;
-  --text-primary: #f3e3b5;
-  --text-secondary: #b08a52;
-  --accent: #d4af37;
-  --red: #e06060;
-  --green: #5fb478;
-  --orange: #f0a93b;
-  --purple: #c89b5c;
-  --shadow-drawer: -4px 0 16px rgba(0, 0, 0, 0.55);
-  --shadow-cta: 0 2px 10px rgba(212, 175, 55, 0.35);
-  --shadow-close: 0 2px 6px rgba(224, 96, 96, 0.3);
-  --active-tint: rgba(212, 175, 55, 0.1);
-  --disclaimer-tint: rgba(240, 169, 59, 0.1);
+  --bg-primary: #fbf3dd;       /* 옅은 샴페인 바탕 */
+  --bg-card: #fffaea;          /* 살짝 더 밝은 카드 */
+  --bg-hover: #f1e2b7;         /* hover 시 살짝 진해지는 골드 */
+  --border: #d9c084;           /* 옅은 골드 테두리 */
+  --text-primary: #7a4b1b;     /* 밝은 브라운 본문 */
+  --text-secondary: #a87b3f;   /* 중간 톤의 골드-브라운 */
+  --accent: #c79a3a;           /* 포인트용 페일 골드 */
+  --red: #cf4a4a;
+  --green: #639a5a;
+  --orange: #d9962a;
+  --purple: #b07a48;
+  --shadow-drawer: -4px 0 16px rgba(120, 90, 30, 0.22);
+  --shadow-cta: 0 2px 10px rgba(199, 154, 58, 0.35);
+  --shadow-close: 0 2px 6px rgba(207, 74, 74, 0.28);
+  --active-tint: rgba(199, 154, 58, 0.14);
+  --disclaimer-tint: rgba(217, 150, 42, 0.14);
 }
 
 * { box-sizing: border-box; }
@@ -360,7 +360,7 @@ header .subtitle-highlight {
 }
 .btn-link:hover { color: var(--text-primary); background: var(--bg-hover); }
 
-/* ── 관심종목 별 버튼 ── */
+/* ── 관심종목 버튼 ── */
 .star-btn {
   background: transparent;
   border: 0;
@@ -370,16 +370,45 @@ header .subtitle-highlight {
   color: var(--text-secondary);
   cursor: pointer;
   border-radius: 4px;
-  transition: color 0.12s, transform 0.08s;
+  transition: color 0.12s, background 0.12s, border-color 0.12s, transform 0.08s;
 }
 .star-btn:hover { color: #f59e0b; background: var(--bg-hover); }
-.star-btn:active { transform: scale(0.92); }
+.star-btn:active { transform: scale(0.96); }
 .star-btn--on { color: #f59e0b; }
 .star-btn--lg { font-size: 22px; padding: 4px 8px; }
 .star-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* 별 대신 '☆ 관심종목 추가' / '★ 담김' 라벨을 노출하는 pill 버튼 변형.
+   행(cl-info) 과 모달 헤더 양쪽에서 공통 사용. */
+.star-btn--pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.star-btn--pill:hover {
+  color: #f59e0b;
+  border-color: #f59e0b;
+  background: var(--bg-hover);
+}
+.star-btn--pill.star-btn--on {
+  color: #f59e0b;
+  border-color: #f59e0b;
+  background: var(--disclaimer-tint);
+}
+/* 모달 헤더에선 살짝 크게 */
+.modal-header .star-btn--pill { font-size: 12px; padding: 4px 10px; }
 
 /* '관심종목만' 필터 체크박스 */
 .filter-check {
@@ -513,7 +542,7 @@ main { padding: 12px 24px 24px; }
 
 .cl-header {
   display: grid;
-  grid-template-columns: 110px minmax(0, 9fr) minmax(0, 4fr) 160px;
+  grid-template-columns: 130px minmax(0, 9fr) minmax(0, 4fr) 160px;
   gap: 6px;
   padding: 6px 32px;
   font-size: 11px;
@@ -532,7 +561,7 @@ main { padding: 12px 24px 24px; }
 .cl-row {
   position: relative;
   display: grid;
-  grid-template-columns: 110px minmax(0, 9fr) minmax(0, 4fr) 160px;
+  grid-template-columns: 130px minmax(0, 9fr) minmax(0, 4fr) 160px;
   grid-template-areas: "info chart supply meta";
   align-items: center;
   gap: 6px;
@@ -544,19 +573,20 @@ main { padding: 12px 24px 24px; }
   transition: background 0.15s;
   min-width: 0;
 }
-/* 관심종목 별 — 행 좌상단 고정. 클릭 이벤트는 app.js 에서 row 클릭 전파 방지 */
-.cl-row > .star-btn {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 2;
-}
 .cl-row .cl-info { grid-area: info; }
 .cl-row .cl-chart { grid-area: chart; }
 .cl-row .cl-supply { grid-area: supply; }
 .cl-row .cl-meta { grid-area: meta; }
 .cl-row:hover { background: var(--bg-hover); }
 .cl-row .cl-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+/* 관심종목 pill 은 info 컬럼 최상단에 위치 — 이름과 겹치지 않음 */
+.cl-row .cl-info .star-btn--pill {
+  align-self: flex-start;
+  margin-bottom: 4px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .cl-row .cl-info .cl-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cl-row .cl-info .cl-code { color: var(--text-secondary); font-family: monospace; font-size: 11px; }
 .cl-row .cl-chart { min-width: 0; }
@@ -699,6 +729,9 @@ main { padding: 12px 24px 24px; }
 }
 .snapshot-cell .label { color: var(--text-secondary); font-size: 11px; }
 .snapshot-cell .value { font-size: 14px; font-weight: 600; margin-top: 2px; }
+/* 부호 색상 (KR 관행: 상승=빨강, 하락=파랑) */
+.val-up { color: var(--red); }
+.val-dn { color: var(--accent); }
 
 .cl-tooltip {
   position: fixed;
@@ -987,7 +1020,7 @@ footer {
 
   /* info + meta 한 컬럼으로 합치고 차트/수급을 넓힘 */
   .cl-row {
-    grid-template-columns: minmax(110px, 1.2fr) minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(120px, 1.3fr) minmax(0, 3fr) minmax(0, 2fr);
     grid-template-areas:
       "info  chart supply"
       "meta  chart supply";
@@ -997,6 +1030,7 @@ footer {
     align-items: start;
   }
   .cl-row .cl-info { grid-area: info; }
+  .cl-row .cl-info .star-btn--pill { font-size: 10px; padding: 2px 7px; margin-bottom: 3px; }
   .cl-row .cl-meta {
     grid-area: meta;
     font-size: 10px;
@@ -1075,9 +1109,10 @@ footer {
   /* 수급 컬럼 숨김 */
   .cl-row .cl-supply { display: none; }
 
-  /* 종목 정보 축소 */
+  /* 종목 정보 축소 + 관심 pill 타이트하게 */
   .cl-row .cl-info .cl-name { font-size: 13px; }
   .cl-row .cl-info .cl-code { font-size: 10px; }
+  .cl-row .cl-info .star-btn--pill { font-size: 10px; padding: 2px 7px; margin-bottom: 3px; }
 
   /* 메타(업종·PER·시총) 오른쪽 정렬 + 압축 */
   .cl-row .cl-meta {
