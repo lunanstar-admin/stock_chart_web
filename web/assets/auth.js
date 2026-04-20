@@ -116,7 +116,7 @@
       const meta = u.user_metadata || {};
       const nick = meta.nickname || meta.name || meta.full_name || '회원';
       const avatar = meta.avatar_url || meta.picture || '';
-      // 아바타/닉네임 칩 자체가 버튼 → 탭하면 드롭다운이 열리고 '로그아웃' 등 제공
+      // 아바타/닉네임 칩 자체가 버튼 → 탭하면 드롭다운이 열리고 '내 정보'/'로그아웃' 제공
       slot.innerHTML =
         '<div class="auth-chip-wrap" id="authChipWrap">' +
           '<button type="button" class="user-chip user-chip--btn" id="authTrigger"' +
@@ -131,6 +131,7 @@
             '<div class="auth-menu-head">' +
               '<div class="auth-menu-nick">' + escapeHtml(nick) + '</div>' +
             '</div>' +
+            '<button type="button" class="auth-menu-item" role="menuitem" id="authMyInfo">내 정보</button>' +
             '<button type="button" class="auth-menu-item" role="menuitem" id="authSignOut">로그아웃</button>' +
           '</div>' +
         '</div>';
@@ -138,6 +139,11 @@
       if (trigger) trigger.addEventListener('click', function (ev) {
         ev.stopPropagation();
         toggleAuthMenu();
+      });
+      const infoBtn = document.getElementById('authMyInfo');
+      if (infoBtn) infoBtn.addEventListener('click', function () {
+        closeAuthMenu();
+        openMyInfo(session.user);
       });
       const btn = document.getElementById('authSignOut');
       if (btn) btn.addEventListener('click', function () {
@@ -229,7 +235,205 @@
     onReady();
   }
 
+  // ── 내 정보 모달 ─────────────────────────────────
+  // 드롭다운의 '내 정보' 클릭 시 열리는 모달.
+  // 테마 선택(4종) + 회원 탈퇴 진입점을 제공.
+  // 모달 DOM 은 lazy 로 body 끝에 주입 (모든 페이지에서 동작).
+
+  function ensureMyInfoModal() {
+    if (document.getElementById('myInfoModal')) return;
+    var el = document.createElement('div');
+    el.id = 'myInfoModal';
+    el.className = 'modal-backdrop myinfo-backdrop';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML =
+      '<div class="modal myinfo-modal" role="dialog" aria-labelledby="myInfoTitle">' +
+        '<div class="modal-header">' +
+          '<h2 id="myInfoTitle">내 정보</h2>' +
+          '<button class="close" type="button" data-role="myinfo-close">닫기 (Esc)</button>' +
+        '</div>' +
+        '<div class="myinfo-body">' +
+          // 프로필 블록
+          '<section class="myinfo-section">' +
+            '<div class="myinfo-profile">' +
+              '<div class="myinfo-avatar" id="myInfoAvatar" aria-hidden="true"></div>' +
+              '<div class="myinfo-profile-text">' +
+                '<div class="myinfo-nick" id="myInfoNick"></div>' +
+                '<div class="myinfo-provider">카카오 간편 가입</div>' +
+              '</div>' +
+            '</div>' +
+          '</section>' +
+          // 테마 선택
+          '<section class="myinfo-section">' +
+            '<h3 class="myinfo-heading">테마</h3>' +
+            '<p class="myinfo-desc">선택한 테마는 이 브라우저와 로그인 계정 양쪽에 저장됩니다.</p>' +
+            '<div class="theme-swatch-grid" id="myInfoThemeGrid" role="radiogroup" aria-label="테마 선택"></div>' +
+          '</section>' +
+          // 회원 탈퇴
+          '<section class="myinfo-section myinfo-danger-zone">' +
+            '<h3 class="myinfo-heading">회원 탈퇴</h3>' +
+            '<p class="myinfo-desc">탈퇴 시 관심종목·테마 설정·프로필 정보가 <strong>즉시 영구 삭제</strong>되며 복구되지 않습니다.</p>' +
+            '<button type="button" class="btn-danger" id="myInfoDeleteBtn">회원 탈퇴 진행</button>' +
+          '</section>' +
+          // 탈퇴 확인 패널 (초기엔 숨김)
+          '<section class="myinfo-section myinfo-confirm-panel" id="myInfoConfirm" hidden>' +
+            '<h3 class="myinfo-heading myinfo-heading--danger">⚠️ 정말 탈퇴하시겠어요?</h3>' +
+            '<ul class="myinfo-warn-list">' +
+              '<li>회원 식별 정보(카카오 연결)가 Supabase 에서 삭제됩니다.</li>' +
+              '<li>관심종목 목록이 전부 삭제됩니다.</li>' +
+              '<li>저장된 테마 설정이 삭제됩니다.</li>' +
+              '<li>이후 다시 가입해도 이전 데이터는 복구할 수 없습니다.</li>' +
+            '</ul>' +
+            '<label class="myinfo-confirm-label">' +
+              '계속하려면 <strong>탈퇴</strong> 를 입력해 주세요' +
+              '<input type="text" id="myInfoConfirmInput" autocomplete="off" spellcheck="false" />' +
+            '</label>' +
+            '<div class="myinfo-confirm-actions">' +
+              '<button type="button" class="btn-secondary" id="myInfoCancelBtn">취소</button>' +
+              '<button type="button" class="btn-danger" id="myInfoConfirmBtn" disabled>탈퇴하기</button>' +
+            '</div>' +
+            '<div class="myinfo-error" id="myInfoError" hidden></div>' +
+          '</section>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(el);
+
+    // 백드롭/닫기 버튼
+    el.addEventListener('click', function (ev) {
+      if (ev.target === el) closeMyInfo();
+    });
+    var closeBtn = el.querySelector('[data-role="myinfo-close"]');
+    if (closeBtn) closeBtn.addEventListener('click', closeMyInfo);
+
+    // 탈퇴 버튼들
+    document.getElementById('myInfoDeleteBtn').addEventListener('click', function () {
+      var panel = document.getElementById('myInfoConfirm');
+      panel.hidden = false;
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.getElementById('myInfoConfirmInput').focus();
+    });
+    document.getElementById('myInfoCancelBtn').addEventListener('click', function () {
+      resetConfirmPanel();
+    });
+    document.getElementById('myInfoConfirmInput').addEventListener('input', function (ev) {
+      var ok = ev.target.value.trim() === '탈퇴';
+      document.getElementById('myInfoConfirmBtn').disabled = !ok;
+    });
+    document.getElementById('myInfoConfirmBtn').addEventListener('click', performAccountDeletion);
+  }
+
+  function resetConfirmPanel() {
+    var panel = document.getElementById('myInfoConfirm');
+    if (!panel) return;
+    panel.hidden = true;
+    var input = document.getElementById('myInfoConfirmInput');
+    if (input) input.value = '';
+    var btn = document.getElementById('myInfoConfirmBtn');
+    if (btn) btn.disabled = true;
+    var err = document.getElementById('myInfoError');
+    if (err) { err.hidden = true; err.textContent = ''; }
+  }
+
+  function openMyInfo(user) {
+    ensureMyInfoModal();
+    var meta = (user && user.user_metadata) || {};
+    var nick = meta.nickname || meta.name || meta.full_name || '회원';
+    var avatar = meta.avatar_url || meta.picture || '';
+
+    var avatarEl = document.getElementById('myInfoAvatar');
+    if (avatarEl) {
+      if (avatar) {
+        avatarEl.innerHTML =
+          '<img src="' + escapeHtml(avatar) + '" alt="" referrerpolicy="no-referrer" />';
+        avatarEl.classList.remove('myinfo-avatar--fallback');
+      } else {
+        avatarEl.textContent = String(nick).slice(0, 1);
+        avatarEl.classList.add('myinfo-avatar--fallback');
+      }
+    }
+    var nickEl = document.getElementById('myInfoNick');
+    if (nickEl) nickEl.textContent = nick;
+
+    renderThemeSwatches();
+    resetConfirmPanel();
+
+    var el = document.getElementById('myInfoModal');
+    el.classList.add('show');
+    el.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeMyInfo() {
+    var el = document.getElementById('myInfoModal');
+    if (!el) return;
+    el.classList.remove('show');
+    el.setAttribute('aria-hidden', 'true');
+    resetConfirmPanel();
+  }
+
+  function renderThemeSwatches() {
+    var grid = document.getElementById('myInfoThemeGrid');
+    if (!grid) return;
+    var cycle = window.THEME_CYCLE || ['dark', 'light', 'sweet', 'gray'];
+    var labels = window.THEME_LABELS || {};
+    var icons = window.THEME_ICONS || {};
+    var current = document.documentElement.getAttribute('data-theme') || 'dark';
+    grid.innerHTML = cycle.map(function (t) {
+      var active = t === current;
+      return (
+        '<button type="button" class="theme-swatch theme-swatch--' + t +
+          (active ? ' is-active' : '') + '"' +
+          ' data-theme="' + t + '" role="radio" aria-checked="' + (active ? 'true' : 'false') + '">' +
+          '<span class="theme-swatch-icon" aria-hidden="true">' + (icons[t] || '') + '</span>' +
+          '<span class="theme-swatch-label">' + (labels[t] || t) + '</span>' +
+          (active ? '<span class="theme-swatch-badge" aria-hidden="true">✓</span>' : '') +
+        '</button>'
+      );
+    }).join('');
+    grid.querySelectorAll('.theme-swatch').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var t = btn.dataset.theme;
+        if (!t || !window.applyTheme) return;
+        window.applyTheme(t);        // Supabase 동기화 포함
+        renderThemeSwatches();       // 활성 표시 갱신
+      });
+    });
+  }
+
+  async function performAccountDeletion() {
+    var btn = document.getElementById('myInfoConfirmBtn');
+    var err = document.getElementById('myInfoError');
+    if (btn) btn.disabled = true;
+    if (btn) btn.textContent = '처리 중...';
+    try {
+      // Supabase RPC: auth.users 삭제 → members / watchlist cascade 삭제
+      var res = await sb.rpc('delete_current_user');
+      if (res && res.error) throw res.error;
+      // 세션 정리 후 홈으로
+      try { await sb.auth.signOut(); } catch (_) {}
+      try { localStorage.removeItem('theme'); } catch (_) {}
+      alert('탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
+      window.location.assign('/');
+    } catch (e) {
+      console.error('[auth] account deletion failed', e);
+      if (err) {
+        err.hidden = false;
+        err.textContent = '탈퇴 처리에 실패했습니다: ' + (e && (e.message || e.hint) || '알 수 없는 오류') +
+          '\n잠시 후 다시 시도하거나 관리자에게 문의해 주세요.';
+      }
+      if (btn) { btn.disabled = false; btn.textContent = '탈퇴하기'; }
+    }
+  }
+
+  // Escape 로 내 정보 모달 닫기
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Escape') return;
+    var el = document.getElementById('myInfoModal');
+    if (el && el.classList.contains('show')) closeMyInfo();
+  });
+
   // 외부에서 직접 호출 가능하도록 최소 노출.
   window.signInKakao = signInKakao;
   window.signOut = signOut;
+  window.openMyInfo = openMyInfo;
+  window.closeMyInfo = closeMyInfo;
 })();

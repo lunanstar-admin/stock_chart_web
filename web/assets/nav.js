@@ -1,32 +1,28 @@
 // 햄버거 네비게이션 드로어 + 테마 토글 — 모든 페이지 공통.
 (function () {
-  // ── 테마 토글 (다크 → 라이트 → 새콤달콤 → 골드 → 다크…) ──
+  // ── 테마 토글 (다크 → 라이트 → 새콤달콤 → 그레이 → 다크…) ──
   // 다크가 기본값. 사용자 선택은 localStorage('theme')에 저장.
   // 로그인 상태라면 Supabase `public.members.theme` 에도 동기화(loggingIn side-effect).
   // 버튼은 "다음 전환될 테마"를 암시하는 아이콘을 보여준다.
   //   dark  → 클릭하면 light (☀)
   //   light → 클릭하면 sweet (🍬)
-  //   sweet → 클릭하면 gold  (👑)
-  //   gold  → 클릭하면 dark  (☾)
-  const THEME_CYCLE = ['dark', 'light', 'sweet', 'gold'];
+  //   sweet → 클릭하면 gray  (☁)
+  //   gray  → 클릭하면 dark  (☾)
+  const THEME_CYCLE = ['dark', 'light', 'sweet', 'gray'];
+  // 표시용 라벨 (내 정보 > 테마 선택 UI 등에서 재사용)
+  const THEME_LABELS = { dark: '다크', light: '크림', sweet: '새콤달콤', gray: '그레이' };
+  const THEME_ICONS = { dark: '☾', light: '☀', sweet: '🍬', gray: '☁' };
   function nextTheme(cur) {
     const i = THEME_CYCLE.indexOf(cur);
     return THEME_CYCLE[(i < 0 ? 0 : i + 1) % THEME_CYCLE.length];
   }
   function themeIcon(cur) {
     // 다음 테마를 암시하는 아이콘
-    const nxt = nextTheme(cur);
-    if (nxt === 'light') return '☀';
-    if (nxt === 'sweet') return '🍬';
-    if (nxt === 'gold')  return '👑';
-    return '☾';
+    return THEME_ICONS[nextTheme(cur)] || '☾';
   }
   function themeLabel(cur) {
     const nxt = nextTheme(cur);
-    if (nxt === 'light') return '라이트 모드로 전환';
-    if (nxt === 'sweet') return '새콤달콤 모드로 전환';
-    if (nxt === 'gold')  return '골드 모드로 전환';
-    return '다크 모드로 전환';
+    return (THEME_LABELS[nxt] || '다크') + ' 모드로 전환';
   }
   function applyTheme(theme, opts) {
     if (!THEME_CYCLE.includes(theme)) theme = 'dark';
@@ -51,6 +47,8 @@
   window.toggleTheme = toggleTheme;
   window.applyTheme = applyTheme;        // 다른 스크립트(auth.js)가 원격 로드 후 호출
   window.THEME_CYCLE = THEME_CYCLE;
+  window.THEME_LABELS = THEME_LABELS;
+  window.THEME_ICONS = THEME_ICONS;
 
   // Supabase 동기화: 로그인 상태이면 members.theme 을 upsert.
   // supabase-js 가 아직 로드 전일 수 있으므로 sb 존재 여부만 확인하고 조용히 실패.
@@ -72,8 +70,13 @@
   window.syncThemeToSupabase = syncThemeToSupabase;
 
   // 초기 적용 (DOMContentLoaded 전에 실행해 깜빡임 방지)
+  // 기존 'gold' 선택은 폐기되었으므로 'gray' 로 자동 이전.
   try {
-    const saved = localStorage.getItem('theme');
+    let saved = localStorage.getItem('theme');
+    if (saved === 'gold') {
+      saved = 'gray';
+      try { localStorage.setItem('theme', 'gray'); } catch (_) {}
+    }
     if (THEME_CYCLE.includes(saved)) {
       document.documentElement.setAttribute('data-theme', saved);
     } else {
