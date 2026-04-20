@@ -108,6 +108,24 @@ header {
   background: var(--bg-card);
 }
 header h1 { margin: 0; font-size: 16px; font-weight: 700; }
+/* ── 브랜드 로고 (세콤달.콤 주식차트) ──
+   '세콤달.콤' 글자별 컬러 (핫핑크 / 파랑 / 앰버 / 퍼플) — 새콤달콤 사탕 분위기.
+   '주식차트' 는 기본 텍스트색 유지.  */
+header .brand-h1 { line-height: 1.15; letter-spacing: -0.01em; white-space: nowrap; }
+header .brand-name { display: inline-block; }
+header .brand-name .bc {
+  display: inline-block;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+header .brand-name .c1 { color: #ff3d8a; }  /* 핫핑크 (세, 마지막 콤) */
+header .brand-name .c2 { color: #2b7ed8; }  /* 파랑 (콤) */
+header .brand-name .c3 { color: #f59e0b; }  /* 앰버 (달) */
+header .brand-name .c4 { color: #9b59b6; }  /* 퍼플 (.) */
+header .brand-sub {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-left: 4px;
+}
 header .subtitle { color: var(--text-secondary); font-size: 12px; margin-left: 8px; }
 header .meta { color: var(--text-secondary); font-size: 11px; }
 header .nav-left { display: flex; align-items: baseline; gap: 0; min-width: 0; }
@@ -1065,7 +1083,18 @@ footer {
     padding: 10px 14px;
     gap: 8px;
   }
-  header h1 { font-size: 15px; }
+  header h1 { font-size: 14px; line-height: 1.15; }
+  /* 모바일: 세콤달.콤 / 주식차트 2줄 분리 */
+  header .brand-h1 { white-space: normal; }
+  header .brand-sub {
+    display: block;
+    margin-left: 0;
+    margin-top: 1px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  header .nav-left { align-items: center; }
   header .subtitle { font-size: 10px; margin-left: 6px; }
   header .subtitle-highlight { font-size: 9px; padding: 1px 5px; }
   header .home-btn { width: 28px; height: 28px; margin-right: 6px; }
@@ -1523,13 +1552,19 @@ footer {
 }
 .btn-secondary:hover { background: var(--border); }
 
-/* 확인 패널 */
-.myinfo-confirm-panel {
-  padding: 14px;
+/* ── 회원 탈퇴 확인 모달 ──
+   내 정보 모달 위에 겹쳐 뜨는 2차 확인 모달 */
+.delete-confirm-backdrop { z-index: 200; }          /* myinfo-backdrop(100) 보다 위 */
+.delete-confirm-modal {
+  max-width: 440px;
   border: 1.5px solid var(--red);
-  border-radius: 10px;
-  background: rgba(229, 72, 72, 0.08);
+  box-shadow: 0 8px 28px rgba(229, 72, 72, 0.35);
 }
+.delete-confirm-modal .modal-header h2 { color: var(--red); }
+.delete-confirm-body {
+  padding-top: 4px;
+}
+
 .myinfo-warn-list {
   margin: 6px 0 12px;
   padding-left: 18px;

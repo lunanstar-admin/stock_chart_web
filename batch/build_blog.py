@@ -143,7 +143,7 @@ def layout(title: str, subtitle: str, body: str, description: str = "", canonica
   <header>
     <div class="nav-left">
       <a href="/" class="home-btn" aria-label="홈으로" title="홈">{HOME_SVG}</a>
-      <h1>세콤달.콤 주식차트</h1>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식차트</span></h1>
       <span class="subtitle">{html.escape(subtitle)}</span>
     </div>
     <div class="nav-right">
