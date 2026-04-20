@@ -698,17 +698,34 @@ function buildDetailHTML(stock, payload) {
       value: `<a class="cinfo-link" href="${safe}" target="_blank" rel="noopener noreferrer">${display} ↗</a>`,
     });
   }
-  const companySection = companyRows.length
+  // 기업개요 — WiseReport 하단 <ul class="dot_cmp"> 에서 추출한 불릿 리스트
+  const overviewBullets = Array.isArray(company.overview) ? company.overview : [];
+  const overviewBlock = overviewBullets.length
+    ? `
+      <div class="cinfo-overview">
+        <div class="cinfo-overview-head">
+          <span class="cinfo-overview-title">📝 기업개요</span>
+          ${company.overviewDate ? `<span class="cinfo-overview-date">[기준 ${escapeHTML(company.overviewDate)}]</span>` : ""}
+        </div>
+        <ul class="cinfo-overview-list">
+          ${overviewBullets.map((t) => `<li>${escapeHTML(t)}</li>`).join("")}
+        </ul>
+      </div>`
+    : "";
+
+  const companySection = companyRows.length || overviewBullets.length
     ? `
     <div class="section cinfo-section">
       <h3>🏢 회사 기본정보</h3>
+      ${companyRows.length ? `
       <dl class="cinfo-grid">
         ${companyRows.map((r) => `
           <div class="cinfo-row">
             <dt>${r.label}</dt>
             <dd>${r.value}</dd>
           </div>`).join("")}
-      </dl>
+      </dl>` : ""}
+      ${overviewBlock}
       <div class="cinfo-note">출처: Naver Finance · WiseReport 요약</div>
     </div>`
     : "";

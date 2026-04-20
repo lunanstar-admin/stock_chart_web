@@ -307,7 +307,7 @@ def fetch_company_info(code: str) -> dict:
 
     네트워크/파싱 실패 시 빈 dict 반환. 배치 전체를 깨트리지 않는다.
     """
-    info: dict[str, str] = {}
+    info: dict[str, object] = {}
     try:
         url = _WISEREPORT_URL.format(code=code)
         r = requests.get(url, headers=_WISEREPORT_HEADERS, timeout=8)
@@ -367,7 +367,29 @@ def fetch_company_info(code: str) -> dict:
         if m:
             info["industryPer"] = m.group(1).strip()
 
+        # 7) 기업개요 — <ul class="dot_cmp"> 내부의 <li class="dot_cmp" data-cd="...">...</li>
+        #    WiseReport 요약 페이지 하단에 있는 회사 개요 불릿 리스트.
+        bullets: list[str] = []
+        for mb in re.finditer(
+            r'<li\s+class="dot_cmp"[^>]*>\s*(.+?)\s*</li>',
+            s,
+            flags=re.DOTALL,
+        ):
+            raw = mb.group(1)
+            # 내부 태그 제거 후 공백 정리
+            text = re.sub(r"<[^>]+>", "", raw)
+            text = html.unescape(text).strip()
+            text = re.sub(r"\s+", " ", text)
+            if text:
+                bullets.append(text)
+        if bullets:
+            info["overview"] = bullets  # type: ignore[assignment]
+            # 기준일 — "[기준:2026.04.10]"
+            dm = re.search(r"\[\s*기준\s*:\s*([0-9.]+)\s*\]", s)
+            if dm:
+                info["overviewDate"] = dm.group(1).strip()
+
     except Exception as e:
         logger.debug("company_info fetch error %s: %s", code, e)
-    # 빈 문자열은 JSON 을 부풀리므로 제거
+    # 빈 값은 JSON 을 부풀리므로 제거 (빈 문자열 / 빈 리스트 모두)
     return {k: v for k, v in info.items() if v}
