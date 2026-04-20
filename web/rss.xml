@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>차트 연구소 Blog</title>
+    <title>세콤달.콤 주식차트 Blog</title>
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
     <lastBuildDate>Mon, 20 Apr 2026 18:19:30 +0900</lastBuildDate>
     <item>
-      <title>차트 연구소에 오신 것을 환영합니다</title>
+      <title>세콤달.콤 주식차트에 오신 것을 환영합니다</title>
       <link>https://secomdal.com/blog/welcome</link>
       <guid isPermaLink="true">https://secomdal.com/blog/welcome</guid>
       <pubDate>Mon, 20 Apr 2026 00:00:00 +0900</pubDate>

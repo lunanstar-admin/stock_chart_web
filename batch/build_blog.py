@@ -43,7 +43,7 @@ POSTS_DIR = ROOT / "web" / "posts"
 BLOG_DIR = ROOT / "web" / "blog"
 RSS_PATH = ROOT / "web" / "rss.xml"
 SITE_URL = "https://secomdal.com"
-SITE_NAME = "차트 연구소"
+SITE_NAME = "세콤달.콤 주식차트"
 KST = timezone(timedelta(hours=9))
 
 
@@ -143,7 +143,7 @@ def layout(title: str, subtitle: str, body: str, description: str = "", canonica
   <header>
     <div class="nav-left">
       <a href="/" class="home-btn" aria-label="홈으로" title="홈">{HOME_SVG}</a>
-      <h1>차트 연구소</h1>
+      <h1>세콤달.콤 주식차트</h1>
       <span class="subtitle">{html.escape(subtitle)}</span>
     </div>
     <div class="nav-right">
@@ -226,7 +226,7 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
 
     <div class="blog-cta">
       <p>관련 종목 차트가 궁금하다면?</p>
-      <a class="cta" href="/chart">차트 연구소 열기 →</a>
+      <a class="cta" href="/chart">세콤달.콤 주식차트 열기 →</a>
     </div>
   </article>
 
@@ -272,7 +272,7 @@ def render_index(posts: list[Post]) -> str:
     body = f"""
 <main class="static-main">
   <section class="blog-hero">
-    <h2>📝 차트 연구소 블로그</h2>
+    <h2>📝 세콤달.콤 주식차트 블로그</h2>
     <p class="lead">종목 분석·수급 인사이트·시장 동향을 기록합니다.</p>
   </section>
 
@@ -287,7 +287,7 @@ def render_index(posts: list[Post]) -> str:
         title="블로그",
         subtitle="Blog",
         body=body,
-        description="차트 연구소의 종목 분석 및 시장 인사이트 블로그",
+        description="세콤달.콤 주식차트의 종목 분석 및 시장 인사이트 블로그",
         canonical=f"{SITE_URL}/blog",
     )
 
