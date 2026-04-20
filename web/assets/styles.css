@@ -1,3 +1,6 @@
+/* 헤더 '맛' 글자용 한글 손글씨 폰트 — 약간 굵고 둥근 Gaegu */
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@700&display=swap');
+
 :root {
   --bg-primary: #0f1117;
   --bg-card: #171a22;
@@ -108,9 +111,10 @@ header {
   background: var(--bg-card);
 }
 header h1 { margin: 0; font-size: 16px; font-weight: 700; }
-/* ── 브랜드 로고 (세콤달.콤 주식차트) ──
+/* ── 브랜드 로고 (세콤달.콤 주식맛집) ──
    '세콤달.콤' 글자별 컬러 (핫핑크 / 파랑 / 앰버 / 퍼플) — 새콤달콤 사탕 분위기.
-   '주식차트' 는 기본 텍스트색 유지.  */
+   '주식맛집' 중 '맛' 은 brand-mat 클래스로 손글씨 + 기울임 강조,
+   나머지는 기본 텍스트색 유지.  */
 header .brand-h1 { line-height: 1.15; letter-spacing: -0.01em; white-space: nowrap; }
 header .brand-name { display: inline-block; }
 header .brand-name .bc {
@@ -125,6 +129,18 @@ header .brand-sub {
   color: var(--text-primary);
   font-weight: 700;
   margin-left: 4px;
+}
+/* '맛' 글자 — 손글씨 느낌 + 약간 비뚤어진 그래픽 강조 */
+header .brand-mat {
+  display: inline-block;
+  font-family: 'Gaegu', 'Gungsuh', cursive;
+  font-weight: 700;
+  color: #ff6b35;                          /* 따뜻한 주황 — '맛집' 무드 */
+  font-size: 1.25em;
+  line-height: 1;
+  padding: 0 1px;
+  transform: rotate(-7deg) translateY(-1px);
+  transform-origin: 50% 60%;
 }
 header .subtitle { color: var(--text-secondary); font-size: 12px; margin-left: 8px; }
 header .meta { color: var(--text-secondary); font-size: 11px; }
@@ -1188,7 +1204,7 @@ footer {
     gap: 8px;
   }
   header h1 { font-size: 14px; line-height: 1.15; }
-  /* 모바일: 세콤달.콤 / 주식차트 2줄 분리 */
+  /* 모바일: 세콤달.콤 / 주식맛집 2줄 분리 */
   header .brand-h1 { white-space: normal; }
   header .brand-sub {
     display: block;
@@ -1198,6 +1214,8 @@ footer {
     font-weight: 600;
     color: var(--text-secondary);
   }
+  /* 모바일에서는 '맛' 글자만 본문 색이 아닌 액센트 유지 */
+  header .brand-mat { font-size: 1.3em; }
   header .nav-left { align-items: center; }
   header .subtitle { font-size: 10px; margin-left: 6px; }
   header .subtitle-highlight { font-size: 9px; padding: 1px 5px; }
