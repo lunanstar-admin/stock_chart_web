@@ -18,6 +18,8 @@
   --shadow-close: 0 2px 6px rgba(239, 68, 68, 0.3);
   --active-tint: rgba(79, 140, 255, 0.08);
   --disclaimer-tint: rgba(245, 158, 11, 0.08);
+  --tooltip-bg: rgba(23, 26, 34, 0.96);   /* bg-card 계열 반투명 */
+  --tooltip-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
 /* ── 라이트(크림) 테마 ── */
@@ -38,6 +40,8 @@ html[data-theme="light"] {
   --shadow-close: 0 2px 6px rgba(220, 38, 38, 0.28);
   --active-tint: rgba(37, 99, 235, 0.08);
   --disclaimer-tint: rgba(180, 83, 9, 0.1);
+  --tooltip-bg: rgba(253, 249, 237, 0.97);
+  --tooltip-shadow: 0 4px 14px rgba(80, 60, 20, 0.22);
 }
 
 /* ── 새콤달콤 테마 (젊은 여성 취향 파스텔 핑크) ── */
@@ -58,6 +62,8 @@ html[data-theme="sweet"] {
   --shadow-close: 0 2px 6px rgba(230, 74, 107, 0.3);
   --active-tint: rgba(255, 111, 168, 0.1);
   --disclaimer-tint: rgba(245, 167, 66, 0.12);
+  --tooltip-bg: rgba(255, 255, 255, 0.97);
+  --tooltip-shadow: 0 4px 14px rgba(255, 111, 168, 0.25);
 }
 
 /* ── 밝은 그레이 테마 ── 쿨 톤 라이트 그레이 (크림 테마와 웜/쿨로 구분) */
@@ -78,6 +84,8 @@ html[data-theme="gray"] {
   --shadow-close: 0 2px 6px rgba(209, 67, 67, 0.25);
   --active-tint: rgba(74, 111, 165, 0.1);
   --disclaimer-tint: rgba(217, 123, 43, 0.12);
+  --tooltip-bg: rgba(255, 255, 255, 0.97);
+  --tooltip-shadow: 0 4px 14px rgba(31, 35, 40, 0.18);
 }
 
 * { box-sizing: border-box; }
@@ -827,7 +835,7 @@ main { padding: 12px 24px 24px; }
 .cinfo-overview {
   margin-top: 10px;
   padding: 10px 14px 12px;
-  background: var(--bg-tertiary);
+  background: var(--bg-hover);
   border: 1px solid var(--border);
   border-radius: 8px;
 }
@@ -875,7 +883,7 @@ main { padding: 12px 24px 24px; }
 .cl-tooltip {
   position: fixed;
   z-index: 200;
-  background: rgba(15, 17, 23, 0.96);
+  background: var(--tooltip-bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 12px;
@@ -884,7 +892,9 @@ main { padding: 12px 24px 24px; }
   color: var(--text-primary);
   pointer-events: none;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--tooltip-shadow);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 .cl-tooltip .tt-label { color: var(--text-secondary); margin-right: 6px; }
 .cl-tooltip .tt-up { color: var(--red); }
