@@ -113,6 +113,7 @@ def parse_post(path: Path) -> Post:
 # ── 템플릿 ─────────────────────────────────────────────
 HEAD_COMMON = """<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3092853375685399"
      crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-3092853375685399">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
