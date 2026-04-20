@@ -938,9 +938,24 @@ footer {
 .hero .hero-sub {
   color: var(--text-secondary);
   font-size: 15px;
-  margin: 0 0 28px;
+  line-height: 1.65;
+  margin: 0 auto 28px;
+  max-width: 640px;
 }
 .hero .hero-sub strong { color: var(--orange); }
+
+/* Hero CTA 버튼 가로 정렬 — 차트 보러가기 + 카카오로 시작하기 */
+.hero-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 14px;
+}
+.hero-actions .cta,
+.hero-actions .kakao-btn.kakao-btn--lg {
+  min-height: 44px;
+}
 
 .cta {
   display: inline-block;
@@ -1340,7 +1355,11 @@ footer {
   .home-main, .static-main { padding: 20px 16px 32px; }
   .hero { padding: 24px 8px 28px; margin-bottom: 28px; }
   .hero h2 { font-size: 20px; }
-  .hero .hero-sub { font-size: 13px; }
+  .hero .hero-sub { font-size: 13px; margin-bottom: 20px; }
+  /* 모바일에서 버튼 2개가 한 줄에 안 들어가면 자연스럽게 wrap → 세로 스택 */
+  .hero-actions { gap: 10px; width: 100%; flex-direction: column; align-items: stretch; }
+  .hero-actions .cta,
+  .hero-actions .kakao-btn.kakao-btn--lg { width: 100%; justify-content: center; }
   .features { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .feature { padding: 16px 12px; }
   .feature .feature-icon { font-size: 24px; }
