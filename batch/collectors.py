@@ -85,6 +85,10 @@ def fetch_market_listing(market: str, page_size: int = 100) -> list[dict]:
 def fetch_ohlcv(code: str, days: int = 120) -> pd.DataFrame:
     """FinanceDataReader로 일봉 OHLCV 수집. 지표 계산 여유분(+80일) 포함.
 
+    Args:
+        days: 필요한 "결과" 일수. 내부에서 지표 계산용 버퍼를 더 받는다.
+              주/월봉 리샘플까지 하려면 호출자가 충분히 큰 값(~3700) 을 넘긴다.
+
     Returns:
         columns=[date, open, high, low, close, volume] DataFrame (소문자).
         실패 시 빈 DataFrame.
@@ -167,6 +171,29 @@ def compute_indicators(df: pd.DataFrame) -> pd.DataFrame:
     out["bb_lower"] = bb_mid - 2 * bb_std
 
     return out
+
+
+def resample_ohlcv(df: pd.DataFrame, rule: str) -> pd.DataFrame:
+    """일봉 → 주/월봉 OHLCV 리샘플.
+
+    rule: pandas offset alias ('W-FRI' = 금요일 종료 주, 'MS' 또는 'ME').
+    여기서는 'W'(주 일요일 종료) / 'ME'(월말)을 쓴다.
+    """
+    if df.empty or "date" not in df.columns:
+        return pd.DataFrame()
+    out = df.copy()
+    out["date"] = pd.to_datetime(out["date"])
+    out = out.set_index("date").sort_index()
+    agg = {
+        "open": "first",
+        "high": "max",
+        "low": "min",
+        "close": "last",
+        "volume": "sum",
+    }
+    res = out.resample(rule).agg(agg).dropna(subset=["open", "close"])
+    res = res.reset_index()
+    return res
 
 
 _CHART_COLS = [

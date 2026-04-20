@@ -30,6 +30,7 @@ from batch.collectors import (
     fetch_market_listing,
     fetch_meta,
     fetch_ohlcv,
+    resample_ohlcv,
 )
 from batch.supply import fetch_investor
 from batch.writers import write_json
@@ -46,14 +47,34 @@ def _now_kst_iso() -> str:
 def _process_stock(stock: dict, output_dir: Path) -> tuple[str, bool, str]:
     code = stock["code"]
     try:
-        ohlcv = fetch_ohlcv(code, days=120)
-        if ohlcv.empty:
+        # 일봉은 120개만 보여주지만, 월봉(120개 ≈ 10년) 리샘플 위해 넉넉히 수집
+        raw = fetch_ohlcv(code, days=120 * 31)
+        if raw.empty:
             return code, False, "empty_ohlcv"
 
-        ohlcv = compute_indicators(ohlcv)
-        data = chart_records(ohlcv, tail=120)
+        # 1) 일봉 지표 (최근 120일)
+        daily = compute_indicators(raw)
+        data = chart_records(daily, tail=120)
         if not data:
             return code, False, "no_chart_records"
+
+        # 2) 주봉 (금요일 종료, 최근 120주 ≈ 2.3년)
+        try:
+            w_raw = resample_ohlcv(raw, "W-FRI")
+            w = compute_indicators(w_raw) if not w_raw.empty else w_raw
+            data_w = chart_records(w, tail=120)
+        except Exception as e:
+            logger.debug("weekly resample failed %s: %s", code, e)
+            data_w = []
+
+        # 3) 월봉 (월말, 최근 120개월 ≈ 10년)
+        try:
+            m_raw = resample_ohlcv(raw, "ME")
+            m = compute_indicators(m_raw) if not m_raw.empty else m_raw
+            data_m = chart_records(m, tail=120)
+        except Exception as e:
+            logger.debug("monthly resample failed %s: %s", code, e)
+            data_m = []
 
         investor = fetch_investor(code, days=60)
         meta = fetch_meta(code)
@@ -75,6 +96,8 @@ def _process_stock(stock: dict, output_dir: Path) -> tuple[str, bool, str]:
             "name": stock.get("name", code),
             "updated": _now_kst_iso(),
             "data": data,
+            "dataW": data_w,
+            "dataM": data_m,
             "investor": investor,
             "meta": meta,
         }
@@ -141,6 +164,19 @@ def run(output_dir: Path, limit: int | None, workers: int) -> None:
     write_json(output_dir / "meta.json", meta_payload)
     logger.info("=== batch done in %.1fs (ok=%d, fail=%d) ===",
                 time.time() - t0, ok_count, fail_count)
+
+    # 4. 일간 포스트 생성 + 블로그 정적 빌드 (실패해도 배치 자체는 성공으로 본다)
+    try:
+        from batch import daily_post
+        daily_post.generate()
+    except Exception as e:
+        logger.warning("daily_post.generate 실패(무시): %s", e)
+
+    try:
+        from batch import build_blog
+        build_blog.build()
+    except Exception as e:
+        logger.warning("build_blog.build 실패(무시): %s", e)
 
 
 def main() -> None:
