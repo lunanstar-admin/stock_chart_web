@@ -57,24 +57,24 @@ html[data-theme="sweet"] {
   --disclaimer-tint: rgba(245, 167, 66, 0.12);
 }
 
-/* ── 그레이(슬레이트) 테마 ── 다크보다 밝고 라이트보다 어두운 중간 톤 */
+/* ── 밝은 그레이 테마 ── 쿨 톤 라이트 그레이 (크림 테마와 웜/쿨로 구분) */
 html[data-theme="gray"] {
-  --bg-primary: #33363d;       /* 중간 슬레이트 */
-  --bg-card: #3f434b;          /* 카드 */
-  --bg-hover: #4d525b;         /* hover */
-  --border: #5b5f6a;           /* 보더 */
-  --text-primary: #e4e6eb;     /* 본문 */
-  --text-secondary: #a0a4ad;   /* 보조 */
-  --accent: #7da3d3;           /* 스틸 블루 포인트 */
-  --red: #e66b6b;
-  --green: #6bb37f;
-  --orange: #e5a45c;
-  --purple: #b38fd3;
-  --shadow-drawer: -4px 0 16px rgba(0, 0, 0, 0.4);
-  --shadow-cta: 0 2px 10px rgba(125, 163, 211, 0.35);
-  --shadow-close: 0 2px 6px rgba(230, 107, 107, 0.3);
-  --active-tint: rgba(125, 163, 211, 0.12);
-  --disclaimer-tint: rgba(229, 164, 92, 0.12);
+  --bg-primary: #eceef2;       /* 라이트 쿨 그레이 배경 */
+  --bg-card: #ffffff;          /* 카드는 순백으로 대비 */
+  --bg-hover: #dde1e8;         /* hover */
+  --border: #c9cfd8;           /* 보더 */
+  --text-primary: #1f2328;     /* 본문 (근흑) */
+  --text-secondary: #5a6070;   /* 보조 (중간 그레이) */
+  --accent: #4a6fa5;           /* 딥 스틸 블루 포인트 */
+  --red: #d14343;
+  --green: #2e8b57;
+  --orange: #d97b2b;
+  --purple: #7851a9;
+  --shadow-drawer: -4px 0 16px rgba(31, 35, 40, 0.1);
+  --shadow-cta: 0 2px 10px rgba(74, 111, 165, 0.3);
+  --shadow-close: 0 2px 6px rgba(209, 67, 67, 0.25);
+  --active-tint: rgba(74, 111, 165, 0.1);
+  --disclaimer-tint: rgba(217, 123, 43, 0.12);
 }
 
 * { box-sizing: border-box; }
@@ -1476,9 +1476,9 @@ footer {
 .theme-swatch--sweet { background: linear-gradient(135deg, #ffe0ec 0%, #fff3f6 100%); }
 .theme-swatch--sweet .theme-swatch-icon { color: #ff6fa8; }
 .theme-swatch--sweet .theme-swatch-label { color: #a67384; }
-.theme-swatch--gray { background: linear-gradient(135deg, #3f434b 0%, #33363d 100%); }
-.theme-swatch--gray .theme-swatch-icon { color: #e4e6eb; }
-.theme-swatch--gray .theme-swatch-label { color: #a0a4ad; }
+.theme-swatch--gray { background: linear-gradient(135deg, #ffffff 0%, #dde1e8 100%); }
+.theme-swatch--gray .theme-swatch-icon { color: #4a6fa5; }
+.theme-swatch--gray .theme-swatch-label { color: #5a6070; }
 
 /* 위험 영역 (회원 탈퇴) */
 .myinfo-danger-zone {
