@@ -57,6 +57,26 @@ html[data-theme="sweet"] {
   --disclaimer-tint: rgba(245, 167, 66, 0.12);
 }
 
+/* ── 골드/브라운 테마 (럭셔리 다크) ── */
+html[data-theme="gold"] {
+  --bg-primary: #1a1410;
+  --bg-card: #241a12;
+  --bg-hover: #3b2a1b;
+  --border: #5a4023;
+  --text-primary: #f3e3b5;
+  --text-secondary: #b08a52;
+  --accent: #d4af37;
+  --red: #e06060;
+  --green: #5fb478;
+  --orange: #f0a93b;
+  --purple: #c89b5c;
+  --shadow-drawer: -4px 0 16px rgba(0, 0, 0, 0.55);
+  --shadow-cta: 0 2px 10px rgba(212, 175, 55, 0.35);
+  --shadow-close: 0 2px 6px rgba(224, 96, 96, 0.3);
+  --active-tint: rgba(212, 175, 55, 0.1);
+  --disclaimer-tint: rgba(240, 169, 59, 0.1);
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -135,6 +155,11 @@ header .subtitle-highlight {
   font-size: 11px;
   margin-left: 2px;
   letter-spacing: 0.02em;
+}
+
+/* 모바일: 헤더의 'KOSPI / KOSDAQ · ' 접두 문구만 숨김 (날짜 뱃지는 유지) */
+@media (max-width: 640px) {
+  header .subtitle-markets { display: none; }
 }
 
 /* ── 햄버거 버튼 (20% 축소) ── */
@@ -257,7 +282,72 @@ header .subtitle-highlight {
   max-width: 100px;
 }
 
-/* 텍스트 링크형 버튼 (로그아웃) */
+/* 칩을 버튼으로 쓸 때 (아바타 탭 → 드롭다운) */
+.auth-chip-wrap { position: relative; display: inline-block; }
+.user-chip.user-chip--btn {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background 0.15s, border-color 0.15s, transform 0.08s;
+}
+.user-chip.user-chip--btn:hover { background: var(--active-tint); border-color: var(--accent); }
+.user-chip.user-chip--btn:active { transform: scale(0.97); }
+.user-chip.user-chip--btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.user-chip-caret {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-left: 2px;
+  transition: transform 0.15s;
+}
+.user-chip--btn[aria-expanded="true"] .user-chip-caret { transform: rotate(180deg); }
+
+/* 아바타 드롭다운 메뉴 */
+.auth-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 160px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 6px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.auth-menu[hidden] { display: none; }
+.auth-menu-head {
+  padding: 6px 10px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.auth-menu-nick {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+.auth-menu-item {
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.auth-menu-item:hover { background: var(--bg-hover); color: var(--accent); }
+
+/* 텍스트 링크형 버튼 (로그아웃 등 — 구 스타일 유지) */
 .btn-link {
   background: transparent;
   border: 0;
@@ -952,8 +1042,12 @@ footer {
   /* 좁은 화면 — 헤더의 카카오 버튼은 글자 숨기고 아이콘만. 큰 CTA(kakao-btn--lg)는 예외 */
   .auth-slot .kakao-btn .kakao-btn-label { display: none; }
   .auth-slot .kakao-btn { padding: 0 8px; gap: 0; }
-  .auth-slot .user-chip { padding: 0 8px 0 3px; max-width: 44px; }
-  .auth-slot .user-chip .user-nick { display: none; }
+  /* 로그인 칩: 모바일에서는 아바타만 보이게. 캐럿/닉네임 숨김. */
+  .auth-slot .user-chip { padding: 0 3px; max-width: 44px; }
+  .auth-slot .user-chip .user-nick,
+  .auth-slot .user-chip .user-chip-caret { display: none; }
+  /* 드롭다운 메뉴는 화면 우측 끝에 맞추기 */
+  .auth-slot .auth-menu { right: 0; min-width: 180px; }
 
   .filter-bar {
     padding: 8px 14px;

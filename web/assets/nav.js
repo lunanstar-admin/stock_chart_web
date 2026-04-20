@@ -1,12 +1,14 @@
 // 햄버거 네비게이션 드로어 + 테마 토글 — 모든 페이지 공통.
 (function () {
-  // ── 테마 토글 (다크 → 라이트 → 새콤달콤 → 다크…) ──
+  // ── 테마 토글 (다크 → 라이트 → 새콤달콤 → 골드 → 다크…) ──
   // 다크가 기본값. 사용자 선택은 localStorage('theme')에 저장.
+  // 로그인 상태라면 Supabase `public.members.theme` 에도 동기화(loggingIn side-effect).
   // 버튼은 "다음 전환될 테마"를 암시하는 아이콘을 보여준다.
   //   dark  → 클릭하면 light (☀)
   //   light → 클릭하면 sweet (🍬)
-  //   sweet → 클릭하면 dark  (☾)
-  const THEME_CYCLE = ['dark', 'light', 'sweet'];
+  //   sweet → 클릭하면 gold  (👑)
+  //   gold  → 클릭하면 dark  (☾)
+  const THEME_CYCLE = ['dark', 'light', 'sweet', 'gold'];
   function nextTheme(cur) {
     const i = THEME_CYCLE.indexOf(cur);
     return THEME_CYCLE[(i < 0 ? 0 : i + 1) % THEME_CYCLE.length];
@@ -16,15 +18,17 @@
     const nxt = nextTheme(cur);
     if (nxt === 'light') return '☀';
     if (nxt === 'sweet') return '🍬';
+    if (nxt === 'gold')  return '👑';
     return '☾';
   }
   function themeLabel(cur) {
     const nxt = nextTheme(cur);
     if (nxt === 'light') return '라이트 모드로 전환';
     if (nxt === 'sweet') return '새콤달콤 모드로 전환';
+    if (nxt === 'gold')  return '골드 모드로 전환';
     return '다크 모드로 전환';
   }
-  function applyTheme(theme) {
+  function applyTheme(theme, opts) {
     if (!THEME_CYCLE.includes(theme)) theme = 'dark';
     document.documentElement.setAttribute('data-theme', theme);
     const btn = document.getElementById('themeToggle');
@@ -34,12 +38,38 @@
       btn.setAttribute('title', themeLabel(theme));
     }
     try { localStorage.setItem('theme', theme); } catch (_) {}
+    // 사용자 액션으로 인한 변경이면 Supabase 에도 동기화 시도.
+    // 원격에서 가져와 적용할 때(opts.remote=true)는 저장 루프 방지.
+    if (!opts || !opts.remote) {
+      syncThemeToSupabase(theme);
+    }
   }
   function toggleTheme() {
     const cur = document.documentElement.getAttribute('data-theme') || 'dark';
     applyTheme(nextTheme(cur));
   }
   window.toggleTheme = toggleTheme;
+  window.applyTheme = applyTheme;        // 다른 스크립트(auth.js)가 원격 로드 후 호출
+  window.THEME_CYCLE = THEME_CYCLE;
+
+  // Supabase 동기화: 로그인 상태이면 members.theme 을 upsert.
+  // supabase-js 가 아직 로드 전일 수 있으므로 sb 존재 여부만 확인하고 조용히 실패.
+  async function syncThemeToSupabase(theme) {
+    try {
+      const sb = window.sb;
+      if (!sb || !sb.auth) return;
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session || !session.user) return;
+      await sb
+        .from('members')
+        .update({ theme: theme, updated_at: new Date().toISOString() })
+        .eq('id', session.user.id);
+    } catch (err) {
+      // 테이블에 아직 theme 컬럼이 없거나 네트워크 오류 등: localStorage 로 폴백.
+      console.debug('[nav] theme sync skipped:', err && err.message);
+    }
+  }
+  window.syncThemeToSupabase = syncThemeToSupabase;
 
   // 초기 적용 (DOMContentLoaded 전에 실행해 깜빡임 방지)
   try {
