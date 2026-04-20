@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>차트 연구소 Blog</title>
+    <link>https://secomdal.com/blog</link>
+    <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
+    <language>ko-kr</language>
+    <lastBuildDate>Mon, 20 Apr 2026 18:07:49 +0900</lastBuildDate>
+    <item>
+      <title>차트 연구소에 오신 것을 환영합니다</title>
+      <link>https://secomdal.com/blog/welcome</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/welcome</guid>
+      <pubDate>Mon, 20 Apr 2026 00:00:00 +0900</pubDate>
+      <description>KOSPI·KOSDAQ 전종목 무료 차트와 앞으로 이 블로그에서 다룰 내용을 소개합니다.</description>
+    </item>
+    <item>
+      <title>2026년 04월 20일 시가총액 상위 10 종목 — 대장주 흐름</title>
+      <link>https://secomdal.com/blog/daily-mcap-20260420</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260420</guid>
+      <pubDate>Mon, 20 Apr 2026 00:00:00 +0900</pubDate>
+      <description>2026년 04월 20일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
+    </item>
+    <item>
+      <title>RSI 제대로 읽기 — 과매수 70, 과매도 30 만으로 충분할까?</title>
+      <link>https://secomdal.com/blog/rsi-basics</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/rsi-basics</guid>
+      <pubDate>Sat, 18 Apr 2026 00:00:00 +0900</pubDate>
+      <description>RSI(상대강도지수)의 정의부터 실전 함정까지. 단순히 70/30 기준만으로 매매를 결정하면 안 되는 이유.</description>
+    </item>
+    <item>
+      <title>투자자별 수급 데이터 읽는 법 — 외국인·기관·개인</title>
+      <link>https://secomdal.com/blog/supply-demand-guide</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/supply-demand-guide</guid>
+      <pubDate>Wed, 15 Apr 2026 00:00:00 +0900</pubDate>
+      <description>외국인·기관·개인의 순매수 데이터가 무엇을 의미하는지, 그리고 누적 차트를 볼 때 흔히 놓치는 포인트.</description>
+    </item>
+  </channel>
+</rss>

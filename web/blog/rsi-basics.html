@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>RSI 제대로 읽기 — 과매수 70, 과매도 30 만으로 충분할까? — 차트 연구소</title>
+<meta name="description" content="RSI(상대강도지수)의 정의부터 실전 함정까지. 단순히 70/30 기준만으로 매매를 결정하면 안 되는 이유." />
+<link rel="canonical" href="https://secomdal.com/blog/rsi-basics" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3092853375685399"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1>차트 연구소</h1>
+      <span class="subtitle">Blog</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+  <a href="/privacy">Privacy</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+
+<main class="static-main">
+  <article class="blog-article">
+    <header class="blog-article-head">
+      <div class="blog-breadcrumb"><a href="/blog">← 블로그 목록</a></div>
+      <h2>RSI 제대로 읽기 — 과매수 70, 과매도 30 만으로 충분할까?</h2>
+      <div class="blog-meta">
+        <time datetime="2026-04-18">2026-04-18</time>
+        <div class="blog-tags"><span class="blog-tag">#지표</span><span class="blog-tag">#RSI</span><span class="blog-tag">#기술적분석</span></div>
+      </div>
+      
+    </header>
+
+    <div class="blog-body">
+      <p>기술적 분석을 처음 접하는 분들이 가장 빠르게 배우는 지표 중 하나가 <strong>RSI(Relative Strength Index, 상대강도지수)</strong><br>
+입니다. "70 넘으면 과매수, 30 밑이면 과매도"라는 말은 너무 유명해서 오히려 경계해야 할 정도입니다.</p>
+<h2 id="rsi">RSI 공식 한 줄 요약</h2>
+<p>일정 기간(보통 14일) 동안,</p>
+<pre><code>RSI = 100 - 100 / (1 + RS)
+RS  = 평균 상승폭 / 평균 하락폭
+</code></pre>
+<p>즉 "최근 14일 동안 오른 폭이 떨어진 폭보다 얼마나 더 컸나"를 0~100 스케일로 정규화한 값입니다.</p>
+<ul>
+<li>RSI = 100 → 14일 연속 상승만 있었다는 뜻</li>
+<li>RSI = 0   → 14일 연속 하락만 있었다는 뜻</li>
+<li>RSI = 50  → 상승·하락 폭이 균형</li>
+</ul>
+<h2 id="7030">70·30 기준의 유래</h2>
+<p>J. Welles Wilder 가 1978년 제시한 원저에서 사용한 숫자입니다. 문제는 <strong>이 기준이 시장·종목·추세에 따라 크게 달라진다</strong><br>
+는 점입니다.</p>
+<table>
+<thead>
+<tr>
+<th>시장 상태</th>
+<th>실무적 참고 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>강한 상승 추세</td>
+<td>70 돌파가 정상. 80~90 까지 머무는 경우도 흔함</td>
+</tr>
+<tr>
+<td>횡보장</td>
+<td>70/30 반전 신호로 비교적 잘 작동</td>
+</tr>
+<tr>
+<td>강한 하락 추세</td>
+<td>30 하단에서 반등 없이 추가 급락도 자주 발생</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">흔히 빠지는 3가지 함정</h2>
+<h3 id="1-70">함정 1. "70 넘었으니 팔자"</h3>
+<p>추세가 살아있는 종목은 RSI 70~80 구간에서 오히려 가속됩니다. 70에서 매도했다가<br>
+추가 30% 상승을 놓치는 사례가 현실에서 비일비재합니다.</p>
+<h3 id="2-14">함정 2. 기간(14) 고정</h3>
+<ul>
+<li>단기 트레이더: RSI(9) 또는 RSI(7) 로 민감도 상승</li>
+<li>장기 투자자: RSI(21) 또는 RSI(28) 로 노이즈 감소</li>
+</ul>
+<p>차트 연구소는 기본 <strong>RSI(14)</strong> 를 사용하지만, 본인의 홀딩 기간에 맞춰 해석이 필요합니다.</p>
+<h3 id="3_1">함정 3. 다이버전스 무시</h3>
+<p>가격은 신고가인데 RSI는 전고점을 넘지 못하면 <strong>강세 다이버전스의 약화 신호</strong>입니다. 반대로 가격은 신저가인데<br>
+RSI가 더 낮아지지 않으면 <strong>약세 다이버전스의 완화</strong> 로 해석할 수 있습니다.</p>
+<h2 id="_1">실전 체크리스트</h2>
+<p>아래 항목을 함께 보면 RSI 신호의 신뢰도가 올라갑니다.</p>
+<ol>
+<li><strong>추세 방향</strong> — MA20/MA60 이 우상향인지 우하향인지</li>
+<li><strong>거래량</strong> — RSI 70 돌파 시 거래량이 실렸는지</li>
+<li><strong>수급</strong> — 외국인·기관 누적 매수가 같은 방향인지</li>
+<li><strong>섹터 대비 상대 강도</strong> — 업종 지수 RSI 와 비교</li>
+</ol>
+<h2 id="rsi_1">차트 연구소에서 RSI 확인하기</h2>
+<p>상세 모달의 <strong>RSI 탭</strong>에서 확인할 수 있습니다.</p>
+<ul>
+<li>과매수 구간(RSI &gt; 70) 은 빨간 영역으로 표시</li>
+<li>과매도 구간(RSI &lt; 30) 은 파란 영역으로 표시</li>
+<li>일봉/주봉/월봉 토글로 시간 프레임을 바꿔가며 확인 가능</li>
+</ul>
+<p><a href="/chart">차트 보러가기 →</a></p>
+<h2 id="_2">마무리</h2>
+<p>RSI는 <strong>참고 지표</strong>입니다. "과매수" 경보가 떴다고 무조건 매도할 필요는 없고,<br>
+"과매도"가 왔다고 바닥 잡기에 급급할 필요도 없습니다. 추세·수급·거래량과 함께 입체적으로 해석하는<br>
+습관을 들이는 것이 장기적으로 훨씬 유용합니다.</p>
+    </div>
+
+    <nav class="blog-nav"><a class="blog-nav-prev" href="/blog/daily-mcap-20260420">← 2026년 04월 20일 시가총액 상위 10 종목 — 대장주 흐름</a><a class="blog-nav-next" href="/blog/supply-demand-guide">투자자별 수급 데이터 읽는 법 — 외국인·기관·개인 →</a></nav>
+
+    <div class="blog-cta">
+      <p>관련 종목 차트가 궁금하다면?</p>
+      <a class="cta" href="/chart">차트 연구소 열기 →</a>
+    </div>
+  </article>
+
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot;
+  <a href="/privacy">Privacy</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>블로그 — 차트 연구소</title>
+<meta name="description" content="차트 연구소의 종목 분석 및 시장 인사이트 블로그" />
+<link rel="canonical" href="https://secomdal.com/blog" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3092853375685399"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1>차트 연구소</h1>
+      <span class="subtitle">Blog</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+  <a href="/privacy">Privacy</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+
+<main class="static-main">
+  <section class="blog-hero">
+    <h2>📝 차트 연구소 블로그</h2>
+    <p class="lead">종목 분석·수급 인사이트·시장 동향을 기록합니다.</p>
+  </section>
+
+  <div class="blog-grid">
+<a class="blog-card" href="/blog/welcome">
+  
+  <div class="blog-card-body">
+    <div class="blog-card-date">2026-04-20</div>
+    <h3 class="blog-card-title">차트 연구소에 오신 것을 환영합니다</h3>
+    <p class="blog-card-summary">KOSPI·KOSDAQ 전종목 무료 차트와 앞으로 이 블로그에서 다룰 내용을 소개합니다.</p>
+    <div class="blog-tags"><span class="blog-tag">#공지</span><span class="blog-tag">#사용법</span></div>
+  </div>
+</a>
+<a class="blog-card" href="/blog/daily-mcap-20260420">
+  
+  <div class="blog-card-body">
+    <div class="blog-card-date">2026-04-20</div>
+    <h3 class="blog-card-title">2026년 04월 20일 시가총액 상위 10 종목 — 대장주 흐름</h3>
+    <p class="blog-card-summary">2026년 04월 20일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</p>
+    <div class="blog-tags"><span class="blog-tag">#일간</span><span class="blog-tag">#시가총액</span><span class="blog-tag">#주도주</span><span class="blog-tag">#대형주</span></div>
+  </div>
+</a>
+<a class="blog-card" href="/blog/rsi-basics">
+  
+  <div class="blog-card-body">
+    <div class="blog-card-date">2026-04-18</div>
+    <h3 class="blog-card-title">RSI 제대로 읽기 — 과매수 70, 과매도 30 만으로 충분할까?</h3>
+    <p class="blog-card-summary">RSI(상대강도지수)의 정의부터 실전 함정까지. 단순히 70/30 기준만으로 매매를 결정하면 안 되는 이유.</p>
+    <div class="blog-tags"><span class="blog-tag">#지표</span><span class="blog-tag">#RSI</span><span class="blog-tag">#기술적분석</span></div>
+  </div>
+</a>
+<a class="blog-card" href="/blog/supply-demand-guide">
+  
+  <div class="blog-card-body">
+    <div class="blog-card-date">2026-04-15</div>
+    <h3 class="blog-card-title">투자자별 수급 데이터 읽는 법 — 외국인·기관·개인</h3>
+    <p class="blog-card-summary">외국인·기관·개인의 순매수 데이터가 무엇을 의미하는지, 그리고 누적 차트를 볼 때 흔히 놓치는 포인트.</p>
+    <div class="blog-tags"><span class="blog-tag">#수급</span><span class="blog-tag">#투자자</span><span class="blog-tag">#기초</span></div>
+  </div>
+</a></div>
+
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot;
+  <a href="/privacy">Privacy</a>
+</footer>
+
+</body>
+</html>

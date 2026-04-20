@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>투자자별 수급 데이터 읽는 법 — 외국인·기관·개인 — 차트 연구소</title>
+<meta name="description" content="외국인·기관·개인의 순매수 데이터가 무엇을 의미하는지, 그리고 누적 차트를 볼 때 흔히 놓치는 포인트." />
+<link rel="canonical" href="https://secomdal.com/blog/supply-demand-guide" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3092853375685399"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1>차트 연구소</h1>
+      <span class="subtitle">Blog</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+  <a href="/privacy">Privacy</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+
+<main class="static-main">
+  <article class="blog-article">
+    <header class="blog-article-head">
+      <div class="blog-breadcrumb"><a href="/blog">← 블로그 목록</a></div>
+      <h2>투자자별 수급 데이터 읽는 법 — 외국인·기관·개인</h2>
+      <div class="blog-meta">
+        <time datetime="2026-04-15">2026-04-15</time>
+        <div class="blog-tags"><span class="blog-tag">#수급</span><span class="blog-tag">#투자자</span><span class="blog-tag">#기초</span></div>
+      </div>
+      
+    </header>
+
+    <div class="blog-body">
+      <p>한국 주식 시장의 독특한 관습 중 하나가 "오늘 외국인 얼마 순매수했다"는 식의<br>
+<strong>투자자별 매매 동향</strong> 공개입니다. 이 데이터는 실제로 유용할까요? 그렇다면 어떻게 활용해야 할까요?</p>
+<h2 id="_1">세 주체, 각자의 성향</h2>
+<p>한국거래소(KRX) 는 매 거래일 종목별 주요 투자자군의 순매수(매수 - 매도)를 공시합니다.<br>
+차트 연구소의 수급 탭에서 보는 <strong>외국인·기관·개인</strong>이 바로 이 데이터입니다.</p>
+<h3 id="_2">외국인</h3>
+<ul>
+<li>해외 펀드·글로벌 IB·주권형 ETF 등이 포함됩니다.</li>
+<li>거시 요인(환율, 미국 금리, 지정학) 에 민감하고, 대체로 <strong>중·장기 포지션</strong>을 구축합니다.</li>
+<li>외국인 비중이 높은 대형주(삼성전자, SK하이닉스 등) 에서 특히 수급 신호로 자주 인용됩니다.</li>
+</ul>
+<h3 id="_3">기관</h3>
+<ul>
+<li>연기금·보험·자산운용·은행 등 국내 기관의 통합 수치입니다.</li>
+<li>연기금이 특히 <strong>가치주·배당주</strong> 에 꾸준히 매수·매도하는 경향이 있습니다.</li>
+<li>기관 내부에서도 성향이 다르지만 공시는 통합치만 공개됩니다.</li>
+</ul>
+<h3 id="_4">개인</h3>
+<ul>
+<li>일반 개인 투자자 전체의 합계입니다.</li>
+<li>통계적으로 <strong>단기 매매</strong> 비중이 높고, <strong>역추세</strong>(하락시 매수) 성향이 강한 것으로 알려져 있습니다.</li>
+<li>"개인의 반대로 가라"는 오래된 격언의 근거가 이 데이터입니다.</li>
+</ul>
+<h2 id="vs">일별 vs 누적, 무엇이 더 유용한가</h2>
+<h3 id="_5">일별 순매수</h3>
+<ul>
+<li>"오늘 외국인 +1,200억 순매수"</li>
+<li><strong>단발성 뉴스</strong>의 파급력을 보기 좋음</li>
+<li>하루 수치만으로는 노이즈가 심함</li>
+</ul>
+<h3 id="_6">누적 순매수 (차트 연구소의 기본 뷰)</h3>
+<ul>
+<li>최근 60일 동안의 <strong>추세</strong>를 보여줌</li>
+<li>하루짜리 이상치에 덜 휘둘림</li>
+<li><strong>방향성</strong>이 명확히 보임 — 꾸준히 오르는 선인지, 횡보인지, 급락인지</li>
+</ul>
+<p>차트 연구소는 상세 모달에서 누적 차트와 일별 차트를 모두 제공합니다.</p>
+<h2 id="_7">수급 차트, 이렇게 읽어보세요</h2>
+<h3 id="1">1. 가격과 방향이 다를 때</h3>
+<ul>
+<li><strong>가격 상승 + 외국인 매도 누적</strong> → 단기 반등일 가능성. 외국인 복귀 여부 관찰</li>
+<li><strong>가격 하락 + 외국인 매수 누적</strong> → 저점 매집 신호일 수 있음</li>
+<li><strong>가격 상승 + 외국인 매수 + 기관 매수</strong> → 전형적 강세 구도</li>
+</ul>
+<h3 id="2-">2. 개인-외국인 다이버전스</h3>
+<p>외국인이 팔고 개인이 받는 전형적인 구도에서, 가격이 버티고 있다면<br>
+<strong>개인의 매수 체력</strong>이 남아있다는 의미일 수 있지만, 외국인 복귀 없이 오래 못 가는<br>
+경우가 일반적입니다.</p>
+<h3 id="3">3. 기관의 지속 매수</h3>
+<p>외국인·개인보다 <strong>덜 출렁이는 기관의 꾸준한 매수</strong>는 종종<br>
+장기 투자 테마(에너지 전환, 반도체 사이클 등)와 연결됩니다.</p>
+<h2 id="_8">한계와 주의할 점</h2>
+<ul>
+<li><strong>공매도 구분 없음</strong> — 순매수는 매수/매도의 차이일 뿐, 공매도 포지션 여부는 별도 공시</li>
+<li><strong>장 외 거래 제외</strong> — 대량 블록딜은 포함되지 않는 경우가 있음</li>
+<li><strong>선물·옵션 미반영</strong> — 현물 바스켓만 반영되므로 전체 포지션을 대표하지는 않음</li>
+<li><strong>외국인 분류 한계</strong> — 국내 기관이 해외 법인을 통해 매매하면 외국인으로 집계될 수 있음</li>
+</ul>
+<p>즉, 수급 데이터는 <strong>방향 힌트</strong>로 쓰고 <strong>매매 타이밍의 유일한 근거</strong>로 삼지는 말아야 합니다.</p>
+<h2 id="_9">차트 연구소에서 수급 확인하기</h2>
+<ol>
+<li>리스트의 각 행 네 번째 컬럼에서 <strong>미니 수급 바</strong>와 <strong>60일 누적 합계</strong>를 한눈에 확인</li>
+<li>행을 클릭하면 상세 모달에서 <strong>누적 차트 + 일별 차트</strong> 를 함께 확인</li>
+<li><strong>관심종목</strong>에 담아두면 수급 흐름을 매일 확인하기 편리합니다</li>
+</ol>
+<p><a href="/chart">차트로 확인하기 →</a></p>
+<h2 id="_10">요약</h2>
+<ul>
+<li>수급은 <strong>보조 지표</strong>입니다. 추세·밸류에이션·재무와 함께 보세요.</li>
+<li><strong>누적 차트</strong>가 방향을 읽기에 훨씬 유용합니다.</li>
+<li>외국인은 거시에, 기관은 스타일에, 개인은 뉴스에 반응하는 경향이 있습니다.</li>
+<li>절대적 정답은 없으니 <strong>꾸준히 관찰</strong>하며 자신만의 해석 틀을 만드는 것이 가장 좋습니다.</li>
+</ul>
+    </div>
+
+    <nav class="blog-nav"><a class="blog-nav-prev" href="/blog/rsi-basics">← RSI 제대로 읽기 — 과매수 70, 과매도 30 만으로 충분할까?</a><span></span></nav>
+
+    <div class="blog-cta">
+      <p>관련 종목 차트가 궁금하다면?</p>
+      <a class="cta" href="/chart">차트 연구소 열기 →</a>
+    </div>
+  </article>
+
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot;
+  <a href="/privacy">Privacy</a>
+</footer>
+
+</body>
+</html>

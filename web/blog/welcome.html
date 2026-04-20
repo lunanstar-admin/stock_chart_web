@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>차트 연구소에 오신 것을 환영합니다 — 차트 연구소</title>
+<meta name="description" content="KOSPI·KOSDAQ 전종목 무료 차트와 앞으로 이 블로그에서 다룰 내용을 소개합니다." />
+<link rel="canonical" href="https://secomdal.com/blog/welcome" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3092853375685399"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1>차트 연구소</h1>
+      <span class="subtitle">Blog</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+  <a href="/privacy">Privacy</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+
+<main class="static-main">
+  <article class="blog-article">
+    <header class="blog-article-head">
+      <div class="blog-breadcrumb"><a href="/blog">← 블로그 목록</a></div>
+      <h2>차트 연구소에 오신 것을 환영합니다</h2>
+      <div class="blog-meta">
+        <time datetime="2026-04-20">2026-04-20</time>
+        <div class="blog-tags"><span class="blog-tag">#공지</span><span class="blog-tag">#사용법</span></div>
+      </div>
+      
+    </header>
+
+    <div class="blog-body">
+      <p>안녕하세요. <strong>차트 연구소</strong>(secomdal.com)를 방문해 주셔서 감사합니다.</p>
+<p>이 사이트는 개인 투자자와 데이터 애호가를 위해 한국 주식 시장(KOSPI·KOSDAQ) 전종목의<br>
+차트·지표·수급 데이터를 <strong>무료로</strong> 제공하는 것이 목표입니다.</p>
+<h2 id="_1">제공하는 기능</h2>
+<p>현재 제공 중인 주요 기능은 다음과 같습니다.</p>
+<ul>
+<li><strong>전종목 미니 차트 스크롤</strong> — 4,256개 종목의 최근 120일 캔들을 한 화면에서 훑어보기</li>
+<li><strong>기술적 지표</strong> — MACD, RSI, OBV, MFI, 볼린저밴드, 이동평균선(MA5/20/60)</li>
+<li><strong>투자자별 수급</strong> — 외국인·기관·개인의 60일 누적 순매수 추이</li>
+<li><strong>일봉/주봉/월봉 전환</strong> — 같은 종목을 다양한 시간 단위로 관찰</li>
+<li><strong>카카오 간편 로그인 + 관심종목</strong> — 즐겨찾는 종목만 모아보기</li>
+</ul>
+<h2 id="_2">앞으로 이 블로그에서 다룰 내용</h2>
+<p>차트와 숫자만으로는 설명이 부족할 때가 많습니다. 이 블로그에서는<br>
+데이터가 말해주는 <strong>맥락</strong>을 풀어서 기록하려 합니다.</p>
+<ol>
+<li><strong>종목 분석</strong> — 실적 시즌 주요 대형주의 수급·기술적 지표 흐름</li>
+<li><strong>섹터 스포트라이트</strong> — 반도체·바이오·2차전지 같은 주도 섹터의 구조적 변화</li>
+<li><strong>지표 활용 가이드</strong> — RSI·MACD·볼린저밴드를 실전에서 어떻게 해석하는지</li>
+<li><strong>시장 동향 월간 요약</strong> — 한 달을 되돌아보는 KOSPI/KOSDAQ 마켓 리포트</li>
+<li><strong>데이터 스토리</strong> — 수급의 누적 흐름이 어떤 시그널을 남겼는지</li>
+</ol>
+<h2 id="_3">데이터 신뢰도와 면책</h2>
+<ul>
+<li>모든 시세·수급 데이터는 <strong>FinanceDataReader</strong>, <strong>pykrx</strong>, <strong>Naver Finance</strong> 같은<br>
+  공개 출처를 기반으로 합니다.</li>
+<li>매일 장 마감 후 1회 배치로 업데이트되며, 실시간이 아닙니다.</li>
+<li>본 블로그의 모든 내용은 <strong>참고용</strong>이며 <strong>투자 권유가 아닙니다</strong>.<br>
+  투자 판단과 그 책임은 전적으로 이용자 본인에게 있습니다.</li>
+</ul>
+<h2 id="_4">연락과 제안</h2>
+<p>개선 아이디어, 버그 제보, 데이터 문의는 언제든 환영합니다.</p>
+<ul>
+<li>이메일: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a></li>
+<li>사이트 내 <a href="/contact">Contact Us</a> 페이지에서 익명 메시지도 가능</li>
+</ul>
+<p>좋은 투자, 더 좋은 연구가 되기를 바랍니다.</p>
+    </div>
+
+    <nav class="blog-nav"><span></span><a class="blog-nav-next" href="/blog/daily-mcap-20260420">2026년 04월 20일 시가총액 상위 10 종목 — 대장주 흐름 →</a></nav>
+
+    <div class="blog-cta">
+      <p>관련 종목 차트가 궁금하다면?</p>
+      <a class="cta" href="/chart">차트 연구소 열기 →</a>
+    </div>
+  </article>
+
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot;
+  <a href="/privacy">Privacy</a>
+</footer>
+
+</body>
+</html>

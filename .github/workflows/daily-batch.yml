@@ -56,17 +56,18 @@ jobs:
           fi
           python -m batch.run_batch --output web/data $ARGS
 
-      - name: Commit & push data
+      - name: Commit & push data + blog
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add web/data
+          # 데이터 JSON + 블로그 원고/빌드 결과 + RSS 모두 커밋
+          git add web/data web/posts web/blog web/rss.xml 2>/dev/null || true
           if git diff --staged --quiet; then
-            echo "No data changes to commit."
+            echo "No changes to commit."
             exit 0
           fi
           DATE=$(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M KST')
-          git commit -m "chore(data): daily update ${DATE}"
+          git commit -m "chore(data): daily update + blog ${DATE}"
           # 동시 커밋 경합 대비 rebase 후 푸시
           for i in 1 2 3; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
