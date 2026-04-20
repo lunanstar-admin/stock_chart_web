@@ -107,49 +107,91 @@
     if (ev.key === 'Escape' && _menuOpen) closeAuthMenu();
   });
 
+  // localStorage 에 저장된 Supabase 세션을 동기적으로 peek.
+  // 페이지 이동 직후 `getSession()` 이 resolve 되기 전 (~100-200ms) 까지
+  // #authSlot 이 비어 있어 "로그아웃 상태처럼 깜빡"이는 문제를 막기 위해
+  // 이 값으로 optimistic 렌더를 먼저 수행한다.
+  function peekCachedSession() {
+    try {
+      if (typeof localStorage === 'undefined') return null;
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (!key || key.indexOf('sb-') !== 0 || key.lastIndexOf('-auth-token') !== key.length - '-auth-token'.length) continue;
+        var raw = localStorage.getItem(key);
+        if (!raw) continue;
+        var parsed = null;
+        try { parsed = JSON.parse(raw); } catch (_) { continue; }
+        if (!parsed) continue;
+        // Supabase v2: { access_token, refresh_token, expires_at, user, ... }
+        // 구버전 호환: { currentSession: {...} }
+        var session = parsed.currentSession || parsed;
+        if (session && session.user) return session;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  // 로그인 상태 칩 HTML 생성 + 이벤트 바인딩. optimistic 렌더와 실제 렌더 공통.
+  function renderAuthChipForUser(user, onSignOut, onMyInfo) {
+    var slot = document.getElementById('authSlot');
+    if (!slot || !user) return;
+    var meta = user.user_metadata || {};
+    var nick = meta.nickname || meta.name || meta.full_name || '회원';
+    var avatar = meta.avatar_url || meta.picture || '';
+    slot.innerHTML =
+      '<div class="auth-chip-wrap" id="authChipWrap">' +
+        '<button type="button" class="user-chip user-chip--btn" id="authTrigger"' +
+               ' aria-haspopup="menu" aria-expanded="false" title="' + escapeHtml(nick) + ' — 메뉴 열기">' +
+          (avatar
+            ? '<img class="user-avatar" src="' + escapeHtml(avatar) + '" alt="" referrerpolicy="no-referrer">'
+            : '<span class="user-avatar user-avatar--fallback" aria-hidden="true">' + escapeHtml(nick.slice(0, 1)) + '</span>') +
+          '<span class="user-nick">' + escapeHtml(nick) + '</span>' +
+          '<span class="user-chip-caret" aria-hidden="true">▾</span>' +
+        '</button>' +
+        '<div class="auth-menu" id="authMenu" role="menu" hidden>' +
+          '<div class="auth-menu-head">' +
+            '<div class="auth-menu-nick">' + escapeHtml(nick) + '</div>' +
+          '</div>' +
+          '<button type="button" class="auth-menu-item" role="menuitem" id="authMyInfo">내 정보</button>' +
+          '<button type="button" class="auth-menu-item" role="menuitem" id="authSignOut">로그아웃</button>' +
+        '</div>' +
+      '</div>';
+    var trigger = document.getElementById('authTrigger');
+    if (trigger) trigger.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      toggleAuthMenu();
+    });
+    var infoBtn = document.getElementById('authMyInfo');
+    if (infoBtn) infoBtn.addEventListener('click', function () {
+      closeAuthMenu();
+      if (typeof onMyInfo === 'function') onMyInfo();
+    });
+    var outBtn = document.getElementById('authSignOut');
+    if (outBtn) outBtn.addEventListener('click', function () {
+      closeAuthMenu();
+      if (typeof onSignOut === 'function') onSignOut();
+    });
+  }
+
+  // 페이지 로드 직후 한 번만 호출 — localStorage 캐시 기반 선제 렌더.
+  function preRenderAuthSlotFromCache() {
+    var slot = document.getElementById('authSlot');
+    if (!slot) return;
+    // 이미 뭔가 렌더되어 있으면 그대로 둔다 (중복 렌더 방지).
+    if (slot.children && slot.children.length > 0) return;
+    var cached = peekCachedSession();
+    if (!cached || !cached.user) return;
+    // onMyInfo 는 캐시된 user 로 동작. 실제 session 확정 후 renderAuthUI 가
+    // 같은 slot 을 다시 그리면서 최신 user 로 재바인딩한다.
+    renderAuthChipForUser(cached.user, signOut, function () { openMyInfo(cached.user); });
+  }
+
   async function renderAuthUI() {
     const slot = document.getElementById('authSlot');
     if (!slot) return;
     const { data: { session } } = await sb.auth.getSession();
     if (session && session.user) {
-      const u = session.user;
-      const meta = u.user_metadata || {};
-      const nick = meta.nickname || meta.name || meta.full_name || '회원';
-      const avatar = meta.avatar_url || meta.picture || '';
-      // 아바타/닉네임 칩 자체가 버튼 → 탭하면 드롭다운이 열리고 '내 정보'/'로그아웃' 제공
-      slot.innerHTML =
-        '<div class="auth-chip-wrap" id="authChipWrap">' +
-          '<button type="button" class="user-chip user-chip--btn" id="authTrigger"' +
-                 ' aria-haspopup="menu" aria-expanded="false" title="' + escapeHtml(nick) + ' — 메뉴 열기">' +
-            (avatar
-              ? '<img class="user-avatar" src="' + escapeHtml(avatar) + '" alt="" referrerpolicy="no-referrer">'
-              : '<span class="user-avatar user-avatar--fallback" aria-hidden="true">' + escapeHtml(nick.slice(0, 1)) + '</span>') +
-            '<span class="user-nick">' + escapeHtml(nick) + '</span>' +
-            '<span class="user-chip-caret" aria-hidden="true">▾</span>' +
-          '</button>' +
-          '<div class="auth-menu" id="authMenu" role="menu" hidden>' +
-            '<div class="auth-menu-head">' +
-              '<div class="auth-menu-nick">' + escapeHtml(nick) + '</div>' +
-            '</div>' +
-            '<button type="button" class="auth-menu-item" role="menuitem" id="authMyInfo">내 정보</button>' +
-            '<button type="button" class="auth-menu-item" role="menuitem" id="authSignOut">로그아웃</button>' +
-          '</div>' +
-        '</div>';
-      const trigger = document.getElementById('authTrigger');
-      if (trigger) trigger.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        toggleAuthMenu();
-      });
-      const infoBtn = document.getElementById('authMyInfo');
-      if (infoBtn) infoBtn.addEventListener('click', function () {
-        closeAuthMenu();
-        openMyInfo(session.user);
-      });
-      const btn = document.getElementById('authSignOut');
-      if (btn) btn.addEventListener('click', function () {
-        closeAuthMenu();
-        signOut();
-      });
+      renderAuthChipForUser(session.user, signOut, function () { openMyInfo(session.user); });
       // 로그인 상태 확정 직후, 저장된 테마가 있으면 당겨와 적용.
       loadThemeFromSupabase(session.user.id);
     } else {
@@ -165,25 +207,44 @@
   }
 
   // 로그인 상태라면 members.theme 을 읽어와 UI 에 반영.
-  // 없거나 실패하면 localStorage 에 저장된 테마를 유지.
+  // 규칙(경합 해결):
+  //   1) localStorage 에 유효한 theme 이 있으면 그것이 "이 브라우저 최신 선택"이다.
+  //      → 로컬이 이긴다. 원격과 다르면 원격을 로컬로 덮어쓴다(sync).
+  //   2) localStorage 가 비어 있으면(다른 기기에서 로그인) 원격 값을 UI 에 적용.
+  //   3) 원격도 비어 있으면 현재 문서 테마(=기본 dark)를 원격에 기록해 초기화.
+  // 이 순서로 해야, 사용자가 테마를 바꾸자마자 페이지를 이동했을 때 원격 sync 가
+  // 아직 끝나지 않아 stale 값이 로컬 선택을 덮어쓰는 race 를 막을 수 있다.
   async function loadThemeFromSupabase(userId) {
     try {
       if (!userId || !window.applyTheme) return;
+      var local = null;
+      try { local = localStorage.getItem('theme'); } catch (_) {}
+      var validCycle = window.THEME_CYCLE || ['gray', 'dark', 'light', 'sweet'];
+      var localValid = local && validCycle.indexOf(local) >= 0;
+
       const { data, error } = await sb
         .from('members')
         .select('theme')
         .eq('id', userId)
         .maybeSingle();
       if (error) throw error;
-      const t = data && data.theme;
-      if (t && (!window.THEME_CYCLE || window.THEME_CYCLE.indexOf(t) >= 0)) {
-        // remote: true → applyTheme 이 다시 Supabase 로 쓰는 것 방지
-        window.applyTheme(t, { remote: true });
-      } else if (!t) {
-        // 원격 기록이 없으면 현재 로컬 테마를 한 번 저장해 준다 (최초 동기화).
-        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-        if (window.syncThemeToSupabase) window.syncThemeToSupabase(cur);
+      const remote = data && data.theme;
+
+      if (localValid) {
+        // 로컬 우선. 원격이 다르면 sync 로 따라오게 한다.
+        if (remote !== local && window.syncThemeToSupabase) {
+          window.syncThemeToSupabase(local);
+        }
+        return;
       }
+      if (remote && validCycle.indexOf(remote) >= 0) {
+        // 로컬엔 기록이 없고 원격엔 있음 — 다른 기기의 선택을 당겨 적용.
+        window.applyTheme(remote, { remote: true });
+        return;
+      }
+      // 양쪽 모두 비어 있음 — 현재 테마로 원격 초기화
+      const cur = document.documentElement.getAttribute('data-theme') || 'gray';
+      if (window.syncThemeToSupabase) window.syncThemeToSupabase(cur);
     } catch (err) {
       // members 테이블에 theme 컬럼이 아직 없을 수 있음 — 조용히 무시.
       console.debug('[auth] loadThemeFromSupabase skipped:', err && err.message);
@@ -223,6 +284,9 @@
 
   function onReady() {
     surfaceOAuthError();
+    // 1) localStorage 세션 캐시로 즉시 로그인 칩 렌더 (로그아웃 깜빡임 방지).
+    preRenderAuthSlotFromCache();
+    // 2) 이어서 실제 세션을 확인해 최종 상태 반영 (+ 테마 sync).
     renderAuthUI();
     // 초기 세션 로드 후 관심종목 pull (chart 페이지에서만 동작)
     if (window.Watchlist && typeof window.Watchlist.load === 'function') {
@@ -410,10 +474,10 @@
   function renderThemeSwatches() {
     var grid = document.getElementById('myInfoThemeGrid');
     if (!grid) return;
-    var cycle = window.THEME_CYCLE || ['dark', 'light', 'sweet', 'gray'];
+    var cycle = window.THEME_CYCLE || ['gray', 'dark', 'light', 'sweet'];
     var labels = window.THEME_LABELS || {};
     var icons = window.THEME_ICONS || {};
-    var current = document.documentElement.getAttribute('data-theme') || 'dark';
+    var current = document.documentElement.getAttribute('data-theme') || 'gray';
     grid.innerHTML = cycle.map(function (t) {
       var active = t === current;
       return (

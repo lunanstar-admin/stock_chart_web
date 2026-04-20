@@ -27,6 +27,7 @@ socket.setdefaulttimeout(30)
 from batch.collectors import (
     chart_records,
     compute_indicators,
+    fetch_company_info,
     fetch_market_listing,
     fetch_meta,
     fetch_ohlcv,
@@ -78,6 +79,14 @@ def _process_stock(stock: dict, output_dir: Path) -> tuple[str, bool, str]:
 
         investor = fetch_investor(code, days=60)
         meta = fetch_meta(code)
+
+        # 회사 기본정보 (실패해도 종목 처리 자체는 계속)
+        try:
+            company = fetch_company_info(code)
+            if company:
+                meta["company"] = company
+        except Exception as e:
+            logger.debug("company_info failed %s: %s", code, e)
 
         # stocks.json의 시장 스냅샷도 meta에 포함 (프론트 편의)
         meta.update({

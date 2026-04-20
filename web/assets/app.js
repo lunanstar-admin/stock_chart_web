@@ -75,6 +75,22 @@ function signClass(v, dir) {
   return n > 0 ? "val-up" : n < 0 ? "val-dn" : "";
 }
 
+// HTML 본문에 안전하게 박히는 텍스트로 변환.
+function escapeHTML(v) {
+  if (v == null) return "";
+  return String(v)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// HTML 속성값(href, title 등)에 들어갈 문자열을 안전하게 변환.
+function escapeAttr(v) {
+  return escapeHTML(v);
+}
+
 /* ── 데이터 로드 ────────────────────────────────── */
 
 async function loadMeta() {
@@ -648,6 +664,55 @@ function buildDetailHTML(stock, payload) {
   const tfBtn = (v, label) =>
     `<button type="button" class="tf-btn${v === tf ? " is-active" : ""}" data-tf="${v}">${label}</button>`;
 
+  // 회사 기본정보 — meta.company 가 존재하고 최소 한 필드라도 있으면 렌더
+  const company = (meta && meta.company) || {};
+  const companyRows = [];
+  if (company.nameKor || company.nameEng) {
+    const en = company.nameEng ? ` <span class="cinfo-sub">${escapeHTML(company.nameEng)}</span>` : "";
+    companyRows.push({ label: "회사명", value: escapeHTML(company.nameKor || stock.name) + en });
+  }
+  if (company.market || company.marketSector) {
+    const mk = [company.market, company.marketSector].filter(Boolean).join(" · ");
+    companyRows.push({ label: "시장·업종", value: escapeHTML(mk) });
+  }
+  if (company.wicsSector) {
+    companyRows.push({ label: "WICS 업종", value: escapeHTML(company.wicsSector) });
+  }
+  if (company.industryPer) {
+    companyRows.push({ label: "업종 PER", value: escapeHTML(company.industryPer) + "배" });
+  }
+  if (company.fiscalMonth) {
+    companyRows.push({ label: "결산월", value: escapeHTML(company.fiscalMonth) });
+  }
+  if (company.phone) {
+    companyRows.push({ label: "대표전화", value: escapeHTML(company.phone) });
+  }
+  if (company.irPhone && company.irPhone !== company.phone) {
+    companyRows.push({ label: "주식담당", value: escapeHTML(company.irPhone) });
+  }
+  if (company.homepage) {
+    const safe = escapeAttr(company.homepage);
+    const display = escapeHTML(company.homepage.replace(/^https?:\/\//, "").replace(/\/$/, ""));
+    companyRows.push({
+      label: "홈페이지",
+      value: `<a class="cinfo-link" href="${safe}" target="_blank" rel="noopener noreferrer">${display} ↗</a>`,
+    });
+  }
+  const companySection = companyRows.length
+    ? `
+    <div class="section cinfo-section">
+      <h3>🏢 회사 기본정보</h3>
+      <dl class="cinfo-grid">
+        ${companyRows.map((r) => `
+          <div class="cinfo-row">
+            <dt>${r.label}</dt>
+            <dd>${r.value}</dd>
+          </div>`).join("")}
+      </dl>
+      <div class="cinfo-note">출처: Naver Finance · WiseReport 요약</div>
+    </div>`
+    : "";
+
   return `
     <div class="snapshot-grid">
       ${snapshotCells.map((c) => `
@@ -656,6 +721,8 @@ function buildDetailHTML(stock, payload) {
           <div class="value${c.cls ? " " + c.cls : ""}">${c.value}</div>
         </div>`).join("")}
     </div>
+
+    ${companySection}
 
     <div class="section">
       <div class="section-head">

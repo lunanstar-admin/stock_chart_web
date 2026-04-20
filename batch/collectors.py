@@ -5,12 +5,15 @@
 - OHLCV: FinanceDataReader
 - 지표: pandas 기반 (MA/MACD/RSI/OBV/VWAP/MFI/Bollinger)
 - 밸류에이션/수급 스냅샷: Naver integration API
+- 회사 기본정보: Naver Finance → WiseReport iframe(c1010001.aspx) 요약 박스
 """
 
 from __future__ import annotations
 
+import html
 import logging
 import math
+import re
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -21,6 +24,10 @@ import requests
 logger = logging.getLogger(__name__)
 
 _NAVER_HEADERS = {"User-Agent": "Mozilla/5.0 (chart-web batch)"}
+_WISEREPORT_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (chart-web batch)",
+    "Referer": "https://finance.naver.com/",
+}
 
 
 # ─── 종목 리스트 ─────────────────────────────────────────────────────────
@@ -250,3 +257,117 @@ def fetch_meta(code: str) -> dict:
     except Exception as e:
         logger.debug("meta fetch error %s: %s", code, e)
     return meta
+
+
+# ─── 회사 기본정보 (WiseReport 요약 박스 파싱) ───────────────────────────
+
+# Naver Finance `/item/coinfo.naver` 가 embed 하는 WiseReport 요약 페이지에서
+# 회사 프로필을 긁어온다. JSON API 가 없고 HTML 만 노출되므로 보수적으로 파싱한다.
+_WISEREPORT_URL = "https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={code}"
+
+
+def _wr_find_title(html_text: str, label: str) -> str | None:
+    """title="[label] ..." 패턴에서 값을 뽑아낸다."""
+    # title 속성은 "[홈페이지] www.xxx.com" 이거나, "[대표전화] 031-... \r[주식담당] 02-..."
+    m = re.search(rf'title="\[{re.escape(label)}\]\s*([^"]+?)"', html_text)
+    if not m:
+        # 여러 항목이 한 title 에 들어있는 경우 (대표전화 + 주식담당)
+        m = re.search(rf'\[{re.escape(label)}\]\s*([^\[<\r\n]+)', html_text)
+    if not m:
+        return None
+    v = html.unescape(m.group(1)).strip()
+    return v or None
+
+
+def _wr_match_dt_after(html_text: str, marker: str) -> str | None:
+    """`<dt ...>` 내부 텍스트에 marker 가 포함된 요소의 텍스트를 반환."""
+    for m in re.finditer(r"<dt[^>]*>([^<]{1,120})</dt>", html_text):
+        t = html.unescape(m.group(1)).strip()
+        if marker in t:
+            return re.sub(r"\s+", " ", t).strip()
+    return None
+
+
+def fetch_company_info(code: str) -> dict:
+    """WiseReport 요약 박스에서 회사 기본정보 추출.
+
+    반환 예:
+      {
+        "nameKor": "삼성전자",
+        "nameEng": "SamsungElec",
+        "market": "KOSPI",            # 상위 시장
+        "marketSector": "전기·전자",   # 거래소 업종
+        "wicsSector": "반도체와반도체장비",  # WICS 업종
+        "homepage": "http://www.samsung.com/sec",
+        "phone": "031-200-1114",
+        "irPhone": "02-2255-9000",
+        "fiscalMonth": "12월",
+        "industryPer": "24.98",
+      }
+
+    네트워크/파싱 실패 시 빈 dict 반환. 배치 전체를 깨트리지 않는다.
+    """
+    info: dict[str, str] = {}
+    try:
+        url = _WISEREPORT_URL.format(code=code)
+        r = requests.get(url, headers=_WISEREPORT_HEADERS, timeout=8)
+        if r.status_code != 200 or not r.text:
+            return info
+        s = r.text
+
+        # 1) 홈페이지 (href 로 정확히 뽑는 편이 안전)
+        m = re.search(r'title="\[홈페이지\][^"]*"\s+href="([^"]+)"', s)
+        if m:
+            info["homepage"] = html.unescape(m.group(1)).strip()
+
+        # 2) 대표전화 / 주식담당 (하나의 title 에 \r 로 묶여 있을 수 있음)
+        m = re.search(r'title="(\[대표전화\][^"]+)"', s)
+        if m:
+            tel_block = html.unescape(m.group(1))
+            m2 = re.search(r'\[대표전화\]\s*([0-9\-\s]+)', tel_block)
+            if m2:
+                info["phone"] = m2.group(1).strip()
+            m2 = re.search(r'\[주식담당\]\s*([0-9\-\s]+)', tel_block)
+            if m2:
+                info["irPhone"] = m2.group(1).strip()
+
+        # 3) 회사명 (한글) — <span class="name">...</span>
+        m = re.search(r'<span class="name">\s*([^<]+?)\s*</span>', s)
+        if m:
+            info["nameKor"] = html.unescape(m.group(1)).strip()
+
+        # 4) 영문명 / 거래소 업종 / WICS 업종 — 회사명 span 이후의 <dt class="line-left"> 블록들
+        head_end = s.find("</table>", s.find("cmp-table")) if "cmp-table" in s else -1
+        head = s[:head_end] if head_end > 0 else s[:6000]
+        lines = re.findall(r'<dt class="line-left">\s*([^<]+?)\s*</dt>', head)
+        for ln in lines:
+            t = html.unescape(ln).strip()
+            if not t:
+                continue
+            if ":" in t:
+                left, right = [x.strip() for x in t.split(":", 1)]
+                if left.upper() == "WICS":
+                    info["wicsSector"] = right
+                elif left in ("KOSPI", "KOSDAQ", "KONEX"):
+                    info["market"] = left
+                    # 우측은 "코스피 전기·전자" 처럼 한 번 더 쪼갤 수 있음
+                    info["marketSector"] = right
+            elif "nameEng" not in info and re.match(r"^[A-Za-z0-9 .,'&\-]+$", t):
+                info["nameEng"] = t
+
+        # 5) 결산월 — "12월 결산" 형태
+        fm = _wr_match_dt_after(head, "결산")
+        if fm:
+            m = re.search(r"(\d{1,2})\s*월\s*결산", fm)
+            if m:
+                info["fiscalMonth"] = f"{int(m.group(1))}월"
+
+        # 6) 업종 PER — "업종PER <b class="num">24.98</b>"
+        m = re.search(r"업종PER\s*<b[^>]*>\s*([0-9,.\-]+)", s)
+        if m:
+            info["industryPer"] = m.group(1).strip()
+
+    except Exception as e:
+        logger.debug("company_info fetch error %s: %s", code, e)
+    # 빈 문자열은 JSON 을 부풀리므로 제거
+    return {k: v for k, v in info.items() if v}

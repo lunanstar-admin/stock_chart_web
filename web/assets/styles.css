@@ -751,6 +751,69 @@ main { padding: 12px 24px 24px; }
 .val-up { color: var(--red); }
 .val-dn { color: var(--accent); }
 
+/* ── 회사 기본정보 섹션 ────────────────────────── */
+.cinfo-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.cinfo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 4px 18px;
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.cinfo-row {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.cinfo-row:last-child { border-bottom: none; }
+.cinfo-row dt {
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 500;
+  margin: 0;
+}
+.cinfo-row dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+.cinfo-sub {
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 400;
+  margin-left: 4px;
+}
+.cinfo-link {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent);
+}
+.cinfo-link:hover { opacity: 0.85; }
+.cinfo-note {
+  margin-top: 6px;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .cinfo-grid { grid-template-columns: 1fr; gap: 2px 0; padding: 8px 10px; }
+  .cinfo-row { grid-template-columns: 80px 1fr; padding: 3px 0; }
+  .cinfo-row dd { font-size: 12.5px; }
+}
+
 .cl-tooltip {
   position: fixed;
   z-index: 200;
