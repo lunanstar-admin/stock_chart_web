@@ -79,6 +79,34 @@
     }
   }
 
+  // 아바타 드롭다운 메뉴 열림 상태
+  let _menuOpen = false;
+  function closeAuthMenu() {
+    const menu = document.getElementById('authMenu');
+    const trigger = document.getElementById('authTrigger');
+    if (menu) menu.hidden = true;
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    _menuOpen = false;
+  }
+  function openAuthMenu() {
+    const menu = document.getElementById('authMenu');
+    const trigger = document.getElementById('authTrigger');
+    if (menu) menu.hidden = false;
+    if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    _menuOpen = true;
+  }
+  function toggleAuthMenu() { _menuOpen ? closeAuthMenu() : openAuthMenu(); }
+
+  // 문서 어디를 클릭하든 드롭다운 바깥이면 닫기
+  document.addEventListener('click', function (ev) {
+    if (!_menuOpen) return;
+    const wrap = document.getElementById('authChipWrap');
+    if (wrap && !wrap.contains(ev.target)) closeAuthMenu();
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && _menuOpen) closeAuthMenu();
+  });
+
   async function renderAuthUI() {
     const slot = document.getElementById('authSlot');
     if (!slot) return;
@@ -88,17 +116,38 @@
       const meta = u.user_metadata || {};
       const nick = meta.nickname || meta.name || meta.full_name || '회원';
       const avatar = meta.avatar_url || meta.picture || '';
+      // 아바타/닉네임 칩 자체가 버튼 → 탭하면 드롭다운이 열리고 '로그아웃' 등 제공
       slot.innerHTML =
-        '<span class="user-chip" title="' + escapeHtml(nick) + '">' +
-          (avatar
-            ? '<img class="user-avatar" src="' + escapeHtml(avatar) + '" alt="" referrerpolicy="no-referrer">'
-            : '<span class="user-avatar user-avatar--fallback" aria-hidden="true">' + escapeHtml(nick.slice(0, 1)) + '</span>') +
-          '<span class="user-nick">' + escapeHtml(nick) + '</span>' +
-        '</span>' +
-        '<button type="button" class="btn-link" id="authSignOut">로그아웃</button>';
+        '<div class="auth-chip-wrap" id="authChipWrap">' +
+          '<button type="button" class="user-chip user-chip--btn" id="authTrigger"' +
+                 ' aria-haspopup="menu" aria-expanded="false" title="' + escapeHtml(nick) + ' — 메뉴 열기">' +
+            (avatar
+              ? '<img class="user-avatar" src="' + escapeHtml(avatar) + '" alt="" referrerpolicy="no-referrer">'
+              : '<span class="user-avatar user-avatar--fallback" aria-hidden="true">' + escapeHtml(nick.slice(0, 1)) + '</span>') +
+            '<span class="user-nick">' + escapeHtml(nick) + '</span>' +
+            '<span class="user-chip-caret" aria-hidden="true">▾</span>' +
+          '</button>' +
+          '<div class="auth-menu" id="authMenu" role="menu" hidden>' +
+            '<div class="auth-menu-head">' +
+              '<div class="auth-menu-nick">' + escapeHtml(nick) + '</div>' +
+            '</div>' +
+            '<button type="button" class="auth-menu-item" role="menuitem" id="authSignOut">로그아웃</button>' +
+          '</div>' +
+        '</div>';
+      const trigger = document.getElementById('authTrigger');
+      if (trigger) trigger.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        toggleAuthMenu();
+      });
       const btn = document.getElementById('authSignOut');
-      if (btn) btn.addEventListener('click', signOut);
+      if (btn) btn.addEventListener('click', function () {
+        closeAuthMenu();
+        signOut();
+      });
+      // 로그인 상태 확정 직후, 저장된 테마가 있으면 당겨와 적용.
+      loadThemeFromSupabase(session.user.id);
     } else {
+      closeAuthMenu();
       slot.innerHTML =
         '<button type="button" class="kakao-btn" id="authKakaoSignIn" aria-label="카카오로 로그인">' +
           '<span class="kakao-icon" aria-hidden="true"></span>' +
@@ -106,6 +155,32 @@
         '</button>';
       const btn = document.getElementById('authKakaoSignIn');
       if (btn) btn.addEventListener('click', signInKakao);
+    }
+  }
+
+  // 로그인 상태라면 members.theme 을 읽어와 UI 에 반영.
+  // 없거나 실패하면 localStorage 에 저장된 테마를 유지.
+  async function loadThemeFromSupabase(userId) {
+    try {
+      if (!userId || !window.applyTheme) return;
+      const { data, error } = await sb
+        .from('members')
+        .select('theme')
+        .eq('id', userId)
+        .maybeSingle();
+      if (error) throw error;
+      const t = data && data.theme;
+      if (t && (!window.THEME_CYCLE || window.THEME_CYCLE.indexOf(t) >= 0)) {
+        // remote: true → applyTheme 이 다시 Supabase 로 쓰는 것 방지
+        window.applyTheme(t, { remote: true });
+      } else if (!t) {
+        // 원격 기록이 없으면 현재 로컬 테마를 한 번 저장해 준다 (최초 동기화).
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        if (window.syncThemeToSupabase) window.syncThemeToSupabase(cur);
+      }
+    } catch (err) {
+      // members 테이블에 theme 컬럼이 아직 없을 수 있음 — 조용히 무시.
+      console.debug('[auth] loadThemeFromSupabase skipped:', err && err.message);
     }
   }
 
