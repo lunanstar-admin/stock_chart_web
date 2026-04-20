@@ -62,9 +62,21 @@ async function loadMeta() {
     state.meta = await r.json();
     const updated = (state.meta.updated || "").replace("T", " ").slice(0, 16);
     const cnt = state.meta.counts?.success ?? state.meta.count ?? 0;
-    $("metaInfo").textContent = `업데이트: ${updated} KST · ${cnt}종목`;
+    const metaEl = $("metaInfo");
+    if (metaEl) metaEl.textContent = `업데이트: ${updated} KST · ${cnt}종목`;
+    // 헤더 우측 '마지막 데이터 날짜 기준' 라벨 (chart.html)
+    const dataDateEl = $("dataDate");
+    if (dataDateEl) {
+      const ymd = (state.meta.updated || "").slice(0, 10);
+      dataDateEl.textContent = ymd
+        ? `${ymd} 종가 기준`
+        : "마지막 데이터 날짜 기준";
+    }
   } catch (e) {
-    $("metaInfo").textContent = "메타 정보 없음";
+    const metaEl = $("metaInfo");
+    if (metaEl) metaEl.textContent = "메타 정보 없음";
+    const dataDateEl = $("dataDate");
+    if (dataDateEl) dataDateEl.textContent = "마지막 데이터 날짜 기준";
   }
 }
 

@@ -37,6 +37,26 @@ html[data-theme="light"] {
   --disclaimer-tint: rgba(180, 83, 9, 0.1);
 }
 
+/* ── 새콤달콤 테마 (젊은 여성 취향 파스텔 핑크) ── */
+html[data-theme="sweet"] {
+  --bg-primary: #fff3f6;
+  --bg-card: #ffffff;
+  --bg-hover: #ffe0ec;
+  --border: #f5c7d6;
+  --text-primary: #4a2238;
+  --text-secondary: #a67384;
+  --accent: #ff6fa8;
+  --red: #e64a6b;
+  --green: #3bbf8a;
+  --orange: #f5a742;
+  --purple: #b57bd8;
+  --shadow-drawer: -4px 0 16px rgba(255, 111, 168, 0.18);
+  --shadow-cta: 0 2px 10px rgba(255, 111, 168, 0.35);
+  --shadow-close: 0 2px 6px rgba(230, 74, 107, 0.3);
+  --active-tint: rgba(255, 111, 168, 0.1);
+  --disclaimer-tint: rgba(245, 167, 66, 0.12);
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -104,7 +124,7 @@ header .home-btn .home-ico {
   display: block;
 }
 
-/* '전일 종가 기준' 하이라이트 */
+/* '마지막 데이터 날짜 기준' 하이라이트 */
 header .subtitle-highlight {
   display: inline-block;
   color: #f59e0b;
