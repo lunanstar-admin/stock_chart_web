@@ -944,17 +944,49 @@ footer {
 }
 .hero .hero-sub strong { color: var(--orange); }
 
-/* Hero CTA 버튼 가로 정렬 — 차트 보러가기 + 카카오로 시작하기 */
+/* Hero CTA 버튼 가로 정렬 — 모양·크기는 통일, 색상만 서로 다르게. */
 .hero-actions {
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 10px 14px;
+  gap: 12px;
 }
+.hero-actions + .hero-actions { margin-top: 12px; }
+.hero-actions--secondary { margin-top: 12px; }
+
+/* hero 안에서는 .cta / .kakao-btn 모두 같은 치수·모양을 갖도록 override */
 .hero-actions .cta,
 .hero-actions .kakao-btn.kakao-btn--lg {
-  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
+  min-width: 180px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+}
+/* 카카오 버튼 내부 아이콘 여백 보정 */
+.hero-actions .kakao-btn.kakao-btn--lg .kakao-icon {
+  width: 16px;
+  height: 16px;
+}
+/* Secondary (블로그) 버튼은 같은 치수지만 outline */
+.hero-actions .cta.cta-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  box-shadow: none;
+}
+.hero-actions .cta.cta-secondary:hover {
+  background: var(--active-tint);
+  opacity: 1;
 }
 
 .cta {
