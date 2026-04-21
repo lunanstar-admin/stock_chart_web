@@ -2,8 +2,8 @@ name: daily-batch
 
 on:
   schedule:
-    # 월–금 16:45 KST = 07:45 UTC (장마감 15:30 이후)
-    - cron: "45 7 * * 1-5"
+    # 월–금 16:00 KST = 07:00 UTC (장마감 15:30 직후)
+    - cron: "0 7 * * 1-5"
   workflow_dispatch:
     inputs:
       limit:
