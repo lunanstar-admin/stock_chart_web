@@ -955,14 +955,17 @@ function attachHoverTooltip(canvas, data) {
     document.body.appendChild(tip);
     return tip;
   };
-  canvas.addEventListener("mousemove", (e) => {
+
+  // 공용 렌더 함수 — (clientX, clientY, isTouch) 에 맞춰 해당 캔들 인덱스의
+  // 툴팁을 그리고 위치를 잡는다. mouse 와 touch 에서 함께 쓴다.
+  const showAt = (clientX, clientY, isTouch) => {
     if (!data || !data.length) return;
     const rect = canvas.getBoundingClientRect();
     const padL = 48;
     const cw = rect.width - padL - 8;
     const barW = cw / data.length;
     const idx = Math.max(0, Math.min(data.length - 1,
-      Math.floor((e.clientX - rect.left - padL) / barW)));
+      Math.floor((clientX - rect.left - padL) / barW)));
     const d = data[idx];
     if (!d) return;
     const up = d.close >= d.open;
@@ -983,13 +986,43 @@ function attachHoverTooltip(canvas, data) {
     t.style.visibility = "hidden";
     const tw = t.offsetWidth, th = t.offsetHeight;
     t.style.visibility = "";
-    let x = e.clientX + 14, y = e.clientY - 10;
-    if (x + tw + 6 > window.innerWidth) x = e.clientX - tw - 14;
+    // 기본 위치: 마우스는 커서 우측, 터치는 손가락 위쪽(손가락이 툴팁을 가리지 않도록).
+    let x, y;
+    if (isTouch) {
+      x = clientX - tw / 2;          // 손가락 기준 가로 중앙
+      y = clientY - th - 28;          // 손가락 위쪽으로 여유 있게
+      if (y < 6) y = clientY + 28;   // 위로 공간이 없으면 아래로
+    } else {
+      x = clientX + 14;
+      y = clientY - 10;
+    }
+    // 화면 경계 클램프
+    if (x + tw + 6 > window.innerWidth) x = window.innerWidth - tw - 6;
+    if (x < 6) x = 6;
     if (y + th + 6 > window.innerHeight) y = window.innerHeight - th - 6;
     if (y < 6) y = 6;
     t.style.left = x + "px"; t.style.top = y + "px";
-  });
-  canvas.addEventListener("mouseleave", () => { if (tip) tip.style.display = "none"; });
+  };
+  const hide = () => { if (tip) tip.style.display = "none"; };
+
+  // ── 마우스 ──
+  canvas.addEventListener("mousemove", (e) => showAt(e.clientX, e.clientY, false));
+  canvas.addEventListener("mouseleave", hide);
+
+  // ── 터치 ──
+  // 손가락이 캔버스 안에 있는 동안 인덱스를 실시간으로 따라가게 한다.
+  // passive:true 를 유지해서 브라우저의 세로 스크롤은 여전히 동작하도록
+  // (CSS touch-action: pan-y 와 짝을 이룸).
+  canvas.addEventListener("touchstart", (e) => {
+    const t = e.touches[0]; if (!t) return;
+    showAt(t.clientX, t.clientY, true);
+  }, { passive: true });
+  canvas.addEventListener("touchmove", (e) => {
+    const t = e.touches[0]; if (!t) return;
+    showAt(t.clientX, t.clientY, true);
+  }, { passive: true });
+  canvas.addEventListener("touchend", hide);
+  canvas.addEventListener("touchcancel", hide);
 }
 
 function closeDetail() {
