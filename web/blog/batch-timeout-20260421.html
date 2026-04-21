@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>오늘 블로그 업데이트가 없었던 이유 — 배치 타임아웃 장애 회고 — 세콤달.콤 주식맛집</title>
+<meta name="description" content="매일 2,600여 종목 데이터를 자동 수집하는 GitHub Actions 배치가 KRX API 장애로 90분 타임아웃 캔슬된 과정과, 원인 분석부터 수정까지의 기록입니다." />
+<link rel="canonical" href="https://secomdal.com/blog/batch-timeout-20260421" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-2454082917321119">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Blog</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+
+<main class="static-main">
+  <article class="blog-article">
+    <header class="blog-article-head">
+      <div class="blog-breadcrumb"><a href="/blog">← 블로그 목록</a></div>
+      <h2>오늘 블로그 업데이트가 없었던 이유 — 배치 타임아웃 장애 회고</h2>
+      <div class="blog-meta">
+        <time datetime="2026-04-21">2026-04-21</time>
+        <div class="blog-tags"><span class="blog-tag">#운영</span><span class="blog-tag">#바이브코딩</span><span class="blog-tag">#GitHub Actions</span><span class="blog-tag">#장애대응</span></div>
+      </div>
+      
+    </header>
+
+    <div class="blog-body">
+      <p>오늘(4월 21일) 주식맛집 블로그에 새 글이 올라오지 않았습니다.</p>
+<p>매일 장 마감 후 16시에 자동으로 데이터를 수집하고, 당일 시장 분석 글이 자동 발행되는 구조인데 — 오늘은 아무것도 없었습니다. 이유를 추적한 과정을 기록해 둡니다.</p>
+<h2 id="_1">뭔가 이상하다는 걸 알게 된 순간</h2>
+<p>밤 11시를 넘겨 블로그를 확인하니 4월 21일자 글이 없었습니다. 오늘이 화요일이라 "당일 등락률 상위 10종목" 포스트가 자동 발행됐어야 하는 날이었는데요.</p>
+<p>제일 먼저 확인한 곳은 GitHub Actions 실행 이력입니다.</p>
+<pre><code>completed  cancelled  daily-batch  schedule  1h30m18s  2026-04-21T09:12:56Z
+completed  success    daily-batch  schedule  53m28s    2026-04-20T09:28:06Z
+</code></pre>
+<p>어제(4/20)는 53분에 성공적으로 끝났는데, 오늘은 <strong>1시간 30분 정확히</strong> 채우고 캔슬.</p>
+<p><code>1h30m18s</code> — 딱 90분 + 18초. 이건 자연스럽게 끝난 게 아니라 <strong>워크플로우에 설정된 90분 타임아웃에 걸려 강제 종료</strong>된 겁니다.</p>
+<h2 id="_2">로그를 열었더니</h2>
+<p>GitHub Actions 로그 마지막 부분:</p>
+<pre><code>pykrx.get_market_trading_value_by_date('20260215','20260421','017250',...)
+  → JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+</code></pre>
+<p><strong>빈 응답(empty body).</strong> 한국거래소(KRX) API가 데이터 없이 빈 body만 돌려보내고 있었습니다.</p>
+<p>수급 데이터(외국인·기관·개인 거래대금)는 pykrx라는 라이브러리로 KRX 공식 API에서 수집합니다. KRX가 정상일 땐 문제없지만, 오늘처럼 빈 응답을 반환하면 pykrx가 재시도를 반복합니다. 그리고 네트워크 소켓 타임아웃이 <strong>30초</strong>로 설정돼 있었기 때문에, 실패한 종목마다 최대 30초씩 기다리다 재시도를 반복한 겁니다.</p>
+<pre><code>2,600개 종목 × 간헐적 KRX 실패 × 소켓 30초 대기 = 90분 초과
+</code></pre>
+<p>어제(53분)와 오늘(90분+) 차이의 원인이 KRX 측 한시적 이슈였다는 게 거의 확실합니다.</p>
+<h2 id="_3">배치가 언제 죽었는지도 중요했다</h2>
+<p>90분 워크플로우 타임아웃은 제가 직접 설정한 값입니다. GitHub Actions 자체 한도(6시간)와 무관하게, "이 이상 걸리면 뭔가 잘못된 것"이라는 안전장치로 걸어뒀던 거죠.</p>
+<p>문제는 이 안전장치가 배치의 <strong>마지막 단계(git commit &amp; push)</strong> 전에 발동했다는 점입니다. 차트 데이터 수집 → 지표 계산 → 블로그 포스트 생성 → git commit → push 순서인데, 90분이 다 차도록 종목 처리가 끝나지 않아서 commit 단계까지 도달하지 못한 것입니다.</p>
+<pre><code>[배치 순서]
+① 전종목 OHLCV 수집 ── 정상 완료
+② 지표 계산         ── 정상 완료
+③ 수급 수집 ──────── ⚠️ 여기서 KRX 빈응답으로 누적 지연
+④ 블로그 포스트 생성 ── 미도달
+⑤ git commit &amp; push  ── 미도달  ← 여기까지 못 가서 반영 안 됨
+</code></pre>
+<h2 id="_4">수정한 것</h2>
+<p>두 가지를 바꿨습니다.</p>
+<p><strong>1. 워크플로우 타임아웃 90분 → 180분</strong></p>
+<p>어제 53분에 끝났으니 두 배 여유를 주는 180분으로 올렸습니다. GitHub Actions 자체 한도(360분) 안에서 충분한 안전 마진입니다.</p>
+<pre><code class="language-yaml"># .github/workflows/daily-batch.yml
+timeout-minutes: 180  # 기존 90
+</code></pre>
+<p><strong>2. 소켓 타임아웃 30초 → 15초</strong></p>
+<p>KRX 같은 API가 실패할 때 빠르게 포기하고 다음으로 넘어가도록, 소켓 연결 대기 시간을 절반으로 줄였습니다. 정상 응답은 보통 1~3초 안에 오기 때문에 15초도 충분합니다.</p>
+<pre><code class="language-python"># batch/run_batch.py
+socket.setdefaulttimeout(15)  # 기존 30
+</code></pre>
+<p>수정 후 배치를 즉시 수동 재실행했습니다. 다음 날 새벽에 오늘자(4/21) 데이터가 정상 반영될 예정입니다.</p>
+<h2 id="_5">바이브코딩 서비스 운영의 현실</h2>
+<p>이 사이트는 Claude Code와 함께 코드를 작성해 가는 이른바 <strong>바이브코딩</strong> 방식으로 만들어졌습니다. AI의 도움으로 코드 작성 속도는 빨라졌지만, 운영 중 발생하는 장애는 여전히 직접 추적하고 이해해야 합니다.</p>
+<p>오늘 일도 그랬습니다. 로그를 열고, 숫자를 보고, 원인을 추론하고, 수정하고, 재실행하는 과정은 AI가 대신해줄 수 있는 부분도 있지만 결국 <strong>운영자가 현상을 이해하고 판단해야</strong> 넘어갈 수 있습니다.</p>
+<p>AI 코딩 도구가 아무리 뛰어나도 "배치가 90분 만에 죽었는데 원인이 뭐지?"라는 질문을 먼저 던지는 건 사람의 몫입니다. 그리고 그 질문에서 오늘 같은 포스트가 나옵니다.</p>
+<hr>
+<p><em><a href="/chart">차트연구소 바로가기 →</a></em></p>
+    </div>
+
+    <nav class="blog-nav"><span></span><a class="blog-nav-next" href="/blog/welcome">세콤달.콤 주식맛집에 오신 것을 환영합니다 →</a></nav>
+
+    <div class="blog-cta">
+      <p>관련 종목 차트가 궁금하다면?</p>
+      <a class="cta" href="/chart">세콤달.콤 주식맛집 열기 →</a>
+    </div>
+  </article>
+
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot;
+  <a href="/privacy">Privacy</a>
+</footer>
+
+</body>
+</html>

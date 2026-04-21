@@ -5,7 +5,14 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 20 Apr 2026 19:20:29 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 22 Apr 2026 00:10:55 +0900</lastBuildDate>
+    <item>
+      <title>오늘 블로그 업데이트가 없었던 이유 — 배치 타임아웃 장애 회고</title>
+      <link>https://secomdal.com/blog/batch-timeout-20260421</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/batch-timeout-20260421</guid>
+      <pubDate>Tue, 21 Apr 2026 00:00:00 +0900</pubDate>
+      <description>매일 2,600여 종목 데이터를 자동 수집하는 GitHub Actions 배치가 KRX API 장애로 90분 타임아웃 캔슬된 과정과, 원인 분석부터 수정까지의 기록입니다.</description>
+    </item>
     <item>
       <title>세콤달.콤 주식맛집에 오신 것을 환영합니다</title>
       <link>https://secomdal.com/blog/welcome</link>
