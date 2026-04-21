@@ -298,7 +298,8 @@ const Chart = (() => {
       ctx.stroke();
     }
 
-    // 캔들
+    // 캔들 — _tentative 플래그가 붙은 봉(오늘 장중 지연시세 기반)은 반투명 + 점선 테두리
+    // 로 그려 사용자가 "아직 미확정" 임을 시각적으로 구분할 수 있게 한다.
     for (let i = 0; i < n; i++) {
       const d = data[i];
       const x = padL + i * barW;
@@ -306,13 +307,28 @@ const Chart = (() => {
       const color = up ? COL.up : COL.down;
       const yTop = toY(Math.max(d.open, d.close));
       const yBot = toY(Math.min(d.open, d.close));
-      ctx.strokeStyle = color; ctx.lineWidth = 1;
+      const tentative = d._tentative === true;
+      ctx.save();
+      if (tentative) {
+        ctx.globalAlpha = 0.55;
+      }
+      ctx.strokeStyle = color; ctx.lineWidth = tentative ? 1.2 : 1;
+      if (tentative) ctx.setLineDash([2, 2]);
       ctx.beginPath();
       ctx.moveTo(x + barW / 2, toY(d.high));
       ctx.lineTo(x + barW / 2, toY(d.low));
       ctx.stroke();
-      ctx.fillStyle = color;
-      ctx.fillRect(x + 0.5, yTop, Math.max(1, barW - 1), Math.max(1, yBot - yTop));
+      if (tentative) ctx.setLineDash([]);
+      if (tentative) {
+        // 몸통은 채우지 않고 테두리만 — 점선 + 반투명.
+        ctx.setLineDash([2, 2]);
+        ctx.strokeRect(x + 0.5, yTop + 0.5, Math.max(1, barW - 1), Math.max(1, yBot - yTop));
+        ctx.setLineDash([]);
+      } else {
+        ctx.fillStyle = color;
+        ctx.fillRect(x + 0.5, yTop, Math.max(1, barW - 1), Math.max(1, yBot - yTop));
+      }
+      ctx.restore();
     }
 
     // MA 선
@@ -364,7 +380,12 @@ const Chart = (() => {
       const up = d.close >= d.open;
       const x = padL + i * barW;
       const vH = (vols[i] / maxV) * ch;
-      ctx.fillStyle = up ? "rgba(239,68,68,0.45)" : "rgba(79,140,255,0.45)";
+      // 잠정 캔들의 거래량도 반투명으로 — 캔들 봉과 톤을 맞춘다.
+      const tentative = d._tentative === true;
+      const alpha = tentative ? 0.25 : 0.45;
+      ctx.fillStyle = up
+        ? `rgba(239,68,68,${alpha})`
+        : `rgba(79,140,255,${alpha})`;
       ctx.fillRect(x, padT + ch - vH, Math.max(1, barW - 0.5), vH);
     }
     ctx.fillStyle = COL.text; ctx.font = "10px sans-serif"; ctx.textAlign = "right";

@@ -131,6 +131,58 @@ async function loadStocks() {
   }));
 }
 
+// KST(Asia/Seoul) 기준 오늘 날짜 YYYY-MM-DD. en-CA locale 이 ISO 포맷을 돌려준다.
+function todayKST() {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Seoul" });
+}
+
+// 지연 시세 프록시 호출. 실패는 무해 — 폴백으로 전일 종가 기반 정상 동작.
+// payload.data 에 오늘 잠정 캔들을 붙일지는 merge 단계에서 판단한다.
+async function fetchQuote(code) {
+  try {
+    const r = await fetch(`/api/quote?code=${encodeURIComponent(code)}`, {
+      cache: "default",
+    });
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j || typeof j !== "object") return null;
+    // price 없으면 의미 없음. 일반적으로 거래정지/상폐 종목.
+    if (j.price == null || Number(j.price) <= 0) return null;
+    return j;
+  } catch (_) {
+    return null;
+  }
+}
+
+// payload 의 마지막 일봉 date 가 today(KST) 보다 이전이면, Naver 실시간(20분 지연)
+// 값으로 오늘 잠정 캔들을 만들어 data 배열 끝에 붙인다. MA/볼린저/MACD 등 지표 값은
+// null 로 두어 선들이 전날에서 끊기게 한다 — 배치 계산 없이 근사하면 오히려 혼란.
+// 주봉/월봉(tf) 에는 적용하지 않음 (월요일/다음달 배치가 자연히 반영).
+function mergeLiveQuoteIntoPayload(payload, quote, tf) {
+  if (tf !== "D" || !payload || !Array.isArray(payload.data) || !payload.data.length) return payload;
+  if (!quote || quote.open == null || quote.high == null || quote.low == null || quote.price == null) return payload;
+  const today = todayKST();
+  const last = payload.data[payload.data.length - 1];
+  if (!last || !last.date) return payload;
+  // 배치가 이미 오늘 (또는 그 이후) 데이터를 담고 있다면 중복 방지.
+  if (last.date >= today) return payload;
+  const tentative = {
+    date: today,
+    open: Number(quote.open),
+    high: Number(quote.high),
+    low: Number(quote.low),
+    close: Number(quote.price),
+    volume: Number(quote.volume || 0),
+    // 지표는 의도적으로 null — 이전 거래일에서 선이 자연스럽게 끊긴다.
+    ma5: null, ma20: null, ma60: null,
+    macd: null, signal: null, hist: null,
+    rsi: null, obv: null, mfi: null,
+    bb_upper: null, bb_mid: null, bb_lower: null,
+    _tentative: true,
+  };
+  return { ...payload, data: [...payload.data, tentative] };
+}
+
 async function loadChartData(code) {
   // 현재 timeframe 에 맞는 payload (리샘플/지표 포함) 반환. 원본은 state.chartCache.
   const tf = state.timeframe || "D";
@@ -589,15 +641,26 @@ async function openDetail(stock) {
   body.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
   $("detailModal").classList.add("show");
 
-  const payload = await loadChartData(stock.code);
+  // 차트 JSON(필수) + 실시간 시세(20분 지연, 선택) 를 병렬 fetch.
+  // 시세 실패해도 차트는 전일 종가 기준으로 정상 표시된다.
+  const [chartRes, quoteRes] = await Promise.allSettled([
+    loadChartData(stock.code),
+    fetchQuote(stock.code),
+  ]);
   if (_activeDetailCode !== stock.code) return;
+
+  let payload = chartRes.status === "fulfilled" ? chartRes.value : null;
+  const quote = quoteRes.status === "fulfilled" ? quoteRes.value : null;
 
   if (!payload || !payload.data || !payload.data.length) {
     body.innerHTML = '<div class="empty">차트 데이터가 없습니다.</div>';
     return;
   }
 
-  body.innerHTML = buildDetailHTML(stock, payload);
+  // 오늘 잠정 캔들 append (tf=D 일 때만 의미 있음).
+  payload = mergeLiveQuoteIntoPayload(payload, quote, state.timeframe || "D");
+
+  body.innerHTML = buildDetailHTML(stock, payload, quote);
 
   requestAnimationFrame(() => {
     Chart.drawDetailCandle($("mCandle"), payload.data);
@@ -622,7 +685,49 @@ function tfLabel(tf) {
   return tf === "W" ? "주봉" : tf === "M" ? "월봉" : "일봉";
 }
 
-function buildDetailHTML(stock, payload) {
+// 지연 시세 배지 문자열 조합.
+//   - 장중(OPEN)  : "⏱ 시세 20분 지연 · 219,000원 +4,500 (+2.10%) · 15:30 기준"
+//   - 장마감(CLOSE): "⏱ 시세 20분 지연 · 장마감 · 04-21 종가 기준"
+// 잠정 캔들이 실제로 payload 끝에 append 됐는지 여부와 무관하게, quote 만 있으면 노출.
+function buildDelayBadge(quote) {
+  if (!quote) return "";
+  const isOpen = quote.market === "OPEN";
+  const price = formatNum(quote.price);
+  const chg = quote.change != null ? formatSignedNum(quote.change, quote.changeDir === "up" ? "RISING" : quote.changeDir === "down" ? "FALLING" : "EVEN") : "";
+  const rate = quote.changeRate != null ? ((Number(quote.changeRate) > 0 ? "+" : "") + quote.changeRate + "%") : "";
+  const chgCls = quote.changeDir === "up" ? "val-up" : quote.changeDir === "down" ? "val-dn" : "";
+
+  // 거래시각: quote.tradedAt 이 Naver tm(HHmmss) 포맷이면 HH:MM 으로, 아니면 fetchedAt(ISO) 에서 추출.
+  let timeLabel = "";
+  const tm = String(quote.tradedAt || "");
+  if (/^\d{6}$/.test(tm)) {
+    timeLabel = `${tm.slice(0, 2)}:${tm.slice(2, 4)}`;
+  } else if (/^\d{4}$/.test(tm)) {
+    timeLabel = `${tm.slice(0, 2)}:${tm.slice(2, 4)}`;
+  } else if (quote.fetchedAt) {
+    try {
+      const d = new Date(quote.fetchedAt);
+      timeLabel = d.toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hour12: false });
+    } catch (_) {}
+  }
+
+  const right = isOpen
+    ? (timeLabel ? `${timeLabel} 기준` : "실시간")
+    : "장마감";
+
+  return `
+    <div class="delay-badge" title="Naver Finance 시세 · 20분 지연">
+      <span class="delay-badge-ico" aria-hidden="true">⏱</span>
+      <span class="delay-badge-main">시세 20분 지연</span>
+      <span class="delay-badge-sep">·</span>
+      <span class="delay-badge-price">${price}원</span>
+      ${chg ? `<span class="delay-badge-chg ${chgCls}">${chg}${rate ? ` (${rate})` : ""}</span>` : ""}
+      <span class="delay-badge-sep">·</span>
+      <span class="delay-badge-time">${right}</span>
+    </div>`;
+}
+
+function buildDetailHTML(stock, payload, quote) {
   const latest = payload.data[payload.data.length - 1] || {};
   const meta = payload.meta || {};
   const inv = payload.investor;
@@ -630,21 +735,31 @@ function buildDetailHTML(stock, payload) {
   const tf = state.timeframe || "D";
   const tfLbl = tfLabel(tf);
 
-  // 스냅샷 원본 값 — stocks.json 우선, 없으면 chart/{code}.json 의 meta 로 폴백
-  const priceRaw = stock.price || meta.price || latest.close;
-  const changeRaw = stock.change || meta.change;
-  const dirRaw = stock.changeDir || meta.changeDir;
-  const rateRaw = stock.changeRate || meta.changeRate || "0";
+  // 실시간(20분 지연) 시세가 있으면 스냅샷 우선순위: quote > stocks.json > chart.meta > 일봉 종가.
+  // quote.changeDir 은 'up'|'down'|'flat' 이라 서버 스키마 (RISING/FALLING/EVEN) 로 맞춰준다.
+  const liveDir = quote && quote.changeDir === "up" ? "RISING"
+    : quote && quote.changeDir === "down" ? "FALLING"
+    : quote ? "EVEN" : null;
+
+  const priceRaw = (quote && quote.price) || stock.price || meta.price || latest.close;
+  const changeRaw = (quote && quote.change != null) ? quote.change : (stock.change || meta.change);
+  const dirRaw = liveDir || stock.changeDir || meta.changeDir;
+  const rateRaw = (quote && quote.changeRate != null)
+    ? String(quote.changeRate)
+    : (stock.changeRate || meta.changeRate || "0");
   const rateNum = parseNum(rateRaw);
-  const volRaw = stock.volume || meta.volume;
+  const volRaw = (quote && quote.volume != null) ? quote.volume : (stock.volume || meta.volume);
   const mcapRaw = meta.marketValue || stock.marketCap || meta.marketCap;
-  const baseDate =
-    latest.date ||
-    (state.meta && state.meta.updated ? String(state.meta.updated).slice(0, 10) : "");
+  const baseDate = (quote && quote.market === "OPEN" ? todayKST() : null)
+    || latest.date
+    || (state.meta && state.meta.updated ? String(state.meta.updated).slice(0, 10) : "");
 
   const changeCls = signClass(changeRaw, dirRaw);
   const rateCls = rateNum > 0 ? "val-up" : rateNum < 0 ? "val-dn" : "";
   const rateStr = (rateNum > 0 ? "+" : "") + (rateRaw || "0") + "%";
+
+  // 지연 시세 배지 — quote 가 있을 때만 표시. 장중이면 거래시각, 장마감이면 '장마감' 라벨.
+  const delayBadge = quote ? buildDelayBadge(quote) : "";
 
   const snapshotCells = [
     { label: "현재가", value: formatNum(priceRaw) },
@@ -748,6 +863,7 @@ function buildDetailHTML(stock, payload) {
           ${tfBtn("D", "일봉")}${tfBtn("W", "주봉")}${tfBtn("M", "월봉")}
         </div>
       </div>
+      ${delayBadge}
       <div class="chart-wrap"><canvas id="mCandle"></canvas></div>
       <div class="chart-legend">
         <span><span class="dot" style="background:#ef4444"></span>양봉</span>

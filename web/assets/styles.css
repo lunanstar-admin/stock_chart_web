@@ -775,6 +775,31 @@ main { padding: 12px 24px 24px; }
 .val-up { color: var(--red); }
 .val-dn { color: var(--accent); }
 
+/* ── 지연 시세 배지 (캔들 차트 상단) ─────────────
+   Naver Finance 20분 지연 시세를 쓴다는 것을 분명히 고지하고,
+   현재가/전일대비/거래시각을 한 줄로 보여준다. */
+.delay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 2px 0 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-hover, rgba(148, 163, 184, 0.08));
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  line-height: 1.4;
+}
+.delay-badge-ico { font-size: 13px; opacity: 0.85; }
+.delay-badge-main { color: var(--text-primary); font-weight: 600; }
+.delay-badge-sep { color: var(--text-secondary); opacity: 0.6; }
+.delay-badge-price { color: var(--text-primary); font-weight: 600; }
+.delay-badge-chg { font-weight: 600; }
+.delay-badge-time { color: var(--text-secondary); }
+
+
 /* ── 회사 기본정보 섹션 ────────────────────────── */
 .cinfo-section h3 {
   margin: 0 0 8px 0;
