@@ -42,6 +42,15 @@
     var nick = meta.nickname || meta.name || meta.full_name || '회원';
     var avatar = meta.avatar_url || meta.picture || '';
 
+    // 로그인 상태 클래스 선제 부여 — hero 의 signed-in/out 엘리먼트 토글에 사용.
+    // auth.js 보다 먼저 실행되므로 FOUC(플래시) 를 막는다.
+    try { document.documentElement.classList.add('is-signed-in'); } catch (_) {}
+    // 닉네임 주입점이 있으면 즉시 채운다.
+    try {
+      var nickNodes = document.querySelectorAll('[data-signed-in-nick]');
+      for (var n = 0; n < nickNodes.length; n++) nickNodes[n].textContent = nick;
+    } catch (_) {}
+
     function esc(s) {
       return String(s == null ? '' : s)
         .replace(/&/g, '&amp;')

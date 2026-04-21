@@ -944,6 +944,15 @@ footer {
 }
 .hero .hero-sub strong { color: var(--orange); }
 
+/* 로그인 상태에 따라 hero 문구·버튼 토글. html.is-signed-in 은 auth.js 가 세팅 */
+.signed-in-only { display: none !important; }
+html.is-signed-in .signed-out-only { display: none !important; }
+html.is-signed-in .signed-in-only { display: revert !important; }
+/* hero 안의 블록 엘리먼트(문구) 는 revert 대신 block 이 자연스러움 */
+html.is-signed-in p.hero-sub.signed-in-only { display: block !important; }
+/* kakao 버튼은 inline-flex 가 기본 */
+html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
+
 /* Hero CTA 버튼 가로 정렬 — 모양·크기는 통일, 색상만 서로 다르게. */
 .hero-actions {
   display: flex;

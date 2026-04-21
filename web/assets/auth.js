@@ -176,14 +176,31 @@
   // 페이지 로드 직후 한 번만 호출 — localStorage 캐시 기반 선제 렌더.
   function preRenderAuthSlotFromCache() {
     var slot = document.getElementById('authSlot');
+    var cached = peekCachedSession();
+    if (!cached || !cached.user) return;
+    // hero 의 signed-in/out only 엘리먼트를 auth-prerender.js 가 미처 처리 못 한
+    // 케이스 보강 — 같은 DOM 변경은 멱등이라 중복 실행해도 안전.
+    var meta = cached.user.user_metadata || {};
+    var nick = meta.nickname || meta.name || meta.full_name || '회원';
+    applySignedInClass(true, nick);
     if (!slot) return;
     // 이미 뭔가 렌더되어 있으면 그대로 둔다 (중복 렌더 방지).
     if (slot.children && slot.children.length > 0) return;
-    var cached = peekCachedSession();
-    if (!cached || !cached.user) return;
     // onMyInfo 는 캐시된 user 로 동작. 실제 session 확정 후 renderAuthUI 가
     // 같은 slot 을 다시 그리면서 최신 user 로 재바인딩한다.
     renderAuthChipForUser(cached.user, signOut, function () { openMyInfo(cached.user); });
+  }
+
+  // 로그인 상태에 따라 <html> 의 is-signed-in 클래스와 [data-signed-in-nick]
+  // 주입점을 갱신한다. hero 의 signed-in / signed-out only 엘리먼트 토글 공용.
+  function applySignedInClass(signedIn, nick) {
+    try {
+      document.documentElement.classList.toggle('is-signed-in', !!signedIn);
+      if (signedIn && nick) {
+        var nodes = document.querySelectorAll('[data-signed-in-nick]');
+        for (var i = 0; i < nodes.length; i++) nodes[i].textContent = nick;
+      }
+    } catch (_) {}
   }
 
   async function renderAuthUI() {
@@ -191,10 +208,14 @@
     if (!slot) return;
     const { data: { session } } = await sb.auth.getSession();
     if (session && session.user) {
+      var meta = session.user.user_metadata || {};
+      var nick = meta.nickname || meta.name || meta.full_name || '회원';
+      applySignedInClass(true, nick);
       renderAuthChipForUser(session.user, signOut, function () { openMyInfo(session.user); });
       // 로그인 상태 확정 직후, 저장된 테마가 있으면 당겨와 적용.
       loadThemeFromSupabase(session.user.id);
     } else {
+      applySignedInClass(false);
       closeAuthMenu();
       slot.innerHTML =
         '<button type="button" class="kakao-btn" id="authKakaoSignIn" aria-label="카카오로 로그인">' +

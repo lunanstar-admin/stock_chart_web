@@ -53,13 +53,17 @@
   <main class="home-main">
     <section class="hero">
       <h2>한눈에 보는 KOSPI · KOSDAQ 전종목 차트</h2>
-      <p class="hero-sub">
+      <p class="hero-sub signed-out-only">
         4,256개 종목의 120일 캔들 · 이평선 · 수급 누적을 <strong>무료로</strong>.
         카카오로 시작하면 <strong>관심종목</strong>까지 저장됩니다.
       </p>
+      <p class="hero-sub signed-in-only">
+        <span data-signed-in-nick>회원</span>님, 다시 오셨네요 👋
+        관심종목은 기기 간에 자동 동기화되고, 테마 설정도 그대로 따라옵니다.
+      </p>
       <div class="hero-actions">
         <a class="cta" href="/chart">차트 보러가기 →</a>
-        <button type="button" class="kakao-btn kakao-btn--lg" onclick="window.signInKakao && window.signInKakao()">
+        <button type="button" class="kakao-btn kakao-btn--lg signed-out-only" onclick="window.signInKakao && window.signInKakao()">
           <span class="kakao-icon" aria-hidden="true"></span>
           <span class="kakao-btn-label">카카오로 시작하기</span>
         </button>
