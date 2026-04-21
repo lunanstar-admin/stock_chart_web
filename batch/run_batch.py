@@ -20,9 +20,10 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-# 네트워크 hang 방지 — 모든 socket 호출에 30s 타임아웃 적용.
+# 네트워크 hang 방지 — 모든 socket 호출에 15s 타임아웃 적용.
 # fdr / pykrx / requests 모두 socket 레벨에서 블록된다.
-socket.setdefaulttimeout(30)
+# KRX API 일시 장애로 재시도 누적 시 전체 배치 90분+ 초과하는 케이스 방지.
+socket.setdefaulttimeout(15)
 
 from batch.collectors import (
     chart_records,
