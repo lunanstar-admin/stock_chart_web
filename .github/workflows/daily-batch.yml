@@ -60,17 +60,25 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # 데이터 JSON + 블로그 원고/빌드 결과 + RSS 모두 커밋
-          git add web/data web/posts web/blog web/rss.xml 2>/dev/null || true
+          # 데이터 JSON + 블로그 원고/빌드 결과 + RSS + sitemap 모두 커밋
+          git add web/data web/posts web/blog web/rss.xml web/sitemap.xml 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "No changes to commit."
             exit 0
           fi
           DATE=$(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M KST')
           git commit -m "chore(data): daily update + blog ${DATE}"
-          # 동시 커밋 경합 대비 rebase 후 푸시
+          # 동시 커밋 경합 대비 — rebase 충돌 시 배치 데이터 우선 merge 로 폴백
           for i in 1 2 3; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            git fetch origin "${GITHUB_REF_NAME}"
+            if git rebase "origin/${GITHUB_REF_NAME}"; then
+              git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            else
+              echo "rebase conflict detected, falling back to merge -X ours..."
+              git rebase --abort
+              git merge -X ours "origin/${GITHUB_REF_NAME}" --no-edit && \
+                git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            fi
             echo "push retry $i..." && sleep 5
           done
           exit 1
