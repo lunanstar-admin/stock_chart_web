@@ -113,7 +113,10 @@
 <div class="modal-backdrop" id="detailModal" onclick="onBackdropClick(event)">
   <div class="modal">
     <div class="modal-header">
-      <h2 id="detailTitle">종목명</h2>
+      <div class="modal-title-row">
+        <h2 id="detailTitle">종목명</h2>
+        <span id="detailDelayTag" class="header-delay-tag" hidden>⏱ 20분 지연</span>
+      </div>
       <code id="detailCode">000000</code>
       <button type="button" id="detailStar" class="star-btn star-btn--lg" aria-pressed="false" title="관심종목 담기/빼기">☆</button>
       <button class="close" onclick="closeDetail()">닫기 (Esc)</button>

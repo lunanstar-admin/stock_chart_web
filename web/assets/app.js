@@ -624,6 +624,9 @@ async function openDetail(stock) {
   _activeDetailCode = stock.code;
   $("detailTitle").textContent = stock.name;
   $("detailCode").textContent = `${stock.code} · ${stock.market}`;
+  // 모달 열릴 때 지연 태그 초기화 (데이터 로딩 전이므로 숨김)
+  const _delayTag = $("detailDelayTag");
+  if (_delayTag) _delayTag.hidden = true;
   // 모달 헤더의 별 — 현재 상태 반영 + 클릭 핸들러 재바인딩
   const dStar = $("detailStar");
   if (dStar) {
@@ -661,6 +664,10 @@ async function openDetail(stock) {
   payload = mergeLiveQuoteIntoPayload(payload, quote, state.timeframe || "D");
 
   body.innerHTML = buildDetailHTML(stock, payload, quote);
+
+  // 종목명 라인 지연 태그 — quote 성공 시 표시
+  const delayTag = $("detailDelayTag");
+  if (delayTag) delayTag.hidden = !(quote && quote.price != null);
 
   requestAnimationFrame(() => {
     Chart.drawDetailCandle($("mCandle"), payload.data);
@@ -846,12 +853,15 @@ function buildDetailHTML(stock, payload, quote) {
     : "";
 
   return `
-    <div class="snapshot-grid">
-      ${snapshotCells.map((c) => `
-        <div class="snapshot-cell">
-          <div class="label">${c.label}</div>
-          <div class="value${c.cls ? " " + c.cls : ""}">${c.value}</div>
-        </div>`).join("")}
+    <div class="snapshot-section">
+      ${quote ? `<p class="snapshot-delay-note">⏱ 현재가·등락률·거래량은 <strong>20분 지연</strong> 시세 기준 · 기준일자·PER·PBR 등은 전일 장마감 후 산출값</p>` : ""}
+      <div class="snapshot-grid">
+        ${snapshotCells.map((c) => `
+          <div class="snapshot-cell">
+            <div class="label">${c.label}</div>
+            <div class="value${c.cls ? " " + c.cls : ""}">${c.value}</div>
+          </div>`).join("")}
+      </div>
     </div>
 
     ${companySection}

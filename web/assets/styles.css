@@ -708,6 +708,21 @@ main { padding: 12px 24px 24px; }
 }
 .modal-header h2 { margin: 0; font-size: 18px; }
 .modal-header code { color: var(--text-secondary); font-size: 13px; }
+/* 종목명 라인 — 이름 + 지연 태그 가로 정렬 */
+.modal-title-row { display: flex; align-items: center; gap: 8px; }
+.header-delay-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-hover, rgba(148,163,184,0.08));
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 .modal-header .close {
   margin-left: auto;
   background: var(--red);
@@ -812,6 +827,20 @@ main { padding: 12px 24px 24px; }
 .delay-badge-price { color: var(--text-primary); font-weight: 600; }
 .delay-badge-chg { font-weight: 600; }
 .delay-badge-time { color: var(--text-secondary); }
+
+/* 스냅샷 섹션 — 지연 안내 노트 */
+.snapshot-section { margin-bottom: 4px; }
+.snapshot-delay-note {
+  margin: 0 0 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-hover, rgba(148,163,184,0.08));
+  border-left: 2px solid var(--border);
+  border-radius: 4px;
+  line-height: 1.5;
+}
+.snapshot-delay-note strong { color: var(--text-primary); font-weight: 600; }
 
 
 /* ── 회사 기본정보 섹션 ────────────────────────── */
