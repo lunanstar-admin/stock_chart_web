@@ -42,9 +42,19 @@ ROOT = Path(__file__).resolve().parent.parent
 POSTS_DIR = ROOT / "web" / "posts"
 BLOG_DIR = ROOT / "web" / "blog"
 RSS_PATH = ROOT / "web" / "rss.xml"
+SITEMAP_PATH = ROOT / "web" / "sitemap.xml"
 SITE_URL = "https://secomdal.com"
 SITE_NAME = "세콤달.콤 주식맛집"
 KST = timezone(timedelta(hours=9))
+
+# 정적 페이지 목록 (slug, priority, changefreq)
+STATIC_PAGES = [
+    ("",        "1.0", "daily"),
+    ("chart",   "0.9", "daily"),
+    ("blog",    "0.8", "daily"),
+    ("about",   "0.5", "monthly"),
+    ("contact", "0.3", "monthly"),
+]
 
 
 # ── 데이터 모델 ────────────────────────────────────────
@@ -323,6 +333,32 @@ def render_rss(posts: list[Post]) -> str:
     return rss
 
 
+def render_sitemap(posts: list[Post]) -> str:
+    today = datetime.now(KST).strftime("%Y-%m-%d")
+    urls = []
+    for slug, priority, changefreq in STATIC_PAGES:
+        loc = f"{SITE_URL}/{slug}" if slug else SITE_URL
+        urls.append(f"""  <url>
+    <loc>{loc}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>{changefreq}</changefreq>
+    <priority>{priority}</priority>
+  </url>""")
+    for p in posts:
+        urls.append(f"""  <url>
+    <loc>{SITE_URL}/blog/{p.slug}</loc>
+    <lastmod>{p.date}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>""")
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "\n".join(urls)
+        + "\n</urlset>\n"
+    )
+
+
 # ── 빌드 ────────────────────────────────────────────────
 def build() -> int:
     if not POSTS_DIR.exists():
@@ -365,6 +401,10 @@ def build() -> int:
     # RSS
     RSS_PATH.write_text(render_rss(posts), encoding="utf-8")
     print(f"[blog] web/rss.xml")
+
+    # Sitemap
+    SITEMAP_PATH.write_text(render_sitemap(posts), encoding="utf-8")
+    print(f"[blog] web/sitemap.xml")
 
     print(f"[blog] 완료: {len(posts)} 글 생성")
     return 0
