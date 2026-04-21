@@ -953,7 +953,21 @@ footer {
   gap: 12px;
 }
 .hero-actions + .hero-actions { margin-top: 12px; }
-.hero-actions--secondary { margin-top: 12px; }
+
+/* Hero — Blog 섹션: 두 번째 hero 로 구분해서 독립된 섹션으로 렌더 */
+.hero.hero--blog {
+  margin-top: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.hero.hero--blog h2 { font-size: 22px; }
+.hero.hero--blog .hero-sub { font-size: 14px; }
+.hero.hero--blog .brand-mat {
+  font-family: "Gaegu", "Nanum Pen Script", "HY산B", "나눔고딕", sans-serif;
+  color: var(--orange);
+  font-weight: 900;
+  font-size: 1.15em;
+  letter-spacing: -0.02em;
+}
 
 /* hero 안에서는 .cta / .kakao-btn 모두 같은 치수·모양을 갖도록 override */
 .hero-actions .cta,
@@ -1388,6 +1402,9 @@ footer {
   .hero { padding: 24px 8px 28px; margin-bottom: 28px; }
   .hero h2 { font-size: 20px; }
   .hero .hero-sub { font-size: 13px; margin-bottom: 20px; }
+  .hero.hero--blog { padding: 20px 8px 24px; margin-bottom: 24px; }
+  .hero.hero--blog h2 { font-size: 17px; }
+  .hero.hero--blog .hero-sub { font-size: 12px; margin-bottom: 18px; }
   /* 모바일에서 버튼 2개가 한 줄에 안 들어가면 자연스럽게 wrap → 세로 스택 */
   .hero-actions { gap: 10px; width: 100%; flex-direction: column; align-items: stretch; }
   .hero-actions .cta,
