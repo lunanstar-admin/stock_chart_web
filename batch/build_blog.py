@@ -137,15 +137,73 @@ HOME_SVG = """<svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria
 </svg>"""
 
 
-def layout(title: str, subtitle: str, body: str, description: str = "", canonical: str = "") -> str:
+def layout(title: str, subtitle: str, body: str, description: str = "", canonical: str = "",
+           og_type: str = "website", og_image: str = "",
+           article_meta: Optional[dict] = None,
+           json_ld: str = "") -> str:
+    """페이지 레이아웃 생성.
+
+    article_meta: 블로그 기사일 때 {published, tags, author} 전달 → Article OG 태그
+    json_ld: 구조화 데이터 JSON-LD <script> 전체 문자열
+    """
     desc_tag = f'<meta name="description" content="{html.escape(description)}" />' if description else ""
     canon_tag = f'<link rel="canonical" href="{canonical}" />' if canonical else ""
+
+    og_img = og_image or f"{SITE_URL}/og-image.png"
+    og_tags = (
+        f'<meta property="og:type" content="{og_type}" />'
+        f'<meta property="og:site_name" content="{SITE_NAME}" />'
+        f'<meta property="og:title" content="{html.escape(title)}" />'
+        f'<meta property="og:description" content="{html.escape(description or title)}" />'
+        f'<meta property="og:locale" content="ko_KR" />'
+        f'<meta property="og:image" content="{og_img}" />'
+        + (f'<meta property="og:url" content="{canonical}" />' if canonical else "")
+    )
+
+    twitter_tags = (
+        '<meta name="twitter:card" content="summary_large_image" />'
+        f'<meta name="twitter:title" content="{html.escape(title)}" />'
+        f'<meta name="twitter:description" content="{html.escape(description or title)}" />'
+        f'<meta name="twitter:image" content="{og_img}" />'
+    )
+
+    article_tags = ""
+    if article_meta:
+        pub = article_meta.get("published", "")
+        author = article_meta.get("author", "세콤달")
+        tag_list = article_meta.get("tags") or []
+        tag_meta = "".join(
+            f'<meta property="article:tag" content="{html.escape(t)}" />' for t in tag_list
+        )
+        article_tags = (
+            f'<meta property="article:published_time" content="{pub}" />'
+            f'<meta property="article:author" content="{html.escape(author)}" />'
+            f'{tag_meta}'
+        )
+
+    robots_tag = '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />'
+    author_tag = '<meta name="author" content="세콤달.콤" />'
+
+    # Keywords — article_meta 의 tags 가 있으면 그걸, 아니면 공용 키워드
+    if article_meta and article_meta.get("tags"):
+        keywords = "주식, 투자, " + ", ".join(article_meta["tags"])
+    else:
+        keywords = "주식차트, 코스피, 코스닥, 블로그, 주식맛집, 세콤달"
+    keywords_tag = f'<meta name="keywords" content="{html.escape(keywords)}" />'
+
     return f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
 <title>{html.escape(title)} — {SITE_NAME}</title>
 {desc_tag}
+{keywords_tag}
+{author_tag}
+{robots_tag}
 {canon_tag}
+{og_tags}
+{article_tags}
+{twitter_tags}
+{json_ld}
 {HEAD_COMMON}
 </head>
 <body class="page-about">
@@ -244,12 +302,45 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
   </div>
 </main>
 """
+    canonical = f"{SITE_URL}/blog/{post.slug}"
+    og_image = f"{SITE_URL}{post.cover}" if post.cover and post.cover.startswith("/") else f"{SITE_URL}/og-image.png"
+
+    # JSON-LD Article 구조화 데이터
+    import json as _json
+    ld_obj = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": post.title,
+        "description": post.summary or post.title,
+        "datePublished": post.date,
+        "dateModified": post.date,
+        "author": {"@type": "Person", "name": "세콤달"},
+        "publisher": {
+            "@type": "Organization",
+            "name": SITE_NAME,
+            "logo": {"@type": "ImageObject", "url": f"{SITE_URL}/og-image.png"},
+        },
+        "mainEntityOfPage": {"@type": "WebPage", "@id": canonical},
+        "image": og_image,
+        "inLanguage": "ko-KR",
+        "keywords": ", ".join(post.tags) if post.tags else "",
+    }
+    ld_script = f'<script type="application/ld+json">{_json.dumps(ld_obj, ensure_ascii=False)}</script>'
+
     return layout(
         title=post.title,
         subtitle="Blog",
         body=body,
         description=post.summary or post.title,
-        canonical=f"{SITE_URL}/blog/{post.slug}",
+        canonical=canonical,
+        og_type="article",
+        og_image=og_image,
+        article_meta={
+            "published": post.date,
+            "author": "세콤달",
+            "tags": post.tags,
+        },
+        json_ld=ld_script,
     )
 
 
