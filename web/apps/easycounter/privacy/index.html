@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyCounter — Privacy Policy</title>
     <meta name="description" content="EasyCounter iOS app privacy policy">
+    <script>
+    // 브라우저 언어 자동 감지 & 리다이렉트 (첫 방문 1회만)
+    (function () {
+        try {
+            // 이미 리다이렉트됐거나 수동 진입(?nolang)이면 스킵
+            if (sessionStorage.getItem('ec_priv_redirected')) return;
+            if (location.search.indexOf('nolang') !== -1) return;
+
+            var lang = ((navigator.languages && navigator.languages[0]) ||
+                         navigator.language || navigator.userLanguage || '').toLowerCase();
+
+            var target = null;
+            if (lang.indexOf('ko') === 0) {
+                target = null;                         // 한국어 유지
+            } else if (lang.indexOf('ja') === 0) {
+                target = '/apps/easycounter/privacy/ja';
+            } else {
+                target = '/apps/easycounter/privacy/en';   // 영어 + 기타 언어 폴백
+            }
+
+            sessionStorage.setItem('ec_priv_redirected', '1');
+            if (target) location.replace(target);
+        } catch (e) { /* 스토리지 차단 시 기본 한국어 표시 */ }
+    })();
+    </script>
     <style>
         :root { color-scheme: dark light; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
