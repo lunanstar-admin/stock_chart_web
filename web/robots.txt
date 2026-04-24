@@ -2,4 +2,14 @@ User-agent: *
 Allow: /
 Disallow: /data/
 
+# 네이버 검색 로봇 — 명시적 허용
+User-agent: Yeti
+Allow: /
+Disallow: /data/
+
+# 구글 검색 로봇 — 명시적 허용
+User-agent: Googlebot
+Allow: /
+Disallow: /data/
+
 Sitemap: https://secomdal.com/sitemap.xml
