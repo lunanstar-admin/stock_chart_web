@@ -27,7 +27,7 @@
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400" }
+        { "key": "Cache-Control", "value": "public, max-age=300, must-revalidate, s-maxage=86400" }
       ]
     }
   ]
