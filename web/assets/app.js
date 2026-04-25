@@ -136,6 +136,19 @@ function todayKST() {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Seoul" });
 }
 
+// KST 기준 오늘이 거래일(평일)인가. 토/일이면 false.
+// 평일 공휴일(설/추석/광복절 등)은 이 함수만으로 잡지 못하지만, 그 경우엔
+// 사용자가 보는 게 1거래일 빠른 캔들일 뿐이고 다음 배치에 자동 정리됨.
+function isWeekdayKST() {
+  // KST 시각의 weekday 를 안전하게 얻는다 — Asia/Seoul 로 포맷팅 후 파싱.
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    weekday: "short",
+  }).formatToParts(new Date());
+  const wd = (parts.find(p => p.type === "weekday") || {}).value || "";
+  return !["Sat", "Sun"].includes(wd);
+}
+
 // 지연 시세 프록시 호출. 실패는 무해 — 폴백으로 전일 종가 기반 정상 동작.
 // payload.data 에 오늘 잠정 캔들을 붙일지는 merge 단계에서 판단한다.
 async function fetchQuote(code) {
@@ -161,11 +174,20 @@ async function fetchQuote(code) {
 function mergeLiveQuoteIntoPayload(payload, quote, tf) {
   if (tf !== "D" || !payload || !Array.isArray(payload.data) || !payload.data.length) return payload;
   if (!quote || quote.open == null || quote.high == null || quote.low == null || quote.price == null) return payload;
+  // 토/일 등 비-거래일에는 잠정 캔들을 절대 추가하지 않는다.
+  // (Naver API 는 휴장에도 직전 거래일 종가를 그대로 반환하기 때문)
+  if (!isWeekdayKST()) return payload;
   const today = todayKST();
   const last = payload.data[payload.data.length - 1];
   if (!last || !last.date) return payload;
   // 배치가 이미 오늘 (또는 그 이후) 데이터를 담고 있다면 중복 방지.
   if (last.date >= today) return payload;
+  // quote.tradedAt 이 ISO 날짜를 포함하고 today 와 다르면 그것은 직전 거래일 데이터 →
+  // 오늘 캔들로 표기하면 안 된다. (예: 일요일에 호출 시 tradedAt=금요일)
+  if (typeof quote.tradedAt === "string" && /\d{4}-\d{2}-\d{2}/.test(quote.tradedAt)) {
+    const ymd = quote.tradedAt.match(/\d{4}-\d{2}-\d{2}/)[0];
+    if (ymd !== today) return payload;
+  }
   const tentative = {
     date: today,
     open: Number(quote.open),
