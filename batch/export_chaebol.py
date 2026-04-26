@@ -232,13 +232,22 @@ def build_codes_index(
             })
 
     # code → 모회사 (자기가 자회사로 등장하는 케이스)
+    # 같은 종목을 여러 회사가 보유한 경우 — 최대 지분율을 가진 회사를 parent 로.
+    # 단순 보유공시(0% 등 형식상 표기)는 parent 가 아님 → 20% 미만 제외.
+    PARENT_MIN_PCT = 20.0
     sub_to_parent: dict[str, dict] = {}
     for s in subsidiaries:
-        if s["code"]:
+        if not s["code"]:
+            continue
+        pct = s["pct"] or 0.0
+        if pct < PARENT_MIN_PCT:
+            continue
+        cur = sub_to_parent.get(s["code"])
+        if cur is None or (cur.get("pct") or 0) < pct:
             sub_to_parent[s["code"]] = {
                 "code": s["parent"],
                 "name": s["parentName"],
-                "pct": s["pct"],
+                "pct": pct,
             }
 
     out: dict[str, dict] = {}
