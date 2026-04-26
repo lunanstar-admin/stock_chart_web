@@ -10,7 +10,7 @@
   "use strict";
 
   const state = {
-    view: "graph",           // 'graph' | 'tree' | 'table'
+    view: "tree",            // 'graph' | 'tree' | 'table'
     listedOnly: true,
     chaebol: null,           // chaebol.json
     codes: null,             // chaebol-codes.json
