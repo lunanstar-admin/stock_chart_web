@@ -29,10 +29,15 @@ from pathlib import Path
 
 KST = timezone(timedelta(hours=9))
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+
 DEFAULT_DB_CANDIDATES = [
-    Path.home() / "Project_AI" / "stock_db" / "data" / "stock_db.sqlite",
+    Path(os.environ["STOCK_DB"]) if os.environ.get("STOCK_DB") else None,
+    _REPO_ROOT / "data" / "stock_db.sqlite",                                # 파이프라인 작업 디렉토리
+    Path.home() / "Project_AI" / "stock_db" / "data" / "stock_db.sqlite",   # 로컬 stock_db 프로젝트
     Path.home() / "Project_AI" / "stock_db.sqlite",
 ]
+DEFAULT_DB_CANDIDATES = [p for p in DEFAULT_DB_CANDIDATES if p is not None]
 
 
 def now_iso_kst() -> str:

@@ -11,3 +11,7 @@ node_modules/
 *.log
 batch/.cache/
 .claude/
+
+# Chaebol pipeline 작업 디렉토리 (DB·로그) — JSON export 결과만 commit
+/data/stock_db.sqlite*
+/logs/
