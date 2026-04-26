@@ -136,22 +136,55 @@ def fetch_groups(con: sqlite3.Connection) -> list[dict]:
 
 
 def fetch_group_members(con: sqlite3.Connection) -> list[dict]:
+    """그룹사 멤버. 두 소스 union:
+      1) group_member_companies (공정위 지정 + 수집기)
+      2) companies.group_name   (단순주식 매핑 — 우선주 자동 상속 포함)
+    code 기준 dedup. 양쪽 다 있으면 group_member_companies 의 listed/rep 우선.
+    """
+    out: dict[tuple[str, str], dict] = {}  # (group, key) → row
+
+    # 1) group_member_companies
     rows = con.execute("""
         SELECT group_name, company_name, code,
                COALESCE(is_listed, 0), COALESCE(is_representative, 0)
         FROM group_member_companies
         ORDER BY group_name, is_representative DESC, is_listed DESC, company_name
     """).fetchall()
-    return [
-        {
-            "group": r[0],
-            "name": r[1],
-            "code": r[2] or None,
-            "listed": bool(r[3]),
-            "rep": bool(r[4]),
+    for r in rows:
+        group, name, code, listed, rep = r
+        key = code or f"name:{name}"
+        out[(group, key)] = {
+            "group": group,
+            "name": name,
+            "code": code or None,
+            "listed": bool(listed),
+            "rep": bool(rep),
         }
-        for r in rows
-    ]
+
+    # 2) companies.group_name — 상장 종목 중심
+    rows = con.execute("""
+        SELECT group_name, name, code, market
+        FROM companies
+        WHERE group_name IS NOT NULL AND code IS NOT NULL
+    """).fetchall()
+    for r in rows:
+        group, name, code, market = r
+        key = code
+        if (group, key) in out:
+            # 이미 있으면 listed=True 만 보강
+            out[(group, key)]["listed"] = True
+            continue
+        out[(group, key)] = {
+            "group": group,
+            "name": name,
+            "code": code,
+            "listed": True,
+            "rep": False,
+        }
+
+    members = list(out.values())
+    members.sort(key=lambda m: (m["group"], not m["rep"], not m["listed"], m["name"]))
+    return members
 
 
 def fetch_subsidiaries_clean(con: sqlite3.Connection) -> list[dict]:
@@ -231,28 +264,33 @@ def build_codes_index(
                 "pct": s["pct"],
             })
 
-    # code → 모회사 (자기가 자회사로 등장하는 케이스)
-    # 같은 종목을 여러 회사가 보유한 경우 — 최대 지분율을 가진 회사를 parent 로.
-    # 단순 보유공시(0% 등 형식상 표기)는 parent 가 아님 → 20% 미만 제외.
-    PARENT_MIN_PCT = 20.0
-    sub_to_parent: dict[str, dict] = {}
+    # code → 모회사 리스트 (자기가 자회사로 등장하는 모든 회사)
+    # 지분율 정보가 있는 모든 모회사를 지분율 내림차순으로 보관.
+    # 0% 단순보유 공시는 의미가 없어 제외.
+    sub_to_parents: dict[str, list[dict]] = {}
     for s in subsidiaries:
         if not s["code"]:
             continue
-        pct = s["pct"] or 0.0
-        if pct < PARENT_MIN_PCT:
+        pct = s["pct"]
+        if pct is None or pct <= 0:
             continue
-        cur = sub_to_parent.get(s["code"])
-        if cur is None or (cur.get("pct") or 0) < pct:
-            sub_to_parent[s["code"]] = {
-                "code": s["parent"],
-                "name": s["parentName"],
-                "pct": pct,
-            }
+        sub_to_parents.setdefault(s["code"], []).append({
+            "code": s["parent"],
+            "name": s["parentName"],
+            "pct": pct,
+        })
+    # dedup by parent code, sort desc by pct
+    for code, lst in sub_to_parents.items():
+        seen = {}
+        for p in lst:
+            k = p["code"] or p["name"]
+            if k not in seen or (seen[k]["pct"] or 0) < (p["pct"] or 0):
+                seen[k] = p
+        sub_to_parents[code] = sorted(seen.values(), key=lambda x: -(x["pct"] or 0))
 
     out: dict[str, dict] = {}
     # 그룹/자회사/모회사가 있는 모든 코드 union
-    all_codes = set(code_to_group.keys()) | set(parent_to_subs.keys()) | set(sub_to_parent.keys())
+    all_codes = set(code_to_group.keys()) | set(parent_to_subs.keys()) | set(sub_to_parents.keys())
     for code in all_codes:
         entry: dict = {}
         if code in code_to_group:
@@ -263,8 +301,8 @@ def build_codes_index(
             entry["affiliates"] = siblings
         if code in parent_to_subs:
             entry["subsidiaries"] = parent_to_subs[code][:10]
-        if code in sub_to_parent:
-            entry["parent"] = sub_to_parent[code]
+        if code in sub_to_parents:
+            entry["parents"] = sub_to_parents[code]
         out[code] = entry
     return out
 
@@ -293,9 +331,6 @@ def main() -> None:
 
     con = sqlite3.connect(str(db_path))
     try:
-        persons = fetch_persons(con)
-        family = fetch_family_relations(con)
-        links = fetch_person_company_links(con)
         groups = fetch_groups(con)
         members = fetch_group_members(con)
         subs = fetch_subsidiaries_clean(con)
@@ -303,19 +338,14 @@ def main() -> None:
     finally:
         con.close()
 
+    # 재벌가계도 데이터(persons/family/personLinks)는 본 프로젝트에서 제외.
     chaebol = {
         "updated": now_iso_kst(),
         "counts": {
-            "persons": len(persons),
-            "family": len(family),
-            "personLinks": len(links),
             "groups": len(groups),
             "groupMembers": len(members),
             "subsidiaries": len(subs),
         },
-        "persons": persons,
-        "family": family,
-        "personLinks": links,
         "groups": groups,
         "groupMembers": members,
     }
@@ -335,8 +365,8 @@ def main() -> None:
     codes_size = codes_path.stat().st_size
     print(f"[chaebol] {chaebol_path}  ({chaebol_size:,} bytes)")
     print(f"[chaebol] {codes_path}  ({codes_size:,} bytes)")
-    print(f"[chaebol] persons={len(persons)} family={len(family)} groups={len(groups)} "
-          f"members={len(members)} subs={len(subs)} shareholders={len(shareholders)} codes")
+    print(f"[chaebol] groups={len(groups)} members={len(members)} "
+          f"subs={len(subs)} shareholders={len(shareholders)} codes")
 
 
 if __name__ == "__main__":

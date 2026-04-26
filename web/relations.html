@@ -6,16 +6,16 @@
   <meta name="google-adsense-account" content="ca-pub-2454082917321119">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>재벌 가계도 · 그룹사 관계도 — 세콤달.콤 주식맛집</title>
-  <meta name="description" content="한국 30대 재벌 가계도와 그룹사 관계도. 노드/트리/테이블 뷰 전환. 상장사 필터. 인터넷 공개정보 기반 단순 참고자료." />
-  <meta name="keywords" content="재벌 가계도, 그룹사 관계도, 계열사, 자회사, 한국 재벌, 삼성, 현대, SK, LG, 롯데" />
+  <title>그룹사 관계도 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="한국 주요 그룹사 출자관계도. 노드/트리/테이블 뷰 전환. 상장사 필터. 인터넷 공개정보 기반 단순 참고자료." />
+  <meta name="keywords" content="그룹사 관계도, 계열사, 자회사, 한국 재벌, 삼성, 현대, SK, LG, 롯데" />
   <meta name="author" content="세콤달.콤" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://secomdal.com/relations" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="세콤달.콤 주식맛집" />
-  <meta property="og:title" content="재벌 가계도 · 그룹사 관계도" />
-  <meta property="og:description" content="한국 30대 재벌 가계도 + 계열사 관계도. 인터넷 공개정보 기반 단순 참고자료." />
+  <meta property="og:title" content="그룹사 관계도" />
+  <meta property="og:description" content="한국 주요 그룹 계열사 관계도. 인터넷 공개정보 기반 단순 참고자료." />
   <meta property="og:url" content="https://secomdal.com/relations" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:image" content="https://secomdal.com/og-image.png" />
@@ -33,7 +33,7 @@
       <a href="/" class="brand-link" aria-label="홈으로" title="홈">
         <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
       </a>
-      <span class="subtitle">재벌 가계도 · 그룹사 관계도</span>
+      <span class="subtitle">그룹사 관계도</span>
     </div>
     <div class="nav-right">
       <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
@@ -48,7 +48,7 @@
 <nav class="nav-drawer" id="navDrawer">
   <a href="/">Home</a>
   <a href="/chart">Stock Chart</a>
-  <a href="/relations">재벌 가계도 · 그룹사 관계도</a>
+  <a href="/relations">그룹사 관계도</a>
   <a href="/blog">Blog</a>
   <a href="/about">About</a>
   <a href="/contact">Contact Us</a>
@@ -66,14 +66,8 @@
     </span>
   </div>
 
-  <!-- 모드 토글 -->
+  <!-- 컨트롤 -->
   <div class="rel-toolbar">
-    <div class="rel-mode-toggle" role="tablist" aria-label="보기 모드">
-      <button type="button" class="rel-mode-btn is-active" data-mode="ownership" id="relModeOwnership">🏛️ 그룹사 관계도</button>
-      <button type="button" class="rel-mode-btn" data-mode="family" id="relModeFamily">👪 재벌 가계도</button>
-    </div>
-
-    <!-- 그룹사 모드 컨트롤 -->
     <div class="rel-controls" id="relControlsOwnership">
       <label class="rel-control">
         <span class="rel-control-label">그룹</span>
@@ -90,14 +84,6 @@
       <label class="rel-control rel-control--check">
         <input type="checkbox" id="relListedOnly" checked />
         <span>상장사만</span>
-      </label>
-    </div>
-
-    <!-- 가계도 모드 컨트롤 -->
-    <div class="rel-controls" id="relControlsFamily" hidden>
-      <label class="rel-control">
-        <span class="rel-control-label">가문</span>
-        <select id="relFamilyGroup" class="rel-select"></select>
       </label>
     </div>
   </div>
@@ -128,7 +114,7 @@
 <!-- vis-network — 노드 그래프 그리기. UMD 빌드, ~300KB.
      defer 로 페이지 인터랙션 막지 않음. -->
 <script defer src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
-<script src="/assets/relations.js?v=20260427a"></script>
+<script src="/assets/relations.js?v=20260427b"></script>
 
 </body>
 </html>
