@@ -688,6 +688,21 @@ async function openDetail(stock) {
   const delayTag = $("detailDelayTag");
   if (delayTag) delayTag.hidden = !(quote && quote.price != null);
 
+  // 종목명 라인 기준일자 — 잠정 캔들 무시한 마지막 확정 캔들의 date.
+  // 장중이면 "오늘 장중", 장 외면 "YYYY-MM-DD 종가" 로 명시해 오해 방지.
+  const dateTag = $("detailBaseDate");
+  if (dateTag) {
+    const lastConfirmed = [...payload.data].reverse().find(d => !d._tentative) || payload.data[payload.data.length - 1];
+    const isLive = quote && quote.market === "OPEN";
+    const dateStr = isLive ? todayKST() : (lastConfirmed && lastConfirmed.date) || "";
+    if (dateStr) {
+      dateTag.textContent = isLive ? `📅 ${dateStr} 장중` : `📅 ${dateStr} 종가`;
+      dateTag.hidden = false;
+    } else {
+      dateTag.hidden = true;
+    }
+  }
+
   requestAnimationFrame(() => {
     Chart.drawDetailCandle($("mCandle"), payload.data);
     Chart.drawVolume($("mVolume"), payload.data);

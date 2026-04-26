@@ -710,7 +710,8 @@ main { padding: 12px 24px 24px; }
 .modal-header code { color: var(--text-secondary); font-size: 13px; }
 /* 종목명 라인 — 이름 + 지연 태그 가로 정렬 */
 .modal-title-row { display: flex; align-items: center; gap: 8px; }
-.header-delay-tag {
+.header-delay-tag,
+.header-base-date {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
@@ -722,6 +723,12 @@ main { padding: 12px 24px 24px; }
   border-radius: 999px;
   white-space: nowrap;
   flex-shrink: 0;
+}
+.header-base-date {
+  /* 기준일자 — 약간 강조해서 사용자 시선이 데이터 시점을 즉시 인식 */
+  color: var(--text-primary);
+  background: var(--active-tint, rgba(79,140,255,0.12));
+  border-color: var(--accent);
 }
 .modal-header .close {
   margin-left: auto;
