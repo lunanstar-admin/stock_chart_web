@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-2454082917321119">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>계열사 지분 관계도 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="KOSPI·KOSDAQ 상장사 지분 출자 관계를 한눈에 — 모회사·자회사·지주회사 구조와 그룹 매핑을 시각화." />
+  <meta name="keywords" content="계열사, 지분관계, 지주회사, 자회사, 출자, 모회사, 그룹, 삼성, SK, LG, 현대" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://secomdal.com/ownership" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="세콤달.콤 주식맛집" />
+  <meta property="og:title" content="계열사 지분 관계도 — 세콤달.콤" />
+  <meta property="og:description" content="상장사 출자 관계와 그룹 구조 시각화 — 검색 한 번으로 모회사·자회사 트리 확인." />
+  <meta property="og:url" content="https://secomdal.com/ownership" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:image" content="https://secomdal.com/og-image.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="계열사 지분 관계도 — 세콤달.콤" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js"></script>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/vis-network@9.1.9/styles/vis-network.min.css">
+  <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+  <style>
+    .own-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:10px 14px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; margin-bottom:10px; }
+    .own-toolbar input, .own-toolbar select { padding:6px 10px; border-radius:6px; border:1px solid var(--border,#cbd5e1); background:var(--bg,#fff); color:var(--text,#0f172a); font-size:13px; }
+    .own-toolbar .stat { font-size:12px; color:var(--text-secondary,#64748b); margin-left:auto; }
+    .own-search-wrap { position:relative; }
+    .own-suggest { position:absolute; top:calc(100% + 2px); left:0; background:var(--card,#fff); border:1px solid var(--border,#cbd5e1); border-radius:6px; display:none; z-index:1000; max-height:280px; overflow-y:auto; width:300px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+    .own-suggest .item { padding:8px 10px; cursor:pointer; border-bottom:1px solid #eef2f6; font-size:12px; }
+    .own-suggest .item:hover { background:var(--bg,#f1f5f9); }
+    .own-legend { display:flex; flex-wrap:wrap; gap:12px; padding:8px 12px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; font-size:11px; align-items:center; margin-bottom:8px; }
+    .own-area { display:flex; gap:10px; height: calc(100vh - 280px); min-height:500px; }
+    .own-graph { flex:1; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; }
+    .own-side { width:280px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; padding:12px; overflow-y:auto; font-size:12px; }
+    @media (max-width: 768px) {
+      .own-area { flex-direction: column; height:auto; }
+      .own-side { width:auto; max-height:280px; }
+    }
+  </style>
+</head>
+<body class="page-about">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈">
+        <svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+        </svg>
+      </a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">계열사 관계도</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/family">재벌 가계도</a>
+  <a href="/ownership">계열사 관계도</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="home-main" style="max-width:1400px;margin:0 auto;padding:14px;">
+  <section class="hero" style="margin-bottom:14px">
+    <h2>🏢 계열사 지분 관계도</h2>
+    <p class="hero-sub">
+      DART 타법인 출자현황 기반 — 검색한 종목의 <strong>모회사·자회사 트리</strong>를 한눈에. 출자 5% 이상만 표시.
+    </p>
+  </section>
+
+  <div class="own-toolbar">
+    <div class="own-search-wrap">
+      <input id="qInput" type="text" placeholder="회사명 또는 코드 (예: 삼성전자, 005930)" oninput="onInput()" autocomplete="off" style="width:280px"
+             onkeydown="if(event.key==='Enter'){document.getElementById('suggest').style.display='none';loadGraph();}">
+      <div id="suggest" class="own-suggest"></div>
+    </div>
+    <select id="depthSel" onchange="loadGraph()">
+      <option value="1">1단계</option>
+      <option value="2" selected>2단계</option>
+      <option value="3">3단계</option>
+    </select>
+    <select id="minPctSel" onchange="loadGraph()">
+      <option value="20">지분 20%↑</option>
+      <option value="10" selected>지분 10%↑</option>
+      <option value="5">지분 5%↑</option>
+    </select>
+    <span class="stat" id="stat"></span>
+  </div>
+
+  <div class="own-legend">
+    <strong>노드:</strong>
+    <span><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#dc2626;border:2px solid #fbbf24;vertical-align:middle"></span> 중심</span>
+    <span><span style="display:inline-block;width:18px;height:11px;border-radius:4px;background:#f97316;border:2px solid #dc2626;vertical-align:middle"></span> 지주/홀딩스</span>
+    <span><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #475569;vertical-align:middle"></span> 상장사</span>
+    <span><span style="display:inline-block;width:18px;height:11px;border-radius:4px;background:#f1f5f9;border:2px dashed #94a3b8;vertical-align:middle"></span> 비상장</span>
+    <strong style="margin-left:8px">출자:</strong>
+    <span><span style="display:inline-block;width:22px;height:4px;background:#dc2626;vertical-align:middle"></span> 50%↑</span>
+    <span><span style="display:inline-block;width:22px;height:3px;background:#ea580c;vertical-align:middle"></span> 20-50%</span>
+    <span><span style="display:inline-block;width:22px;height:2px;background:#0d9488;vertical-align:middle"></span> 5-20%</span>
+    <span style="margin-left:auto;color:#64748b">더블클릭 → 차트 페이지</span>
+  </div>
+
+  <div class="own-area">
+    <div id="graph" class="own-graph"></div>
+    <div id="side" class="own-side">
+      <div style="color:#64748b">검색 결과의 회사를 선택하세요. 노드 클릭 시 정보, 더블클릭 시 차트로 이동합니다.</div>
+    </div>
+  </div>
+
+  <div class="ad-slot ad-bottom" aria-label="광고" style="margin-top:14px">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+<footer>
+  데이터: DART OpenAPI · 매월 갱신 &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/chart">Chart</a> &middot; <a href="/family">가계도</a> &middot; <a href="/about">About</a>
+</footer>
+
+<script>
+let DATA = null;
+let net = null;
+let suggestDebounce = null;
+
+async function init() {
+  const stat = document.getElementById('stat');
+  stat.textContent = '데이터 로딩 중...';
+  const r = await fetch('/data/ownership.json?v=' + Date.now());
+  DATA = await r.json();
+  stat.textContent = `회사 ${DATA.count_companies}개 / 자회사 관계 ${DATA.count_subsidiaries}건`;
+  // 디폴트: 삼성전자
+  document.getElementById('qInput').value = '삼성전자 (005930)';
+  loadGraph('005930');
+}
+
+function fmtCap(n) {
+  if (!n) return '-';
+  if (n >= 1e12) return (n/1e12).toFixed(2) + '조';
+  if (n >= 1e8)  return Math.round(n/1e8).toLocaleString() + '억';
+  return n.toLocaleString();
+}
+
+function onInput() {
+  if (suggestDebounce) clearTimeout(suggestDebounce);
+  suggestDebounce = setTimeout(showSuggest, 200);
+}
+
+function showSuggest() {
+  const q = document.getElementById('qInput').value.trim();
+  const sug = document.getElementById('suggest');
+  if (!q || !DATA) { sug.style.display = 'none'; return; }
+  if (/^\d{6}$/.test(q)) { sug.style.display = 'none'; loadGraph(q); return; }
+  const ql = q.toLowerCase();
+  const matches = DATA.companies.filter(c => c.name.toLowerCase().includes(ql) || c.code.startsWith(q)).slice(0, 20);
+  if (!matches.length) {
+    sug.innerHTML = '<div class="item" style="color:#94a3b8">검색 결과 없음</div>';
+    sug.style.display = 'block';
+    return;
+  }
+  sug.innerHTML = matches.map(m =>
+    `<div class="item" onclick="pickSuggest('${m.code}', ${JSON.stringify(m.name)})">
+        <strong>${m.name}</strong>
+        <code style="color:#64748b;font-size:11px;margin-left:6px">${m.code}</code>
+        <span style="float:right;font-size:10px;color:#64748b">${m.market}</span>
+     </div>`
+  ).join('');
+  sug.style.display = 'block';
+}
+
+function pickSuggest(code, name) {
+  document.getElementById('qInput').value = name + ' (' + code + ')';
+  document.getElementById('suggest').style.display = 'none';
+  loadGraph(code);
+}
+
+document.addEventListener('click', e => {
+  const sug = document.getElementById('suggest');
+  const inp = document.getElementById('qInput');
+  if (sug && !sug.contains(e.target) && e.target !== inp) sug.style.display = 'none';
+});
+
+function buildSubGraph(centerCode, depth, minPct) {
+  // BFS up/down from center
+  const subsByParent = {};
+  const subsBySub = {};
+  DATA.subsidiaries.forEach(s => {
+    if ((s.pct || 0) < minPct) return;
+    (subsByParent[s.p] = subsByParent[s.p] || []).push(s);
+    if (s.sc) (subsBySub[s.sc] = subsBySub[s.sc] || []).push(s);
+  });
+  const compByCode = {};
+  DATA.companies.forEach(c => compByCode[c.code] = c);
+
+  const nodes = {};
+  const edges = [];
+  const visited = new Set([centerCode]);
+  const queue = [{ code: centerCode, d: 0 }];
+  function addNode(code, name, listed) {
+    if (nodes[code || name]) return;
+    const c = code ? compByCode[code] : null;
+    nodes[code || name] = {
+      id: code || name,
+      label: name,
+      code: code,
+      market: c ? c.market : null,
+      cap: c ? c.cap : null,
+      group: c ? c.group : null,
+      listed: !!c,
+    };
+  }
+  const start = compByCode[centerCode];
+  if (!start) return null;
+  addNode(centerCode, start.name);
+
+  while (queue.length) {
+    const { code, d } = queue.shift();
+    if (d >= depth) continue;
+    // children
+    (subsByParent[code] || []).forEach(s => {
+      const target = s.sc || s.sn;
+      addNode(s.sc, s.sn);
+      edges.push({ from: code, to: target, pct: s.pct, label: s.pct ? s.pct.toFixed(1)+'%' : '' });
+      if (s.sc && !visited.has(s.sc)) { visited.add(s.sc); queue.push({ code: s.sc, d: d+1 }); }
+    });
+    // parents
+    (subsBySub[code] || []).forEach(s => {
+      addNode(s.p, s.pn);
+      edges.push({ from: s.p, to: code, pct: s.pct, label: s.pct ? s.pct.toFixed(1)+'%' : '' });
+      if (!visited.has(s.p)) { visited.add(s.p); queue.push({ code: s.p, d: d+1 }); }
+    });
+  }
+  return { nodes: Object.values(nodes), edges, center: centerCode };
+}
+
+function loadGraph(forcedCode) {
+  if (!DATA) return;
+  let code = forcedCode;
+  if (!code) {
+    const q = document.getElementById('qInput').value.trim();
+    const m = q.match(/\((\d{6})\)\s*$/);
+    if (m) code = m[1];
+    else if (/^\d{6}$/.test(q)) code = q;
+    else {
+      const found = DATA.companies.find(c => c.name === q);
+      if (found) code = found.code;
+    }
+  }
+  if (!code) return;
+  const depth = parseInt(document.getElementById('depthSel').value);
+  const minPct = parseFloat(document.getElementById('minPctSel').value);
+  const g = buildSubGraph(code, depth, minPct);
+  if (!g) {
+    document.getElementById('stat').textContent = '회사를 찾을 수 없음';
+    return;
+  }
+  document.getElementById('stat').textContent = `노드 ${g.nodes.length}개 / 관계 ${g.edges.length}건`;
+  render(g);
+}
+
+function classify(n, edges, centerCode) {
+  if (n.code === centerCode) return 'center';
+  if (/지주|홀딩스|holdings/i.test(n.label)) return 'holding';
+  const hasOut = edges.some(e => e.from === n.id);
+  const hasIn = edges.some(e => e.to === n.id);
+  if (hasOut && !hasIn) return 'parent';
+  if (!hasOut && hasIn) return n.listed ? 'sub_listed' : 'sub_unlisted';
+  return n.listed ? 'mid_listed' : 'mid_unlisted';
+}
+
+function render(data) {
+  if (net) { net.destroy(); net = null; }
+  const grpSet = [...new Set(data.nodes.map(n => n.group).filter(Boolean))];
+  const palette = ['#0f172a','#f59e0b','#ec4899','#8b5cf6','#10b981','#3b82f6','#ef4444','#06b6d4','#84cc16','#f97316'];
+  const grpBorder = {}; grpSet.forEach((g,i) => grpBorder[g] = palette[i % palette.length]);
+
+  const metaMap = {};
+  const visNodes = data.nodes.map(n => {
+    const role = classify(n, data.edges, data.center);
+    const isCenter = role === 'center', isHolding = role === 'holding';
+    const isGroupHead = isCenter || isHolding;
+    let size = 30;
+    if (isCenter) size = 50;
+    else if (isHolding) size = 44;
+    else if (n.cap) size = Math.min(38, 28 + Math.log10(n.cap/1e9)*1.5);
+
+    let bg, bc, fc, bw, shape;
+    if (isCenter) { bg='#dc2626'; bc='#fbbf24'; fc='#fff'; bw=5; shape='circle'; }
+    else if (isHolding) { bg='#f97316'; bc='#dc2626'; fc='#fff'; bw=4; shape='box'; }
+    else if (n.listed) { bg='#fff'; bc=grpBorder[n.group]||'#475569'; fc='#0f172a'; bw=3; shape='circle'; }
+    else { bg='#f1f5f9'; bc='#94a3b8'; fc='#475569'; bw=2; shape='box'; }
+
+    const labelTxt = (n.label || '').length > 8 ? n.label.substring(0,8)+'…' : n.label;
+    const sub = n.listed ? (n.cap ? fmtCap(n.cap) : '') : '비상장';
+    const label = isGroupHead ? n.label : (sub ? `${labelTxt}\n${sub}` : labelTxt);
+
+    metaMap[n.id] = n;
+    return {
+      id: n.id, label,
+      title: `${n.label}${n.code ? ' ('+n.code+')':''}\n${({center:'중심',holding:'지주/홀딩스',parent:'모회사',sub_listed:'상장 자회사',mid_listed:'상장 중간',sub_unlisted:'비상장 자회사',mid_unlisted:'비상장 중간'})[role]}${n.market?'\n시장: '+n.market:''}${n.cap?'\n시총: '+fmtCap(n.cap):''}${n.group?'\n그룹: '+n.group:''}`,
+      shape, size,
+      color: { background: bg, border: bc, highlight:{background:'#fef3c7',border:'#f59e0b'}, hover:{background:'#fef3c7',border:'#f59e0b'} },
+      borderWidth: bw,
+      font: { color: fc, size: isCenter?14:(isHolding?13:11), face: 'sans-serif', bold: isGroupHead, multi:false },
+      margin: 12,
+      widthConstraint: shape === 'box' ? { minimum: 100, maximum: 160 } : undefined,
+      shapeProperties: { borderDashes: (!n.listed && !isGroupHead) ? [5,4] : false },
+    };
+  });
+
+  const visEdges = data.edges.map(e => {
+    const pct = e.pct || 0;
+    let color, w, dashes;
+    if (pct >= 50) { color='#dc2626'; w=4; dashes=false; }
+    else if (pct >= 20) { color='#ea580c'; w=3; dashes=false; }
+    else if (pct >= 5) { color='#0d9488'; w=2; dashes=false; }
+    else { color='#94a3b8'; w=1; dashes=[4,4]; }
+    return {
+      from: e.from, to: e.to,
+      label: e.label,
+      font: { size: 12, color: '#0f172a', strokeWidth:4, strokeColor:'#fff', face:'sans-serif', align:'middle', bold: pct>=50 },
+      arrows: { to: { enabled:true, scaleFactor:0.7 } },
+      width: w, dashes,
+      color: { color, highlight:'#fbbf24' },
+      smooth: { type:'cubicBezier', forceDirection:'none', roundness:0.4 },
+    };
+  });
+
+  const opts = {
+    physics: {
+      enabled: true,
+      stabilization: { enabled:true, iterations:500, fit:true, onlyDynamicEdges:false },
+      barnesHut: { gravitationalConstant:-25000, centralGravity:0.1, springLength:280, springConstant:0.04, damping:0.5, avoidOverlap:1.0 },
+      minVelocity: 1.0, timestep: 0.5,
+    },
+    layout: { improvedLayout:true, randomSeed:42 },
+    interaction: { hover:true, tooltipDelay:200, dragNodes:true, zoomView:true },
+  };
+
+  net = new vis.Network(document.getElementById('graph'),
+    { nodes: new vis.DataSet(visNodes), edges: new vis.DataSet(visEdges) }, opts);
+
+  net.once('stabilizationIterationsDone', () => net.setOptions({ physics: false }));
+
+  net.on('click', params => {
+    if (!params.nodes.length) return;
+    const meta = metaMap[params.nodes[0]];
+    if (meta) showSide(meta);
+  });
+  net.on('doubleClick', params => {
+    if (!params.nodes.length) return;
+    const meta = metaMap[params.nodes[0]];
+    if (meta && meta.code) window.location.href = '/chart?code=' + meta.code;
+  });
+}
+
+function showSide(m) {
+  document.getElementById('side').innerHTML = `
+    <h4 style="margin:0 0 8px 0">${m.label}</h4>
+    <div style="display:grid;gap:4px;font-size:12px;line-height:1.6">
+      ${m.code ? `<div><strong>코드:</strong> <code>${m.code}</code></div>` : '<div style="color:#94a3b8">비상장 (코드 없음)</div>'}
+      ${m.market ? `<div><strong>시장:</strong> ${m.market}</div>` : ''}
+      ${m.cap ? `<div><strong>시가총액:</strong> ${fmtCap(m.cap)}</div>` : ''}
+      ${m.group ? `<div><strong>그룹:</strong> ${m.group}</div>` : ''}
+    </div>
+    ${m.code ? `<div style="margin-top:10px;display:flex;gap:6px">
+      <a href="/chart?code=${m.code}" style="flex:1;text-align:center;background:#3b82f6;color:#fff;padding:6px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600">📈 차트 보기</a>
+      <a href="https://search.naver.com/search.naver?query=${encodeURIComponent(m.label)}" target="_blank" rel="noopener" style="flex:1;text-align:center;background:#03c75a;color:#fff;padding:6px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600">🔍 N 검색</a>
+    </div>` : ''}
+    <div style="margin-top:12px;color:#94a3b8;font-size:11px">💡 노드 더블클릭 → 차트 페이지<br>💡 드래그·휠로 이동/확대</div>
+  `;
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-2454082917321119">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한국 재벌가 가계도 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="삼성·현대·LG·SK·한화·롯데 등 한국 주요 재벌가의 가계도와 그룹사 지분관계를 한눈에 — 인물, 결혼, 후계 구도, 상장사 매핑." />
+  <meta name="keywords" content="재벌, 가계도, 삼성가, 현대가, LG가, SK가, 한화가, 롯데가, 후계, 지분관계, 기업집단" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://secomdal.com/family" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="세콤달.콤 주식맛집" />
+  <meta property="og:title" content="한국 재벌가 가계도 — 세콤달.콤" />
+  <meta property="og:description" content="삼성·현대·LG·SK·한화·롯데 주요 재벌가 인물·혼인·후계 구도 시각화." />
+  <meta property="og:url" content="https://secomdal.com/family" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:image" content="https://secomdal.com/og-image.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="한국 재벌가 가계도 — 세콤달.콤" />
+  <meta name="twitter:description" content="주요 재벌가 가계도와 지분관계 시각화." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js"></script>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .family-toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:10px 14px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; margin-bottom:10px; }
+    .family-toolbar select, .family-toolbar input { padding:6px 10px; border-radius:6px; border:1px solid var(--border,#cbd5e1); background:var(--bg,#fff); color:var(--text,#0f172a); font-size:13px; }
+    .family-toolbar .stat { font-size:12px; color:var(--text-secondary,#64748b); margin-left:auto; }
+    .family-legend { display:flex; flex-wrap:wrap; gap:14px; padding:8px 12px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; font-size:11px; align-items:center; margin-bottom:8px; }
+    .family-legend strong { font-size:12px; }
+    .family-area { display:flex; gap:10px; height: calc(100vh - 280px); min-height: 500px; }
+    .family-graph { flex:1; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; overflow:auto; position:relative; }
+    .family-side { width:280px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; padding:12px; overflow-y:auto; font-size:12px; }
+    .family-graph svg { display:block; }
+    @media (max-width: 768px) {
+      .family-area { flex-direction: column; height:auto; }
+      .family-side { width:auto; max-height:280px; }
+    }
+  </style>
+</head>
+<body class="page-about">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈">
+        <svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+        </svg>
+      </a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">재벌 가계도</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/family">재벌 가계도</a>
+    <a href="/ownership">계열사 관계도</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="home-main" style="max-width:1400px;margin:0 auto;padding:14px;">
+  <section class="hero" style="margin-bottom:14px">
+    <h2>🏛 한국 재벌가 가계도</h2>
+    <p class="hero-sub">
+      삼성·현대·LG·SK·한화·롯데 등 주요 그룹의 <strong>창업주부터 4세대</strong>까지 인물·혼인·후계 구도. 공개 자료 기반 큐레이션.
+    </p>
+  </section>
+
+  <div class="family-toolbar">
+    <label>그룹</label>
+    <select id="grpSel" onchange="render()">
+      <option value="">전체 (모든 가문)</option>
+    </select>
+    <span class="stat" id="stat"></span>
+  </div>
+
+  <div class="family-legend">
+    <strong>인물:</strong>
+    <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#dbeafe;border:3px solid #fbbf24;vertical-align:middle"></span> 👑 현 총수</span>
+    <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#dbeafe;border:3px solid #cbd5e1;vertical-align:middle"></span> 🥈 후계</span>
+    <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#fce7f3;border:2px solid #10b981;vertical-align:middle"></span> 여성</span>
+    <span><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#1e293b;opacity:0.7;vertical-align:middle"></span> 작고</span>
+    <strong style="margin-left:8px">관계:</strong>
+    <span><span style="display:inline-block;width:18px;height:2px;background:#0d9488;vertical-align:middle"></span> 부모-자식</span>
+    <span><span style="display:inline-block;width:18px;height:3px;background:#ec4899;vertical-align:middle"></span> ❤ 부부</span>
+    <span><span style="display:inline-block;width:18px;height:0;border-top:2px dashed #ef4444;vertical-align:middle"></span> 이혼</span>
+  </div>
+
+  <div class="family-area">
+    <div id="graph" class="family-graph"></div>
+    <div id="side" class="family-side">
+      <div style="color:var(--text-secondary,#64748b)">노드를 클릭하면 인물 정보가 표시됩니다. 더블클릭 시 네이버 검색.</div>
+    </div>
+  </div>
+
+  <!-- ── 광고 영역 ── -->
+  <div class="ad-slot ad-bottom" aria-label="광고" style="margin-top:14px">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+<footer>
+  데이터: 공개 자료(언론·위키) 기반 큐레이션 · 매월 갱신 &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/chart">Chart</a> &middot; <a href="/about">About</a>
+</footer>
+
+<script>
+const CURRENT_YEAR = new Date().getFullYear();
+let DATA = null;
+
+async function init() {
+  const r = await fetch('/data/family.json?v=' + Date.now());
+  DATA = await r.json();
+  // populate group select
+  const groups = [...new Set(DATA.persons.map(p => p.group).filter(Boolean))].sort();
+  const sel = document.getElementById('grpSel');
+  groups.forEach(g => {
+    const o = document.createElement('option');
+    o.value = g; o.textContent = g;
+    sel.appendChild(o);
+  });
+  // 디폴트 삼성그룹
+  if (groups.includes('삼성그룹')) sel.value = '삼성그룹';
+  render();
+}
+
+function render() {
+  const grp = document.getElementById('grpSel').value;
+  // 필터: 그룹 선택 시 그룹 인물 + 그들의 배우자
+  let persons = DATA.persons;
+  let relations = DATA.relations;
+  if (grp) {
+    const ids = new Set(DATA.persons.filter(p => p.group === grp).map(p => p.id));
+    DATA.relations.filter(r => r.type === 'spouse').forEach(r => {
+      if (ids.has(r.from)) ids.add(r.to);
+      if (ids.has(r.to)) ids.add(r.from);
+    });
+    persons = DATA.persons.filter(p => ids.has(p.id));
+    relations = DATA.relations.filter(r => ids.has(r.from) && ids.has(r.to));
+  }
+  const companies = DATA.companies.filter(c => persons.some(p => p.id === c.person));
+  document.getElementById('stat').textContent =
+    `${grp || '전체'} — 인물 ${persons.length}명 / 관계 ${relations.length}건`;
+  drawTree({ persons, relations, companies });
+}
+
+function drawTree(data) {
+  const container = document.getElementById('graph');
+  container.innerHTML = '';
+  const { persons, relations, companies } = data;
+  if (!persons.length) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:#94a3b8">데이터 없음</div>';
+    return;
+  }
+
+  const personMap = {};
+  persons.forEach(p => personMap[p.id] = p);
+  const spouseOf = {};
+  relations.filter(r => r.type === 'spouse').forEach(r => {
+    spouseOf[r.from] = { id: r.to, divorced: !!r.divorced };
+    spouseOf[r.to]   = { id: r.from, divorced: !!r.divorced };
+  });
+  const childrenOf = {}, parentsOf = {};
+  relations.filter(r => r.type === 'parent').forEach(r => {
+    (childrenOf[r.from] = childrenOf[r.from] || []).push(r.to);
+    (parentsOf[r.to] = parentsOf[r.to] || []).push(r.from);
+  });
+  const personLinks = {};
+  companies.forEach(c => (personLinks[c.person] = personLinks[c.person] || []).push(c));
+
+  const groupColors = {};
+  const palette = ['#10b981','#f59e0b','#3b82f6','#ec4899','#8b5cf6','#ef4444','#06b6d4','#84cc16','#f97316','#6366f1'];
+  [...new Set(persons.map(p => p.group).filter(Boolean))].forEach((g, i) => groupColors[g] = palette[i % palette.length]);
+
+  // 후계 식별 (가장 senior generation 살아있는 사람 + 자녀 점수)
+  let headId = null, succRanks = {};
+  if (data.persons.length) {
+    const grp = persons[0].group;
+    if (grp) {
+      const grpPersons = persons.filter(p => p.group === grp && !p.death);
+      grpPersons.sort((a, b) => (a.gen||99) - (b.gen||99) || (a.birth||9999) - (b.birth||9999));
+      if (grpPersons.length) {
+        headId = grpPersons[0].id;
+        const kids = (childrenOf[headId] || []).map(cid => personMap[cid]).filter(Boolean);
+        const score = p => {
+          const role = (p.role || '').replace(' ','');
+          const w = {회장:100,부회장:70,사장:50,부사장:35,경영리더:30,전무:25,상무:20,이사장:25}[role] || 5;
+          const age = p.birth ? CURRENT_YEAR - p.birth : 35;
+          let s = w;
+          if (age >= 40 && age <= 65) s += 10;
+          else if (age > 70) s -= 10;
+          return s;
+        };
+        kids.sort((a,b) => score(b) - score(a));
+        kids.forEach((p, i) => succRanks[p.id] = i + 1);
+      }
+    }
+  }
+
+  const NODE_W = 130, NODE_H = 76, SPOUSE_GAP = 26, SIB_GAP = 30, LEVEL_H = 150, PADDING = 30;
+
+  function getSharedChildren(pid) {
+    const sp = spouseOf[pid];
+    const myKids = childrenOf[pid] || [];
+    if (!sp || !personMap[sp.id]) return { shared: myKids.slice() };
+    return { shared: myKids.filter(c => (parentsOf[c]||[]).includes(sp.id)) };
+  }
+
+  const subtreeWidth = {};
+  function calcWidth(pid, visiting) {
+    if (subtreeWidth[pid] !== undefined) return subtreeWidth[pid];
+    if (visiting && visiting.has(pid)) return 0;
+    const v = visiting || new Set(); v.add(pid);
+    const sp = spouseOf[pid];
+    const hasSpouse = sp && personMap[sp.id];
+    const selfWidth = hasSpouse ? (NODE_W*2 + SPOUSE_GAP) : NODE_W;
+    const { shared } = getSharedChildren(pid);
+    if (!shared.length) { subtreeWidth[pid] = selfWidth; v.delete(pid); return selfWidth; }
+    let tot = 0;
+    shared.forEach((c, i) => { tot += calcWidth(c, v); if (i>0) tot += SIB_GAP; });
+    const w = Math.max(selfWidth, tot);
+    subtreeWidth[pid] = w; v.delete(pid);
+    return w;
+  }
+
+  const positions = {}, placed = new Set(), rootOf = {};
+  const genY = pid => PADDING + (((personMap[pid] && personMap[pid].gen) || 1) - 1) * LEVEL_H;
+  function placeFamily(pid, leftX, rid) {
+    if (placed.has(pid)) return;
+    placed.add(pid); rootOf[pid] = rid;
+    const sp = spouseOf[pid];
+    const hasSpouse = sp && personMap[sp.id];
+    const selfWidth = hasSpouse ? (NODE_W*2+SPOUSE_GAP) : NODE_W;
+    const myW = subtreeWidth[pid];
+    const { shared } = getSharedChildren(pid);
+    if (!shared.length) {
+      const sx = leftX + (myW - selfWidth)/2;
+      positions[pid] = { x: sx, y: genY(pid) };
+      if (hasSpouse) { placed.add(sp.id); rootOf[sp.id] = rid;
+        positions[sp.id] = { x: sx + NODE_W + SPOUSE_GAP, y: genY(sp.id) };
+      }
+      return;
+    }
+    let tot = 0;
+    shared.forEach((c, i) => { tot += subtreeWidth[c]; if (i>0) tot += SIB_GAP; });
+    let cx = leftX + (myW - tot)/2;
+    shared.forEach(c => { placeFamily(c, cx, rid); cx += subtreeWidth[c] + SIB_GAP; });
+    const sx = leftX + (myW - selfWidth)/2;
+    positions[pid] = { x: sx, y: genY(pid) };
+    if (hasSpouse) { placed.add(sp.id); rootOf[sp.id] = rid;
+      positions[sp.id] = { x: sx + NODE_W + SPOUSE_GAP, y: genY(sp.id) };
+    }
+  }
+
+  const isMarriedIn = pid => { const sp = spouseOf[pid]; return !!(sp && parentsOf[sp.id] && parentsOf[sp.id].length); };
+  const roots = persons.filter(p => !parentsOf[p.id] && !isMarriedIn(p.id));
+  const rootDone = new Set();
+  let curX = PADDING;
+  roots.forEach(p => {
+    if (rootDone.has(p.id)) return;
+    const sp = spouseOf[p.id];
+    if (sp && roots.find(r => r.id === sp.id)) rootDone.add(sp.id);
+    rootDone.add(p.id);
+    calcWidth(p.id);
+    placeFamily(p.id, curX, p.id);
+    curX += subtreeWidth[p.id] + SIB_GAP*2;
+  });
+  persons.forEach(p => {
+    if (placed.has(p.id)) return;
+    calcWidth(p.id);
+    placeFamily(p.id, curX, p.id);
+    curX += subtreeWidth[p.id] + SIB_GAP*2;
+  });
+
+  let maxX = 0, maxY = 0;
+  Object.values(positions).forEach(pos => { maxX = Math.max(maxX, pos.x + NODE_W); maxY = Math.max(maxY, pos.y + NODE_H); });
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('width', maxX + PADDING);
+  svg.setAttribute('height', maxY + PADDING);
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(svgNS, tag);
+    for (const k in attrs) if (attrs[k] != null) e.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(e);
+    return e;
+  }
+
+  // 부부 + 자녀 직각 라인
+  const drawnSp = new Set();
+  persons.forEach(p => {
+    const sp = spouseOf[p.id];
+    if (!sp || !personMap[sp.id]) return;
+    const key = [p.id, sp.id].sort().join('||');
+    if (drawnSp.has(key)) return; drawnSp.add(key);
+    const p1 = positions[p.id], p2 = positions[sp.id];
+    if (!p1 || !p2) return;
+    const lineY = p1.y + NODE_H/2;
+    const left = p1.x < p2.x ? p1 : p2;
+    const right = p1.x < p2.x ? p2 : p1;
+    const x1 = left.x + NODE_W, x2 = right.x;
+    const midX = (x1+x2)/2;
+    const lc = sp.divorced ? '#ef4444' : '#ec4899';
+    el('line', { x1, y1: lineY, x2, y2: lineY, stroke: lc, 'stroke-width': 3, 'stroke-dasharray': sp.divorced ? '6 4' : null });
+    const lab = el('text', { x: midX, y: lineY-7, 'text-anchor':'middle', 'font-size': 14, fill: lc, 'font-weight':'bold' });
+    lab.textContent = sp.divorced ? '이혼' : '❤';
+    const shared = (childrenOf[p.id]||[]).filter(c => (parentsOf[c]||[]).includes(sp.id));
+    if (!shared.length) return;
+    const childY = positions[shared[0]].y;
+    const dropY = lineY + (childY - lineY) * 0.5;
+    el('line', { x1: midX, y1: lineY, x2: midX, y2: dropY, stroke:'#475569', 'stroke-width':2 });
+    const cxs = shared.map(c => positions[c].x + NODE_W/2);
+    if (shared.length > 1) el('line', { x1: Math.min(...cxs), y1: dropY, x2: Math.max(...cxs), y2: dropY, stroke:'#475569', 'stroke-width':2 });
+    shared.forEach(c => {
+      const cp = positions[c]; const cx = cp.x + NODE_W/2;
+      el('line', { x1: cx, y1: dropY, x2: cx, y2: cp.y, stroke:'#475569', 'stroke-width':2 });
+    });
+  });
+
+  // 단독 부모 (다른 가문 가로지르는 선은 제외)
+  relations.filter(r => r.type === 'parent').forEach(r => {
+    const sp = spouseOf[r.from];
+    if (sp && (parentsOf[r.to]||[]).includes(sp.id)) return;
+    if (rootOf[r.from] && rootOf[r.to] && rootOf[r.from] !== rootOf[r.to]) return;
+    const fp = positions[r.from], cp = positions[r.to];
+    if (!fp || !cp) return;
+    const x1 = fp.x + NODE_W/2, y1 = fp.y + NODE_H;
+    const x2 = cp.x + NODE_W/2, y2 = cp.y;
+    const midY = (y1+y2)/2;
+    el('path', { d: `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`, stroke:'#0d9488', 'stroke-width':2, fill:'none' });
+  });
+
+  // 인물 노드
+  persons.forEach(p => {
+    const pos = positions[p.id]; if (!pos) return;
+    const isDeceased = !!p.death;
+    const age = p.birth ? (p.death ? p.death - p.birth : CURRENT_YEAR - p.birth) : null;
+    const isHead = p.id === headId;
+    const succRank = succRanks[p.id];
+    let bc = isDeceased ? '#475569' : (groupColors[p.group] || '#64748b');
+    let bw = 2;
+    if (isHead) { bc = '#dc2626'; bw = 4; }
+    else if (succRank === 1) { bc = '#fbbf24'; bw = 3; }
+    else if (succRank === 2) { bc = '#94a3b8'; bw = 3; }
+    else if (succRank === 3) { bc = '#d97706'; bw = 3; }
+    const bg = isDeceased ? '#1e293b' : (p.gender === 'F' ? '#fce7f3' : '#dbeafe');
+    const fc = isDeceased ? '#cbd5e1' : '#0f172a';
+    const g = el('g', { transform: `translate(${pos.x}, ${pos.y})`, style:'cursor:pointer' });
+    g.addEventListener('click', () => showInfo(p, personLinks[p.id] || [], isHead, succRank));
+    g.addEventListener('dblclick', () => {
+      const cs = personLinks[p.id] || [];
+      const c = cs.find(x => x.code);
+      if (c && c.code) { window.location.href = '/chart?code=' + c.code; return; }
+      const kw = [p.name, p.group ? p.group.replace('그룹','') : ''].filter(Boolean).join(' ');
+      window.open('https://search.naver.com/search.naver?query=' + encodeURIComponent(kw), '_blank');
+    });
+    el('rect', { x:0, y:0, width:NODE_W, height:NODE_H, rx:10, ry:10, fill:bg, stroke:bc, 'stroke-width':bw, opacity:isDeceased?0.9:1 }, g);
+    let badge = '';
+    if (isHead) badge = '👑 ';
+    else if (succRank === 1) badge = '🥇 ';
+    else if (succRank === 2) badge = '🥈 ';
+    else if (succRank === 3) badge = '🥉 ';
+    const t1 = el('text', { x:NODE_W/2, y:22, 'text-anchor':'middle', 'font-size':13, 'font-weight':'bold', fill:fc }, g);
+    t1.textContent = badge + (isDeceased ? '故 ' : '') + p.name;
+    if (p.birth) {
+      const t2 = el('text', { x:NODE_W/2, y:42, 'text-anchor':'middle', 'font-size':11, fill:fc, opacity:0.75 }, g);
+      t2.textContent = (p.death ? `${p.birth}~${p.death}` : `${p.birth}~`) + (age ? ` (${age})` : '');
+    }
+    if (p.role || p.group) {
+      const t3 = el('text', { x:NODE_W/2, y:60, 'text-anchor':'middle', 'font-size':11, fill:fc }, g);
+      const grp = p.group ? p.group.replace('그룹','') : '';
+      t3.textContent = grp ? `${grp} ${p.role||''}`.trim() : (p.role||'');
+    }
+  });
+
+  container.appendChild(svg);
+}
+
+function showInfo(p, cs, isHead, succRank) {
+  const lifespan = p.death ? `${p.birth||'?'} - ${p.death}` : (p.birth ? `${p.birth} - ` : '');
+  const compHtml = cs.length ? cs.map(c => `
+    <div style="margin-top:4px;padding:4px 6px;background:rgba(0,0,0,0.04);border-radius:4px">
+      ${c.code ? `<a href="/chart?code=${c.code}" style="color:#3b82f6;text-decoration:none"><strong>${c.company}</strong></a>` : `<strong>${c.company}</strong>`}
+      <div style="font-size:11px;color:#64748b">${c.role||''}${c.pct != null ? ' / 지분 '+c.pct+'%' : ''}</div>
+    </div>`).join('') : '<div style="color:#94a3b8;font-size:11px">관계회사 데이터 없음</div>';
+  const kw = [p.name, p.group ? p.group.replace('그룹','') : ''].filter(Boolean).join(' ');
+  const naverUrl = 'https://search.naver.com/search.naver?query=' + encodeURIComponent(kw);
+  const naverPpl = 'https://people.search.naver.com/search.naver?where=nexearch&sm=tab_pge&query=' + encodeURIComponent(p.name);
+  const badge = isHead ? '👑 현 총수' : (succRank ? `🏅 후계 ${succRank}위` : '');
+  document.getElementById('side').innerHTML = `
+    <h4 style="margin:0 0 6px 0">
+      <a href="${naverUrl}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed #3b82f6">${p.name}</a>
+      ${p.name_alt ? `<span style="font-size:11px;color:#64748b">${p.name_alt}</span>`:''}
+      <a href="${naverUrl}" target="_blank" rel="noopener" style="float:right;background:#03c75a;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;text-decoration:none;font-weight:600">N 검색</a>
+    </h4>
+    ${badge ? `<div style="margin-bottom:6px;font-size:12px;font-weight:600;color:#dc2626">${badge}</div>` : ''}
+    <div style="font-size:12px;line-height:1.6">
+      <div><strong>그룹:</strong> ${p.group || '-'}</div>
+      <div><strong>생몰:</strong> ${lifespan || '-'}</div>
+      <div><strong>역할:</strong> ${p.role || '-'}</div>
+      ${p.notes ? `<div style="margin-top:6px;color:#64748b">${p.notes}</div>` : ''}
+    </div>
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+      <a href="${naverUrl}" target="_blank" rel="noopener" style="flex:1;text-align:center;background:#03c75a;color:#fff;padding:6px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600">🔍 통합검색</a>
+      <a href="${naverPpl}" target="_blank" rel="noopener" style="flex:1;text-align:center;background:#1e293b;color:#fff;padding:6px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600">👤 인물 프로필</a>
+    </div>
+    <div style="margin-top:10px"><strong style="font-size:12px">관계회사</strong>${compHtml}</div>
+    <div style="margin-top:12px;color:#94a3b8;font-size:11px">💡 회사명 클릭 → 차트<br>🔗 더블클릭 → 네이버 검색</div>
+  `;
+}
+
+init();
+</script>
+
+</body>
+</html>
