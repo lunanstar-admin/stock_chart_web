@@ -75,14 +75,22 @@ module.exports = async (req, res) => {
       'Cache-Control',
       'public, max-age=15, s-maxage=30, stale-while-revalidate=90'
     );
+    // Naver 의 cr(등락률) 은 절댓값만 반환 — 방향은 rf 필드에 따로 있다.
+    // 클라이언트가 그대로 쓰면 하락도 +로 표시되니 여기서 부호를 박아준다.
+    const changeAbs = n(d.cr);
+    const direction = RF_MAP[String(d.rf)] || 'flat';
+    const signedChangeRate = (changeAbs == null)
+      ? null
+      : (direction === 'down' ? -Math.abs(changeAbs) : Math.abs(changeAbs));
+
     res.status(200).json({
       code: d.cd,
       name: d.nm || null,
       price: n(d.nv),
       prevClose: n(d.sv != null ? d.sv : d.pcv),
       change: n(d.cv),
-      changeRate: n(d.cr),
-      changeDir: RF_MAP[String(d.rf)] || 'flat',
+      changeRate: signedChangeRate,
+      changeDir: direction,
       open: n(d.ov),
       high: n(d.hv),
       low: n(d.lv),

@@ -174,20 +174,17 @@ async function fetchQuote(code) {
 function mergeLiveQuoteIntoPayload(payload, quote, tf) {
   if (tf !== "D" || !payload || !Array.isArray(payload.data) || !payload.data.length) return payload;
   if (!quote || quote.open == null || quote.high == null || quote.low == null || quote.price == null) return payload;
-  // 토/일 등 비-거래일에는 잠정 캔들을 절대 추가하지 않는다.
-  // (Naver API 는 휴장에도 직전 거래일 종가를 그대로 반환하기 때문)
+  // 잠정 캔들은 시장이 실제로 OPEN 일 때만 추가한다.
+  // (BEFORE/CLOSE/주말/공휴일 모두에서 Naver 는 직전 거래일 종가를 반환 →
+  //  그것을 today 캔들로 붙이면 잘못된 정보가 됨)
+  if (quote.market !== "OPEN") return payload;
+  // 토/일 등 비-거래일 안전망 (이론상 OPEN 이 안 나오지만 이중 방어)
   if (!isWeekdayKST()) return payload;
   const today = todayKST();
   const last = payload.data[payload.data.length - 1];
   if (!last || !last.date) return payload;
   // 배치가 이미 오늘 (또는 그 이후) 데이터를 담고 있다면 중복 방지.
   if (last.date >= today) return payload;
-  // quote.tradedAt 이 ISO 날짜를 포함하고 today 와 다르면 그것은 직전 거래일 데이터 →
-  // 오늘 캔들로 표기하면 안 된다. (예: 일요일에 호출 시 tradedAt=금요일)
-  if (typeof quote.tradedAt === "string" && /\d{4}-\d{2}-\d{2}/.test(quote.tradedAt)) {
-    const ymd = quote.tradedAt.match(/\d{4}-\d{2}-\d{2}/)[0];
-    if (ymd !== today) return payload;
-  }
   const tentative = {
     date: today,
     open: Number(quote.open),
@@ -779,7 +776,13 @@ function buildDetailHTML(stock, payload, quote) {
   const rateNum = parseNum(rateRaw);
   const volRaw = (quote && quote.volume != null) ? quote.volume : (stock.volume || meta.volume);
   const mcapRaw = meta.marketValue || stock.marketCap || meta.marketCap;
+  // 기준일자 = "마지막 거래일 기준" 의미.
+  // 1) 장중(OPEN) 이면 today (오늘 장중 시세 기준)
+  // 2) 그 외에는 잠정 캔들(_tentative)을 건너뛴 최근 확정 캔들의 날짜
+  // 3) 폴백 — latest 또는 meta.updated 일자
+  const lastConfirmed = [...payload.data].reverse().find(d => !d._tentative) || latest;
   const baseDate = (quote && quote.market === "OPEN" ? todayKST() : null)
+    || (lastConfirmed && lastConfirmed.date)
     || latest.date
     || (state.meta && state.meta.updated ? String(state.meta.updated).slice(0, 10) : "");
 
