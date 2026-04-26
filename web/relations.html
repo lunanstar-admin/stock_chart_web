@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-2454082917321119">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>재벌 가계도 · 그룹사 관계도 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="한국 30대 재벌 가계도와 그룹사 관계도. 노드/트리/테이블 뷰 전환. 상장사 필터. 인터넷 공개정보 기반 단순 참고자료." />
+  <meta name="keywords" content="재벌 가계도, 그룹사 관계도, 계열사, 자회사, 한국 재벌, 삼성, 현대, SK, LG, 롯데" />
+  <meta name="author" content="세콤달.콤" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://secomdal.com/relations" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="세콤달.콤 주식맛집" />
+  <meta property="og:title" content="재벌 가계도 · 그룹사 관계도" />
+  <meta property="og:description" content="한국 30대 재벌 가계도 + 계열사 관계도. 인터넷 공개정보 기반 단순 참고자료." />
+  <meta property="og:url" content="https://secomdal.com/relations" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:image" content="https://secomdal.com/og-image.png" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js"></script>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body class="page-relations">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="brand-link" aria-label="홈으로" title="홈">
+        <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      </a>
+      <span class="subtitle">재벌 가계도 · 그룹사 관계도</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/relations">재벌 가계도 · 그룹사 관계도</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="rel-main">
+
+  <!-- 디스클레이머 -->
+  <div class="rel-disclaimer">
+    <span class="rel-disclaimer-icon">ℹ️</span>
+    <span class="rel-disclaimer-text">
+      <strong>인터넷 공개정보</strong> (DART 공시, Naver Finance 등) <strong>기반</strong>. 정보에 오류가 있는 경우
+      <a href="/contact">알려주시면 수정</a>하도록 하겠습니다. <strong>단순 참고자료로만 이용</strong> 부탁드립니다.
+    </span>
+  </div>
+
+  <!-- 모드 토글 -->
+  <div class="rel-toolbar">
+    <div class="rel-mode-toggle" role="tablist" aria-label="보기 모드">
+      <button type="button" class="rel-mode-btn is-active" data-mode="ownership" id="relModeOwnership">🏛️ 그룹사 관계도</button>
+      <button type="button" class="rel-mode-btn" data-mode="family" id="relModeFamily">👪 재벌 가계도</button>
+    </div>
+
+    <!-- 그룹사 모드 컨트롤 -->
+    <div class="rel-controls" id="relControlsOwnership">
+      <label class="rel-control">
+        <span class="rel-control-label">그룹</span>
+        <select id="relGroupSelect" class="rel-select"></select>
+      </label>
+      <label class="rel-control">
+        <span class="rel-control-label">뷰</span>
+        <div class="rel-view-toggle" role="tablist">
+          <button type="button" class="rel-view-btn is-active" data-view="graph">노드</button>
+          <button type="button" class="rel-view-btn" data-view="tree">트리</button>
+          <button type="button" class="rel-view-btn" data-view="table">테이블</button>
+        </div>
+      </label>
+      <label class="rel-control rel-control--check">
+        <input type="checkbox" id="relListedOnly" checked />
+        <span>상장사만</span>
+      </label>
+    </div>
+
+    <!-- 가계도 모드 컨트롤 -->
+    <div class="rel-controls" id="relControlsFamily" hidden>
+      <label class="rel-control">
+        <span class="rel-control-label">가문</span>
+        <select id="relFamilyGroup" class="rel-select"></select>
+      </label>
+    </div>
+  </div>
+
+  <!-- 캔버스 / 트리 / 테이블 영역 -->
+  <div class="rel-canvas-wrap">
+    <div id="relStatus" class="rel-status">데이터 로드 중…</div>
+    <div id="relCanvas" class="rel-canvas" aria-label="관계도 그래프"></div>
+    <div id="relTree" class="rel-tree" hidden></div>
+    <div id="relTable" class="rel-table-wrap" hidden></div>
+  </div>
+
+  <!-- 범례 -->
+  <div class="rel-legend" id="relLegend"></div>
+
+  <!-- 광고 -->
+  <div class="ad-slot ad-bottom" aria-label="광고">
+    <span class="ad-placeholder">광고</span>
+  </div>
+</main>
+
+<footer>
+  데이터 출처: DART 공시 · Naver Finance · 공개 보도자료 &nbsp;|&nbsp;
+  매월 1일 업데이트 &nbsp;|&nbsp;
+  <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+</footer>
+
+<!-- vis-network — 노드 그래프 그리기. UMD 빌드, ~300KB.
+     defer 로 페이지 인터랙션 막지 않음. -->
+<script defer src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<script src="/assets/relations.js?v=20260427a"></script>
+
+</body>
+</html>

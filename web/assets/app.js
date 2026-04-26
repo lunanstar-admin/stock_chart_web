@@ -1294,6 +1294,20 @@ function bindInputs() {
   }
 }
 
+// URL 해시에 #code=005930 형태가 있으면 stocks 로드 후 해당 종목 모달 자동 오픈.
+// /relations 등 다른 페이지에서 차트로 딥링크할 때 사용.
+function _openFromHash() {
+  const m = (location.hash || "").match(/code=(\d{6})/);
+  if (!m) return;
+  const code = m[1];
+  const s = state.stocks.find((x) => x.code === code);
+  if (s) {
+    openDetail(s);
+    // 새로고침 시 같은 모달이 또 열리지 않도록 hash 제거
+    history.replaceState(null, "", location.pathname);
+  }
+}
+
 (async function init() {
   bindInputs();
   await loadMeta();
@@ -1305,4 +1319,5 @@ function bindInputs() {
     return;
   }
   applyFilter();
+  _openFromHash();
 })();
