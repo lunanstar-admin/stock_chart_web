@@ -161,6 +161,39 @@ async function loadStocks() {
     _rate: parseNum(s.changeRate),
     _nameLower: (s.name || "").toLowerCase(),
   }));
+  // 그룹 매핑 비동기 보강 (실패해도 무시)
+  loadGroupMap().catch(() => {});
+}
+
+let _groupMap = null;
+async function loadGroupMap() {
+  try {
+    const r = await fetch('/data/group_map.json');
+    if (!r.ok) return;
+    const d = await r.json();
+    _groupMap = d.map || {};
+    // 이미 로드된 종목에 group 속성 부착
+    state.stocks.forEach(s => { if (_groupMap[s.code]) s.group = _groupMap[s.code]; });
+    // 화면이 이미 그려졌다면 그룹 배지를 즉시 업데이트
+    if (typeof refreshGroupBadges === 'function') refreshGroupBadges();
+  } catch (e) {}
+}
+
+function refreshGroupBadges() {
+  if (!_groupMap) return;
+  document.querySelectorAll('.cl-row').forEach(row => {
+    const code = row.dataset.code;
+    if (!code || row.querySelector('.cl-group')) return;
+    const g = _groupMap[code];
+    if (!g) return;
+    const codeEl = row.querySelector('.cl-code');
+    if (!codeEl) return;
+    const badge = document.createElement('span');
+    badge.className = 'cl-group';
+    badge.title = g;
+    badge.textContent = g.replace('그룹', '');
+    codeEl.parentNode.insertBefore(badge, codeEl.nextSibling);
+  });
 }
 
 // KST(Asia/Seoul) 기준 오늘 날짜 YYYY-MM-DD. en-CA locale 이 ISO 포맷을 돌려준다.
@@ -551,12 +584,17 @@ function makeRow(s) {
   const starTitle = starOn ? "관심종목에서 빼기" : "관심종목에 추가";
   const starCls = starOn ? "star-btn star-btn--pill star-btn--on" : "star-btn star-btn--pill";
 
+  const group = s.group || (_groupMap ? _groupMap[s.code] : null) || '';
+  const groupBadge = group
+    ? `<span class="cl-group" title="${group}">${group.replace('그룹','')}</span>`
+    : '';
   row.innerHTML = `
     <div class="cl-info">
       <button type="button" class="${starCls}" data-role="star" data-code="${s.code}"
         aria-pressed="${starOn}" title="${starTitle}">${starLabel}</button>
       <span class="cl-name" title="${s.name}">${s.name}</span>
       <span class="cl-code">${s.code} · ${s.market}</span>
+      ${groupBadge}
       <span style="font-size:11px;font-weight:600;margin-top:2px">${formatNum(s.price)}</span>
       <span style="font-size:10px" class="${rateClass}">${rateTxt}</span>
     </div>

@@ -631,6 +631,24 @@ main { padding: 12px 24px 24px; }
 }
 .cl-row .cl-info .cl-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cl-row .cl-info .cl-code { color: var(--text-secondary); font-family: monospace; font-size: 11px; }
+.cl-row .cl-info .cl-group {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 6px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: fit-content;
+}
+[data-theme="light"] .cl-row .cl-info .cl-group {
+  background: rgba(217, 119, 6, 0.12);
+  color: #b45309;
+  border-color: rgba(217, 119, 6, 0.3);
+}
 .cl-row .cl-chart { min-width: 0; }
 .cl-row .cl-chart canvas { border-radius: 4px; display: block; width: 100%; height: 180px; }
 .cl-row .cl-supply { font-size: 9px; line-height: 1.4; overflow: hidden; display: flex; flex-direction: column; gap: 2px; }

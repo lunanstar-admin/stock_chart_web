@@ -103,6 +103,26 @@ def build():
     print(f'✅ {OUT_PATH} 생성 ({size_mb:.2f} MB)')
     print(f'   회사 {len(companies)}, 자회사 {len(subs)}, 그룹 {len(groups)}')
 
+    # ─── 가벼운 group_map.json (chart 리스트용) ───
+    # 우선주 자동 매핑 (코드 마지막이 5/7/9/K)
+    gmap = {c['code']: c['group'] for c in companies if c['group']}
+    derived = {}
+    for code, g in gmap.items():
+        base = code[:5]
+        for tail in ('5', '7', '9', 'K'):
+            pref = base + tail
+            if pref != code and pref not in gmap:
+                derived[pref] = g
+    gmap.update(derived)
+
+    GROUP_MAP_PATH = ROOT / 'web/data/group_map.json'
+    GROUP_MAP_PATH.write_text(
+        json.dumps({'updated': datetime.now().isoformat(timespec='seconds'), 'map': gmap}, ensure_ascii=False, separators=(',', ':')),
+        encoding='utf-8'
+    )
+    gm_kb = GROUP_MAP_PATH.stat().st_size / 1024
+    print(f'✅ {GROUP_MAP_PATH} 생성 ({gm_kb:.1f} KB) — {len(gmap)}개 종목')
+
     conn.close()
 
 
