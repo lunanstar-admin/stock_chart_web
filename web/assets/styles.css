@@ -1343,9 +1343,9 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
 }
 .ad-slot ins.adsbygoogle { width: 100%; }
 
-/* 상단(헤더-필터 사이) 고정 영역용 광고 배너 */
+/* 상단(헤더 바로 아래) 광고 배너 */
 .ad-slot.ad-top {
-  margin: 0;                   /* topbar 내부 — 자체 여백 제거 */
+  margin: 0;                   /* 헤더 바로 아래 — 자체 여백 제거 */
   max-width: none;
   width: 100%;
   min-height: 70px;            /* 흔한 leaderboard(728x90) 축소본에 맞춘 높이 */
@@ -1354,6 +1354,7 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
   border-bottom: 1px solid var(--border);
   border-radius: 0;
   background: var(--bg-primary);
+  box-sizing: border-box;
 }
 @media (max-width: 640px) {
   .ad-slot.ad-top { min-height: 56px; padding: 6px 12px; }
