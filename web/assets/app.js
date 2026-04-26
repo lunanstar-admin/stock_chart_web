@@ -11,7 +11,39 @@ const state = {
   chartCache: new Map(),   // code → raw {data[], investor{}, meta{}}  (일봉 원본)
   chartCacheTF: new Map(), // `${code}:${tf}` → 리샘플 + 지표 재계산된 {data[], investor, meta}
   timeframe: "D",          // 'D' | 'W' | 'M'
+  chaebolCodes: null,      // chaebol-codes.json 캐시 — 모달에서 그룹사 정보 lookup
 };
+
+// 모달 안의 그룹사 칩(자회사·계열사 등) 클릭 시 호출. 종목코드 → 해당 stock 으로 모달 갈아끼움.
+// stocks.json 에 없는 비상장 자회사는 무시 (chip 자체가 .chaebol-chip--unlisted 로 비활성).
+function showByCode(code, fallbackName) {
+  if (!code) return;
+  const s = (state.stocks || []).find((x) => x.code === code);
+  if (s) {
+    openDetail(s);
+  } else if (fallbackName) {
+    // stocks.json 에 없으면 임시 stock 객체로 — chart.json 도 없을 수 있어 에러 가능성 있음
+    openDetail({ code, name: fallbackName, market: "KOSPI" });
+  }
+}
+window.showByCode = showByCode;
+
+// 종목코드 → {group, affiliates[], subsidiaries[], parent, shareholders[]} 인덱스를 lazy fetch.
+// 차트 모달이 처음 열릴 때 1회만 로드. 1MB 정도라 한 번 로드 후 메모리 캐시.
+async function loadChaebolCodes() {
+  if (state.chaebolCodes !== null) return state.chaebolCodes;
+  try {
+    const r = await fetch("/data/chaebol-codes.json", { cache: "force-cache" });
+    if (!r.ok) {
+      state.chaebolCodes = {};
+      return state.chaebolCodes;
+    }
+    state.chaebolCodes = await r.json();
+  } catch (_) {
+    state.chaebolCodes = {};
+  }
+  return state.chaebolCodes;
+}
 
 const els = {};
 
@@ -663,16 +695,19 @@ async function openDetail(stock) {
   body.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
   $("detailModal").classList.add("show");
 
-  // 차트 JSON(필수) + 실시간 시세(20분 지연, 선택) 를 병렬 fetch.
-  // 시세 실패해도 차트는 전일 종가 기준으로 정상 표시된다.
-  const [chartRes, quoteRes] = await Promise.allSettled([
+  // 차트 JSON(필수) + 실시간 시세(20분 지연, 선택) + 그룹사 인덱스(선택) 를 병렬 fetch.
+  // 시세/그룹사 실패해도 차트는 전일 종가 기준으로 정상 표시된다.
+  const [chartRes, quoteRes, chaebolRes] = await Promise.allSettled([
     loadChartData(stock.code),
     fetchQuote(stock.code),
+    loadChaebolCodes(),
   ]);
   if (_activeDetailCode !== stock.code) return;
 
   let payload = chartRes.status === "fulfilled" ? chartRes.value : null;
   const quote = quoteRes.status === "fulfilled" ? quoteRes.value : null;
+  const chaebolMap = chaebolRes.status === "fulfilled" ? chaebolRes.value : null;
+  const chaebolInfo = chaebolMap && chaebolMap[stock.code] ? chaebolMap[stock.code] : null;
 
   if (!payload || !payload.data || !payload.data.length) {
     body.innerHTML = '<div class="empty">차트 데이터가 없습니다.</div>';
@@ -682,7 +717,7 @@ async function openDetail(stock) {
   // 오늘 잠정 캔들 append (tf=D 일 때만 의미 있음).
   payload = mergeLiveQuoteIntoPayload(payload, quote, state.timeframe || "D");
 
-  body.innerHTML = buildDetailHTML(stock, payload, quote);
+  body.innerHTML = buildDetailHTML(stock, payload, quote, chaebolInfo);
 
   // 종목명 라인 지연 태그 — quote 성공 시 표시
   const delayTag = $("detailDelayTag");
@@ -768,7 +803,7 @@ function buildDelayBadge(quote) {
     </div>`;
 }
 
-function buildDetailHTML(stock, payload, quote) {
+function buildDetailHTML(stock, payload, quote, chaebolInfo) {
   const latest = payload.data[payload.data.length - 1] || {};
   const meta = payload.meta || {};
   const inv = payload.investor;
@@ -892,6 +927,73 @@ function buildDetailHTML(stock, payload, quote) {
     </div>`
     : "";
 
+  // ── 그룹사 관계 카드 ────────────────────────────────────
+  // chaebol-codes.json 에서 lookup 한 결과를 자회사·계열사·관계사·모회사·주주로 분류 표시
+  const chaebolSection = (function () {
+    if (!chaebolInfo) return "";
+    const code = stock.code;
+    const lookupName = (otherCode) => {
+      const s = state.stocks.find((x) => x.code === otherCode);
+      return s ? s.name : null;
+    };
+    const codeChip = (c, fallbackName) => {
+      const nm = lookupName(c) || fallbackName || c;
+      // 같은 페이지 모달 띄우기 — clShowDetail 재사용
+      return `<button type="button" class="chaebol-chip" data-code="${c}" onclick="showByCode('${c}', ${JSON.stringify(nm)})">${escapeHTML(nm)} <code>${c}</code></button>`;
+    };
+
+    const blocks = [];
+
+    if (chaebolInfo.group) {
+      blocks.push(
+        `<div class="chaebol-row"><dt>그룹</dt><dd><strong>${escapeHTML(chaebolInfo.group)}</strong></dd></div>`
+      );
+    }
+    if (chaebolInfo.parent && chaebolInfo.parent.code) {
+      const p = chaebolInfo.parent;
+      const pct = p.pct != null ? ` (${p.pct}%)` : "";
+      blocks.push(
+        `<div class="chaebol-row"><dt>모회사</dt><dd>${codeChip(p.code, p.name)}${pct}</dd></div>`
+      );
+    }
+    if (Array.isArray(chaebolInfo.subsidiaries) && chaebolInfo.subsidiaries.length) {
+      const items = chaebolInfo.subsidiaries.slice(0, 8).map((s) => {
+        const pct = s.pct != null ? ` <span class="chaebol-pct">${s.pct}%</span>` : "";
+        if (s.code) return codeChip(s.code, s.name) + pct;
+        return `<span class="chaebol-chip chaebol-chip--unlisted">${escapeHTML(s.name)}${pct}</span>`;
+      });
+      blocks.push(
+        `<div class="chaebol-row"><dt>자회사</dt><dd class="chaebol-chip-list">${items.join("")}</dd></div>`
+      );
+    }
+    if (Array.isArray(chaebolInfo.affiliates) && chaebolInfo.affiliates.length) {
+      const items = chaebolInfo.affiliates.map((c) => codeChip(c));
+      blocks.push(
+        `<div class="chaebol-row"><dt>계열사</dt><dd class="chaebol-chip-list">${items.join("")}</dd></div>`
+      );
+    }
+    if (Array.isArray(chaebolInfo.shareholders) && chaebolInfo.shareholders.length) {
+      const items = chaebolInfo.shareholders.slice(0, 5).map((s) => {
+        const rel = s.rel ? ` <span class="chaebol-rel">${escapeHTML(s.rel)}</span>` : "";
+        return `<span class="chaebol-chip chaebol-chip--share">${escapeHTML(s.name)}${rel} <span class="chaebol-pct">${s.pct}%</span></span>`;
+      });
+      blocks.push(
+        `<div class="chaebol-row"><dt>주요주주</dt><dd class="chaebol-chip-list">${items.join("")}</dd></div>`
+      );
+    }
+
+    if (!blocks.length) return "";
+    return `
+    <div class="section chaebol-section">
+      <h3>🏛️ 그룹사 관계</h3>
+      <dl class="chaebol-grid">${blocks.join("")}</dl>
+      <div class="chaebol-note">
+        ⚠️ 인터넷 공개정보(DART 등) 기반 · 매월 1일 업데이트 · 단순 참고자료입니다.
+        <a href="/contact" class="chaebol-note-link">오류 제보</a>
+      </div>
+    </div>`;
+  })();
+
   return `
     <div class="snapshot-section">
       ${quote ? `<p class="snapshot-delay-note">⏱ 현재가·등락률·거래량은 <strong>20분 지연</strong> 시세 기준 · 기준일자·PER·PBR 등은 전일 장마감 후 산출값</p>` : ""}
@@ -905,6 +1007,8 @@ function buildDetailHTML(stock, payload, quote) {
     </div>
 
     ${companySection}
+
+    ${chaebolSection}
 
     <div class="section">
       <div class="section-head">

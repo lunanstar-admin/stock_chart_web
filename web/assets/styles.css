@@ -1956,3 +1956,106 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
   .myinfo-confirm-actions .btn-danger,
   .myinfo-confirm-actions .btn-secondary { width: 100%; justify-content: center; }
 }
+
+/* ─── 그룹사 관계 카드 (모달) ─────────────────────────── */
+.chaebol-section { margin-top: 12px; }
+.chaebol-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.chaebol-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.chaebol-row dt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding-top: 4px;
+}
+.chaebol-row dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+.chaebol-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chaebol-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.chaebol-chip:hover {
+  background: var(--active-tint);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.chaebol-chip code {
+  font-size: 10px;
+  font-family: monospace;
+  color: var(--text-secondary);
+  letter-spacing: .02em;
+}
+.chaebol-chip--unlisted {
+  cursor: default;
+  background: transparent;
+  color: var(--text-secondary);
+  border-style: dashed;
+}
+.chaebol-chip--unlisted:hover {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+.chaebol-chip--share {
+  cursor: default;
+}
+.chaebol-pct {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  font-family: monospace;
+}
+.chaebol-rel {
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.chaebol-note {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--disclaimer-tint);
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1.55;
+}
+.chaebol-note-link {
+  color: var(--accent);
+  margin-left: 6px;
+  text-decoration: underline;
+}
