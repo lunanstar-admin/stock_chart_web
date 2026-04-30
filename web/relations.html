@@ -23,7 +23,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260430a" />
 </head>
 <body class="page-relations">
 
@@ -49,6 +49,10 @@
 <nav class="nav-drawer" id="navDrawer">
   <a href="/">Home</a>
   <a href="/chart">Stock Chart</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">수급 가이드</a>
+  <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/glossary">용어집</a>
   <a href="/relations">그룹사 관계도</a>
   <a href="/blog">Blog</a>
   <a href="/about">About</a>
@@ -57,6 +61,23 @@
 <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
 
 <main class="rel-main">
+
+  <!-- 페이지 설명 -->
+  <section class="page-intro page-intro--compact" aria-label="페이지 설명">
+    <h2>그룹사 관계도란?</h2>
+    <p>
+      한국 자본시장은 <strong>지주회사 체제</strong>를 중심으로 한 30대 재벌 그룹들이 큰 비중을 차지합니다.
+      그룹사 관계도는 같은 그룹 내 회사들의 출자 구조 — 누가 누구의 지분을 얼마나 가지고 있는지 — 를
+      <strong>노드·트리·테이블</strong> 세 가지 뷰로 시각화한 페이지입니다.
+      DART 공시(타법인 출자현황)와 공정거래위원회 지정 자료를 기반으로, 매월 1회 업데이트됩니다.
+    </p>
+    <p>
+      좌측 그룹 셀렉트로 그룹을 선택하면 해당 그룹의 상장사·비상장 자회사 관계가 즉시 그려집니다.
+      <strong>모회사 컬럼</strong>에는 5% 이상 지분 보유 회사가 지분율과 함께 표시되며, 트리 뷰는
+      지배 구조를 위에서 아래로 한눈에 파악할 수 있습니다.
+      <a href="/glossary">지주회사·자회사·관계회사</a> 의 정확한 정의는 용어집에서 확인할 수 있습니다.
+    </p>
+  </section>
 
   <!-- 디스클레이머 -->
   <div class="rel-disclaimer">

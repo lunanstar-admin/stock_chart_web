@@ -27,7 +27,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css?v=20260427f" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260430a" />
 </head>
 <body>
 
@@ -88,6 +88,10 @@
 <nav class="nav-drawer" id="navDrawer">
   <a href="/">Home</a>
   <a href="/chart">Stock Chart</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">수급 가이드</a>
+  <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/glossary">용어집</a>
     <a href="/relations">📊 그룹사 관계도</a>
     <a href="/ownership">계열사 관계도</a>
   <a href="/blog">Blog</a>
@@ -101,6 +105,37 @@
     <div class="loading"><div class="spinner"></div></div>
   </div>
 
+  <!-- 페이지 설명 — SEO + 사용자 가이드 -->
+  <section class="page-intro" aria-label="페이지 설명">
+    <h2>이 페이지는 무엇인가요?</h2>
+    <p>
+      세콤달.콤 주식맛집의 <strong>전종목 차트</strong> 페이지는 한국거래소에 상장된
+      <strong>KOSPI · KOSDAQ 전 4,256개 종목</strong>의 최근 120거래일 캔들 차트, 이동평균선, 외국인·기관 누적 수급,
+      그리고 PER · 시가총액 등 핵심 메타 정보를 한 화면에 무료로 제공합니다.
+      매일 장 마감 후 1회 자동 배치되어 종가 기준으로 갱신됩니다.
+    </p>
+    <h3>차트 보는 법</h3>
+    <ul>
+      <li><strong>좌측 종목 정보</strong>: 종목명·코드, 그룹사명, 현재가, 전일 대비 등락률을 표시합니다.</li>
+      <li><strong>가운데 캔들 차트</strong>: 5·20·60·120일 이동평균선이 함께 그려집니다.</li>
+      <li><strong>우측 수급 그래프</strong>: 60일 동안의 외국인·기관 누적 순매수를 라인으로 표시.</li>
+      <li><strong>봉 주기 토글</strong>: 상단 일봉 / 주봉 / 월봉 버튼으로 시간 단위를 바꿀 수 있습니다.</li>
+      <li><strong>정렬·필터</strong>: 시가총액·거래량·등락률, KOSPI/KOSDAQ 시장, 종목명·코드 검색을 지원합니다.</li>
+      <li><strong>관심종목</strong>: 카카오 로그인 후 ☆ 버튼을 누르면 기기 간 자동 동기화됩니다.</li>
+    </ul>
+    <h3>더 깊이 이해하려면</h3>
+    <p>차트의 지표·수급·캔들이 처음이라면 다음 가이드를 참고하세요.</p>
+    <ul>
+      <li><a href="/guide/technical-indicators">기술적 지표 완전 가이드</a> — MACD · RSI · 볼린저밴드 등 지표 6종의 의미와 활용</li>
+      <li><a href="/guide/supply-demand">투자자 수급 읽는 법</a> — 외국인·기관·개인 매매의 해석</li>
+      <li><a href="/guide/candle-patterns">캔들 차트 기초</a> — 망치형·도지·장악형 등 주요 패턴</li>
+      <li><a href="/glossary">주식 용어집</a> — 시가총액·PER·ROE·공매도 등 30개 용어 정리</li>
+    </ul>
+    <p class="page-intro-note">
+      ⚠️ 본 사이트의 모든 정보는 <strong>참고용</strong>이며, 투자 권유가 아닙니다.
+      투자 판단과 그 결과에 대한 책임은 전적으로 이용자 본인에게 있습니다.
+    </p>
+  </section>
 </main>
 
 <footer>
