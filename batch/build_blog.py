@@ -140,7 +140,7 @@ HOME_SVG = """<svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria
 def layout(title: str, subtitle: str, body: str, description: str = "", canonical: str = "",
            og_type: str = "website", og_image: str = "",
            article_meta: Optional[dict] = None,
-           json_ld: str = "") -> str:
+           json_ld: str = "", noindex: bool = False) -> str:
     """페이지 레이아웃 생성.
 
     article_meta: 블로그 기사일 때 {published, tags, author} 전달 → Article OG 태그
@@ -181,7 +181,11 @@ def layout(title: str, subtitle: str, body: str, description: str = "", canonica
             f'{tag_meta}'
         )
 
-    robots_tag = '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />'
+    if noindex:
+        # 자동 생성된 일일 데이터 요약은 색인 제외 — AdSense "가치 낮은 콘텐츠" 회피
+        robots_tag = '<meta name="robots" content="noindex, nofollow" />'
+    else:
+        robots_tag = '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />'
     author_tag = '<meta name="author" content="세콤달.콤" />'
 
     # Keywords — article_meta 의 tags 가 있으면 그걸, 아니면 공용 키워드
@@ -297,9 +301,6 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
     </div>
   </article>
 
-  <div class="ad-slot ad-bottom" aria-label="광고">
-    <span class="ad-placeholder">광고</span>
-  </div>
 </main>
 """
     canonical = f"{SITE_URL}/blog/{post.slug}"
@@ -327,6 +328,10 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
     }
     ld_script = f'<script type="application/ld+json">{_json.dumps(ld_obj, ensure_ascii=False)}</script>'
 
+    # 자동 생성 일일 포스트(daily-*, batch-*) 는 검색엔진 색인에서 제외 —
+    # AdSense "가치 낮은 콘텐츠" 평가 회피용. 사용자는 /blog 목록에서 여전히 접근 가능.
+    is_auto = post.slug.startswith("daily-") or post.slug.startswith("batch-")
+
     return layout(
         title=post.title,
         subtitle="Blog",
@@ -341,6 +346,7 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
             "tags": post.tags,
         },
         json_ld=ld_script,
+        noindex=is_auto,
     )
 
 
@@ -378,9 +384,6 @@ def render_index(posts: list[Post]) -> str:
 
   {cards}
 
-  <div class="ad-slot ad-bottom" aria-label="광고">
-    <span class="ad-placeholder">광고</span>
-  </div>
 </main>
 """
     return layout(
@@ -436,11 +439,29 @@ def render_sitemap(posts: list[Post]) -> str:
     <priority>{priority}</priority>
   </url>""")
     for p in posts:
+        # 자동 생성 포스트는 색인 제외 — sitemap 에서도 누락
+        if p.slug.startswith("daily-") or p.slug.startswith("batch-"):
+            continue
         urls.append(f"""  <url>
     <loc>{SITE_URL}/blog/{p.slug}</loc>
     <lastmod>{p.date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>""")
+    # 가이드 페이지
+    for slug in ("guide/technical-indicators", "guide/supply-demand", "guide/candle-patterns", "glossary"):
+        urls.append(f"""  <url>
+    <loc>{SITE_URL}/{slug}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>""")
+    # 관계도
+    urls.append(f"""  <url>
+    <loc>{SITE_URL}/relations</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>""")
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'

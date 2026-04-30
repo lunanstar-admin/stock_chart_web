@@ -24,7 +24,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260430a" />
   <link rel="stylesheet" href="https://unpkg.com/vis-network@9.1.9/styles/vis-network.min.css">
   <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
   <style>
@@ -72,6 +72,10 @@
 <nav class="nav-drawer" id="navDrawer">
   <a href="/">Home</a>
   <a href="/chart">Stock Chart</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">수급 가이드</a>
+  <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/glossary">용어집</a>
   <a href="/ownership">계열사 관계도</a>
   <a href="/blog">Blog</a>
   <a href="/about">About</a>
@@ -84,6 +88,20 @@
     <h2>🏢 계열사 지분 관계도</h2>
     <p class="hero-sub">
       DART 타법인 출자현황 기반 — 검색한 종목의 <strong>모회사·자회사 트리</strong>를 한눈에. 출자 5% 이상만 표시.
+    </p>
+  </section>
+
+  <!-- 페이지 설명 -->
+  <section class="page-intro page-intro--compact" aria-label="페이지 설명">
+    <h3>이 페이지 사용법</h3>
+    <p>
+      회사명이나 종목코드를 검색하면 해당 회사를 중심으로 <strong>모회사 — 자기 — 자회사 — 손자회사</strong> 까지
+      이어지는 출자 트리를 그래프로 그립니다. <strong>탐색 단계</strong>(1·2·3) 와 <strong>지분 임계값</strong>(5%·10%·20%)
+      을 조절해 그래프의 깊이와 밀도를 바꿀 수 있습니다. 노드를 더블 클릭하면 해당 종목 차트로 이동합니다.
+    </p>
+    <p>
+      그룹 단위로 전체 계열사를 보고 싶다면 <a href="/relations">그룹사 관계도</a> 페이지가 더 직관적입니다.
+      <a href="/glossary">지분율·자회사·관계회사</a> 의 정의가 헷갈리면 용어집을 함께 보세요.
     </p>
   </section>
 

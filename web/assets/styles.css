@@ -1322,6 +1322,44 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
 .feedback-form .actions .status.err { color: var(--red); }
 
 /* ─────────────────────────────────────────────
+   페이지 설명 박스 — SEO + 사용자 가이드
+   ───────────────────────────────────────────── */
+.page-intro {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 20px 24px;
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-primary, #1e293b);
+}
+.page-intro h2 {
+  font-size: 20px;
+  margin: 0 0 12px;
+  color: var(--text-primary);
+}
+.page-intro h3 {
+  font-size: 15px;
+  margin: 16px 0 6px;
+  color: var(--text-primary);
+}
+.page-intro p { margin: 0 0 10px; }
+.page-intro ul { padding-left: 22px; margin: 8px 0; }
+.page-intro li { margin: 4px 0; }
+.page-intro a { color: #f59e0b; text-decoration: underline; }
+.page-intro--compact { padding: 14px 18px; margin: 10px 0 14px; }
+.page-intro--compact h2 { font-size: 17px; margin-bottom: 8px; }
+.page-intro-note {
+  margin-top: 14px !important;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+/* ─────────────────────────────────────────────
    AdSense 배너 영역
    ───────────────────────────────────────────── */
 .ad-slot {

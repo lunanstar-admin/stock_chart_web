@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>캔들 차트 기초 — 봉의 구조와 주요 패턴 — 세콤달.콤 주식맛집</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="캔들 차트의 기본 구조(시가·종가·고가·저가)부터 일봉·주봉·월봉의 차이, 망치형·도지·장악형·샛별형 등 주요 패턴과 한계를 정리한 캔들 가이드." />
+<meta name="keywords" content="캔들차트, 봉차트, 망치형, 도지, 장악형, 샛별형, 갭, 일봉, 주봉, 월봉, 캔들패턴" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://secomdal.com/guide/candle-patterns" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="세콤달.콤 주식맛집" />
+<meta property="og:title" content="캔들 차트 기초 — 봉의 구조와 주요 패턴" />
+<meta property="og:description" content="캔들 차트의 기본 구조(시가·종가·고가·저가)부터 일봉·주봉·월봉의 차이, 망치형·도지·장악형·샛별형 등 주요 패턴과 한계를 정리한 캔들 가이드." />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:image" content="https://secomdal.com/og-image.png" />
+<meta property="og:url" content="https://secomdal.com/guide/candle-patterns" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+<style>
+.guide-content h2 { font-size: 26px; margin: 0 0 8px; }
+.guide-content .lead { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; line-height: 1.7; }
+.guide-content section { margin: 24px 0; padding: 16px 18px; background: var(--card,#fff); border: 1px solid var(--border,#e5e7eb); border-radius: 8px; }
+.guide-content section h3 { font-size: 18px; margin: 0 0 10px; color: var(--text-primary); }
+.guide-content section h4 { font-size: 15px; margin: 14px 0 6px; }
+.guide-content p, .guide-content li { line-height: 1.75; font-size: 14px; }
+.guide-content ul, .guide-content ol { padding-left: 22px; }
+.guide-content code.formula { display: inline-block; background: var(--bg-secondary,#f1f5f9); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace,monospace; font-size: 13px; }
+.guide-content .callout { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.guide-content .callout strong { color: #b45309; }
+.guide-toc { background: var(--bg-secondary,#f8fafc); padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; }
+.guide-toc strong { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
+.guide-toc a { display: inline-block; margin-right: 12px; font-size: 13px; }
+.guide-related { margin-top: 30px; padding: 16px; background: var(--bg-secondary,#f8fafc); border-radius: 8px; }
+.guide-related a { display: inline-block; margin-right: 14px; font-size: 13px; }
+</style>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Guide · 캔들</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/relations">그룹사 관계도</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">투자자 수급</a>
+  <a href="/guide/candle-patterns">캔들 차트</a>
+  <a href="/glossary">용어집</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content guide-content">
+    
+<h2>🕯️ 캔들 차트 기초 — 봉 하나가 알려주는 4가지 가격</h2>
+<p class="lead">
+  캔들 차트(봉 차트)는 일정 기간의 시가·종가·고가·저가 4가지 가격을 하나의 막대로 시각화한 차트입니다.
+  17세기 일본 쌀 거래상이었던 혼마 무네히사가 고안한 형식이 현재까지 전 세계에서 표준으로 쓰이고 있습니다.
+  이 가이드는 캔들의 구조부터 자주 등장하는 패턴, 그리고 패턴 매매의 한계까지 차근차근 정리합니다.
+</p>
+
+<section>
+  <h3>1. 캔들 한 개의 구조</h3>
+  <ul>
+    <li><strong>몸통(body)</strong>: 시가와 종가 사이의 굵은 사각형</li>
+    <li><strong>꼬리(wick, shadow)</strong>: 몸통 위·아래로 뻗은 가는 선 — 고가와 저가를 표시</li>
+    <li><strong>양봉(빨강 또는 파랑)</strong>: 종가가 시가보다 높음 — 그날 매수가 우세</li>
+    <li><strong>음봉(파랑 또는 빨강)</strong>: 종가가 시가보다 낮음 — 그날 매도가 우세</li>
+  </ul>
+  <div class="callout"><strong>색상은 지역별 관습</strong>이며, 한국·일본은 보통 양봉 빨강 / 음봉 파랑이지만, 미국·유럽은 양봉 초록 / 음봉 빨강을 더 많이 씁니다. 색만 보고 헷갈리지 말고 시가·종가의 관계로 판단하세요.</div>
+</section>
+
+<section>
+  <h3>2. 일봉·주봉·월봉의 차이</h3>
+  <ul>
+    <li><strong>일봉</strong>: 하루의 시가·고가·저가·종가. 단기 매매 시그널 포착에 적합.</li>
+    <li><strong>주봉</strong>: 5거래일을 묶은 봉. 중기 추세 파악에 유리. 일봉의 잡음을 걸러줌.</li>
+    <li><strong>월봉</strong>: 한 달치 봉. 장기 사이클(상승·하락 국면) 분석용.</li>
+  </ul>
+  <p>
+    같은 종목이라도 봉 주기에 따라 그림이 완전히 달라 보일 수 있습니다.
+    단기 매매라면 일봉, 장기 보유라면 주봉·월봉을 기본으로 보는 것이 좋습니다.
+    세콤달 차트는 좌상단 토글로 일봉·주봉·월봉을 즉시 전환할 수 있습니다.
+  </p>
+</section>
+
+<section>
+  <h3>3. 자주 등장하는 단일 캔들 패턴</h3>
+  <h4>장대양봉 / 장대음봉</h4>
+  <p>
+    몸통이 길고 꼬리가 거의 없는 캔들. 그날 매수(또는 매도) 한 방향이 압도적이었음을 의미하며,
+    추세의 시작이나 가속을 시사합니다. 특히 거래량이 평소보다 2배 이상 늘어난 장대봉은 의미가 큽니다.
+  </p>
+  <h4>도지(Doji)</h4>
+  <p>
+    시가와 종가가 거의 같아 십자가 형태인 캔들. 매수와 매도가 균형을 이뤘음을 뜻하며,
+    상승·하락 추세의 끝에 나타나면 <strong>추세 반전 가능성</strong>의 신호로 자주 인용됩니다.
+  </p>
+  <h4>망치형 (Hammer) / 역망치형</h4>
+  <p>
+    몸통이 작고 한쪽 꼬리가 매우 긴 캔들. 하락 후 등장한 망치형(아래 꼬리 김)은 저가에서의 매수 진입을,
+    상승 후 등장한 역망치형(위 꼬리 김)은 고가에서의 매도 압력을 시사합니다.
+  </p>
+</section>
+
+<section>
+  <h3>4. 자주 등장하는 복수 캔들 패턴</h3>
+  <h4>장악형 (Engulfing)</h4>
+  <p>
+    전일 캔들의 몸통을 다음날 캔들이 완전히 덮어버리는 패턴. 하락 후 양봉 장악형이 나오면 반전 신호,
+    상승 후 음봉 장악형은 약세 반전 신호로 해석됩니다.
+  </p>
+  <h4>샛별형 (Morning Star) / 석별형 (Evening Star)</h4>
+  <p>
+    3개의 캔들로 이뤄진 패턴입니다. 하락 → 작은 몸통 → 강한 양봉 흐름이면 샛별형(매수 신호 후보),
+    상승 → 작은 몸통 → 강한 음봉 흐름이면 석별형(매도 신호 후보) 입니다.
+  </p>
+  <h4>갭(Gap)</h4>
+  <p>
+    전일 종가와 당일 시가 사이에 가격 공백이 생긴 상태. 강한 호재·악재로 형성되며,
+    <strong>상승 갭</strong>은 매수 압력의 증거지만 단기 차익매물의 표적이 되기도 합니다.
+    대부분의 갭은 일정 시간 안에 채워진다는 통계적 경향이 있습니다.
+  </p>
+</section>
+
+<section>
+  <h3>5. 캔들 패턴 매매의 한계</h3>
+  <ul>
+    <li><strong>단독 신호의 신뢰도는 낮음</strong> — 망치형 하나만 보고 매수하기보다는, 지지선·이평선·거래량과 겹칠 때 의미가 커집니다.</li>
+    <li><strong>거래량을 함께 봐야 함</strong> — 거래량 없는 패턴은 가짜 신호일 확률이 높음.</li>
+    <li><strong>시장 전체 흐름이 우선</strong> — 약세장에서 망치형이 나와도 시장이 더 빠지면 무력화될 수 있음.</li>
+    <li><strong>패턴 인식 편향</strong> — 사람은 무작위 차트에서도 패턴을 만들어 보는 경향이 있어, 통계적 검증 없이 맹신하면 위험합니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h3>마치며</h3>
+  <p>
+    캔들은 가격 데이터의 시각화 도구일 뿐, 그 자체로 미래를 예측하지 않습니다.
+    중요한 것은 캔들이 <strong>어디에서</strong>(지지선·저항선·이평선 위/아래에서) 나타났고,
+    <strong>어떤 거래량</strong>과 함께였는지, 그리고 <strong>전반적인 추세</strong>가 어떤 상태인지를 함께 보는 것입니다.
+    세콤달 차트에서 다양한 종목의 일봉·주봉을 보며 위에서 설명한 패턴을 직접 찾아보세요.
+    눈에 익을수록 차트 읽기가 빨라집니다.
+  </p>
+</section>
+
+
+    <div class="guide-related">
+      <strong>📚 함께 읽기</strong><br>
+      <a href="/guide/technical-indicators">기술적 지표 완전 가이드</a>
+      <a href="/guide/supply-demand">투자자 수급 읽는 법</a>
+      <a href="/guide/candle-patterns">캔들 차트 기초</a>
+      <a href="/glossary">주식 용어집</a>
+      <a href="/chart">전종목 차트 보기 →</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+</footer>
+</body>
+</html>

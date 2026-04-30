@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>기술적 지표 완전 가이드 — MACD · RSI · 볼린저밴드 — 세콤달.콤 주식맛집</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="주식 차트의 기술적 지표(이동평균선·MACD·RSI·볼린저밴드·OBV·MFI) 의 계산 원리, 해석 방법, 한계와 조합 활용법을 한 번에 정리한 완전 가이드." />
+<meta name="keywords" content="기술적지표, MACD, RSI, 볼린저밴드, 이동평균선, OBV, MFI, 주식차트, 보조지표, 골든크로스, 데드크로스" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://secomdal.com/guide/technical-indicators" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="세콤달.콤 주식맛집" />
+<meta property="og:title" content="기술적 지표 완전 가이드 — MACD · RSI · 볼린저밴드" />
+<meta property="og:description" content="주식 차트의 기술적 지표(이동평균선·MACD·RSI·볼린저밴드·OBV·MFI) 의 계산 원리, 해석 방법, 한계와 조합 활용법을 한 번에 정리한 완전 가이드." />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:image" content="https://secomdal.com/og-image.png" />
+<meta property="og:url" content="https://secomdal.com/guide/technical-indicators" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+<style>
+.guide-content h2 { font-size: 26px; margin: 0 0 8px; }
+.guide-content .lead { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; line-height: 1.7; }
+.guide-content section { margin: 24px 0; padding: 16px 18px; background: var(--card,#fff); border: 1px solid var(--border,#e5e7eb); border-radius: 8px; }
+.guide-content section h3 { font-size: 18px; margin: 0 0 10px; color: var(--text-primary); }
+.guide-content section h4 { font-size: 15px; margin: 14px 0 6px; }
+.guide-content p, .guide-content li { line-height: 1.75; font-size: 14px; }
+.guide-content ul, .guide-content ol { padding-left: 22px; }
+.guide-content code.formula { display: inline-block; background: var(--bg-secondary,#f1f5f9); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace,monospace; font-size: 13px; }
+.guide-content .callout { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.guide-content .callout strong { color: #b45309; }
+.guide-toc { background: var(--bg-secondary,#f8fafc); padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; }
+.guide-toc strong { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
+.guide-toc a { display: inline-block; margin-right: 12px; font-size: 13px; }
+.guide-related { margin-top: 30px; padding: 16px; background: var(--bg-secondary,#f8fafc); border-radius: 8px; }
+.guide-related a { display: inline-block; margin-right: 14px; font-size: 13px; }
+</style>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Guide · 기술적 지표</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/relations">그룹사 관계도</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">투자자 수급</a>
+  <a href="/guide/candle-patterns">캔들 차트</a>
+  <a href="/glossary">용어집</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content guide-content">
+    
+<h2>📈 기술적 지표 완전 가이드 — MACD · RSI · 볼린저밴드 · OBV · MFI</h2>
+<p class="lead">
+  주가 차트 위에 그려지는 보조 지표들은 단순한 그래프가 아니라, 가격과 거래량을 수학적으로 가공해
+  <strong>매매 시점의 힌트</strong>를 시각화한 도구입니다. 이 가이드는 세콤달.콤 주식맛집 차트에서 제공하는
+  주요 기술적 지표 6가지의 계산 원리, 해석 방법, 그리고 실전에서 자주 빠지는 함정을 한 번에 정리합니다.
+  지표는 만능이 아니며, 시장의 모든 움직임을 예측할 수도 없습니다. 다만 <em>가격이 보내는 신호를
+  더 명확하게 읽기 위한 보조 도구</em>로 사용한다면 매매 판단에 큰 도움이 됩니다.
+</p>
+
+<div class="guide-toc">
+  <strong>📑 목차</strong>
+  <a href="#sma">이동평균선</a>
+  <a href="#macd">MACD</a>
+  <a href="#rsi">RSI</a>
+  <a href="#bb">볼린저밴드</a>
+  <a href="#obv">OBV</a>
+  <a href="#mfi">MFI</a>
+  <a href="#combo">조합 활용</a>
+  <a href="#caveat">한계</a>
+</div>
+
+<section id="sma">
+  <h3>1. 이동평균선 (Moving Average, MA)</h3>
+  <p>
+    이동평균선은 일정 기간 동안의 종가 평균을 선으로 이은 것입니다. 단순이동평균(SMA)과
+    지수이동평균(EMA)이 가장 흔하며, 세콤달 차트는 5/20/60/120일 SMA를 기본 표시합니다.
+    각 기간은 단기 흐름(5·20일), 중기 추세(60일), 장기 흐름(120일)을 의미합니다.
+  </p>
+  <h4>골든크로스와 데드크로스</h4>
+  <ul>
+    <li><strong>골든크로스</strong>: 단기 이동평균이 장기 이동평균을 상향 돌파 — 상승 추세 전환 신호로 자주 인용</li>
+    <li><strong>데드크로스</strong>: 반대로 단기선이 장기선을 하향 돌파 — 하락 추세 가능성</li>
+    <li>다만 횡보장에서는 잦은 가짜 신호(whipsaw)가 발생하므로 거래량·다른 지표와 함께 봐야 합니다.</li>
+  </ul>
+  <div class="callout"><strong>실전 팁:</strong> 20일선 위에서 횡보하던 종목이 20일선을 깨고 내려오면 단기 추세 약화 신호. 60일선까지 깨면 중기 추세도 위험합니다.</div>
+</section>
+
+<section id="macd">
+  <h3>2. MACD (Moving Average Convergence Divergence)</h3>
+  <p>
+    MACD는 단기 EMA(12일)와 장기 EMA(26일)의 차이를 그린 지표입니다. 추세의 방향과 강도를
+    동시에 보여주며, 시그널선(MACD의 9일 EMA) 과의 교차로 매매 신호를 읽습니다.
+  </p>
+  <p><code class="formula">MACD = EMA(12) − EMA(26)</code> · <code class="formula">Signal = EMA(MACD, 9)</code> · <code class="formula">Histogram = MACD − Signal</code></p>
+  <h4>해석 포인트</h4>
+  <ul>
+    <li>MACD가 시그널선을 <strong>상향 돌파</strong> → 매수 신호 후보</li>
+    <li>MACD가 시그널선을 <strong>하향 돌파</strong> → 매도 신호 후보</li>
+    <li>MACD가 0선 위에 있으면 상승 추세, 아래면 하락 추세</li>
+    <li>히스토그램(막대) 길이가 짧아지면 추세 약화, 길어지면 추세 강화</li>
+  </ul>
+  <h4>다이버전스 (Divergence)</h4>
+  <p>
+    가격은 신고가를 갱신하는데 MACD는 이전 고점을 못 넘는 경우 → <strong>약세 다이버전스</strong>로,
+    상승 추세 둔화의 조기 신호일 수 있습니다. 반대 케이스는 강세 다이버전스로, 하락 종목의 반등 가능성을 시사합니다.
+  </p>
+</section>
+
+<section id="rsi">
+  <h3>3. RSI (Relative Strength Index, 상대강도지수)</h3>
+  <p>
+    RSI는 일정 기간(보통 14일) 동안의 상승 폭과 하락 폭을 비교해 0~100 사이 값으로 나타낸 지표입니다.
+    과매수·과매도 영역을 가늠하는 데 유용합니다.
+  </p>
+  <p><code class="formula">RSI = 100 − 100 / (1 + RS)</code> · <code class="formula">RS = 14일 평균 상승폭 / 14일 평균 하락폭</code></p>
+  <h4>해석 기준 (전통적)</h4>
+  <ul>
+    <li><strong>RSI &gt; 70</strong>: 과매수 — 단기 조정 가능성</li>
+    <li><strong>RSI &lt; 30</strong>: 과매도 — 단기 반등 가능성</li>
+    <li>50 부근은 중립, 추세장에서는 50 이상에서 70까지, 50 이하에서 30까지 머무는 경향</li>
+  </ul>
+  <div class="callout"><strong>주의:</strong> 강한 추세장에서는 RSI가 70 이상에 오래 머물러도 상승이 계속될 수 있습니다. 단순히 70 넘었다고 매도하면 큰 상승을 놓칠 수 있어, MACD·이평선과 함께 봐야 합니다.</div>
+</section>
+
+<section id="bb">
+  <h3>4. 볼린저밴드 (Bollinger Bands)</h3>
+  <p>
+    볼린저밴드는 20일 이동평균선을 중심으로, 위·아래 ±2 표준편차 거리에 띠를 그린 지표입니다.
+    가격이 밴드 폭의 어디쯤 있는지로 변동성과 상대적 위치를 파악합니다.
+  </p>
+  <p><code class="formula">Upper = MA(20) + 2σ</code> · <code class="formula">Lower = MA(20) − 2σ</code></p>
+  <h4>주요 신호</h4>
+  <ul>
+    <li><strong>밴드 폭 축소(Squeeze)</strong>: 변동성 잠잠 → 곧 큰 움직임 가능성</li>
+    <li><strong>상단 돌파</strong>: 강세 신호이나 상단에 붙어 가는 추세장에서는 매도 신호가 아님</li>
+    <li><strong>하단 이탈</strong>: 단기 약세, 다만 강한 하락장에서는 하단 따라 흘러내릴 수 있음</li>
+    <li>중심선(20일 MA) 회귀 경향 — 평균 회귀 매매 전략의 기반</li>
+  </ul>
+</section>
+
+<section id="obv">
+  <h3>5. OBV (On Balance Volume, 누적 거래량)</h3>
+  <p>
+    OBV는 종가가 전일보다 오르면 그날 거래량을 더하고, 내리면 빼서 누적한 지표입니다.
+    가격이 횡보해도 OBV가 우상향한다면 <strong>매집(거래량 유입)</strong>이 진행 중일 가능성을 시사합니다.
+  </p>
+  <h4>활용</h4>
+  <ul>
+    <li>OBV가 가격보다 먼저 신고가를 만들면 → 강세 다이버전스(상승 압력)</li>
+    <li>OBV가 가격을 따라 신고가를 못 만들면 → 약세 다이버전스(상승 추진력 약화)</li>
+    <li>거래량 자체가 적은 종목에서는 노이즈가 크므로 신뢰도가 낮음</li>
+  </ul>
+</section>
+
+<section id="mfi">
+  <h3>6. MFI (Money Flow Index, 자금 흐름 지수)</h3>
+  <p>
+    MFI는 RSI 에 거래량을 가중한 지표로, 거래대금(typical price × volume) 의 유입·유출을
+    계산해 0~100 사이로 나타냅니다. RSI 가 가격만 본다면, MFI 는 <strong>"거래대금까지 본 RSI"</strong>입니다.
+  </p>
+  <ul>
+    <li><strong>MFI &gt; 80</strong>: 자금 유입 과열 — 조정 가능성</li>
+    <li><strong>MFI &lt; 20</strong>: 자금 유출 과도 — 반등 후보</li>
+    <li>RSI와 함께 보면 가격·거래량 모두에서의 매수·매도 압력을 입체적으로 파악 가능</li>
+  </ul>
+</section>
+
+<section id="combo">
+  <h3>7. 지표 조합 활용 — 단일 지표는 위험하다</h3>
+  <p>
+    어떤 단일 지표도 시장을 100% 설명하지 못합니다. 실전에서는 보통 다음과 같이 <strong>2~3 개 지표를 조합</strong>해
+    한 방향의 신호가 동시에 나타날 때 신뢰도를 높입니다.
+  </p>
+  <h4>예시 조합</h4>
+  <ul>
+    <li><strong>추세 추종</strong>: 이평선 정배열 + MACD 0선 위 + RSI 50 이상</li>
+    <li><strong>역추세 매매</strong>: 볼린저 하단 터치 + RSI 30 이하 + 거래량 급증</li>
+    <li><strong>매집 포착</strong>: 가격 횡보 중 OBV 우상향 + MFI 50 이상 유지</li>
+    <li><strong>고점 경계</strong>: 가격 신고가 + RSI 다이버전스 + MACD 약세 다이버전스</li>
+  </ul>
+</section>
+
+<section id="caveat">
+  <h3>8. 기술적 지표의 한계 — 반드시 알아야 할 것</h3>
+  <ul>
+    <li><strong>후행 지표</strong>: 대부분의 지표는 과거 데이터로 계산되므로, 신호가 나오면 이미 움직임의 일부가 진행된 상태일 수 있습니다.</li>
+    <li><strong>가짜 신호(whipsaw)</strong>: 횡보장에서는 골든크로스·데드크로스가 빈번히 반복되며 손실을 누적시킵니다.</li>
+    <li><strong>이벤트 리스크</strong>: 실적 발표, 정책 변화 같은 펀더멘털 이벤트는 지표로 예측 불가</li>
+    <li><strong>과최적화 함정</strong>: 백테스트로 잘 맞은 파라미터가 미래에도 통한다는 보장은 없음</li>
+    <li>지표는 <strong>가설을 세우는 도구</strong>일 뿐, 자동 매매 신호가 아니라는 점을 늘 인지해야 합니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h3>마치며</h3>
+  <p>
+    기술적 지표는 시장의 언어를 읽는 도구입니다. 한두 개를 깊이 이해하고 일관되게 적용하는 것이,
+    수십 개를 얕게 보는 것보다 훨씬 효과적입니다. 세콤달.콤 주식맛집의 <a href="/chart">전종목 차트</a>에서
+    실제 종목들을 살펴보며 위 지표들을 직접 비교해 보세요. 가설을 세우고, 검증하고, 자신만의 매매 원칙을
+    천천히 만들어 가는 과정이 결국 가장 큰 수익률을 만듭니다.
+  </p>
+</section>
+
+
+    <div class="guide-related">
+      <strong>📚 함께 읽기</strong><br>
+      <a href="/guide/technical-indicators">기술적 지표 완전 가이드</a>
+      <a href="/guide/supply-demand">투자자 수급 읽는 법</a>
+      <a href="/guide/candle-patterns">캔들 차트 기초</a>
+      <a href="/glossary">주식 용어집</a>
+      <a href="/chart">전종목 차트 보기 →</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+</footer>
+</body>
+</html>

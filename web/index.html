@@ -67,7 +67,7 @@
     <script src="/assets/nav.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/assets/auth.js"></script>
-    <link rel="stylesheet" href="/assets/styles.css" />
+    <link rel="stylesheet" href="/assets/styles.css?v=20260430a" />
 </head>
 
 <body class="page-home">
@@ -98,6 +98,10 @@
   <nav class="nav-drawer" id="navDrawer">
     <a href="/">Home</a>
     <a href="/chart">Stock Chart</a>
+    <a href="/guide/technical-indicators">기술적 지표</a>
+    <a href="/guide/supply-demand">수급 가이드</a>
+    <a href="/guide/candle-patterns">캔들 가이드</a>
+    <a href="/glossary">용어집</a>
     <a href="/relations">📊 그룹사 관계도</a>
     <a href="/ownership">계열사 관계도</a>
     <a href="/blog">Blog</a>
@@ -158,6 +162,53 @@
         <h3>매일 자동 업데이트</h3>
         <p>장 마감 후 1회 배치, 마지막 데이터 날짜 종가 기준.</p>
       </div>
+    </section>
+
+    <!-- 사이트 안내 — SEO + AdSense 콘텐츠 가치 -->
+    <section class="page-intro" aria-label="사이트 안내">
+      <h2>세콤달.콤 주식맛집은 어떤 사이트인가요?</h2>
+      <p>
+        세콤달.콤 주식맛집은 한국 주식 시장 — KOSPI 와 KOSDAQ 에 상장된 모든 종목 — 의 차트 데이터와
+        보조 지표, 투자자 수급 누적, 그리고 그룹 계열사 관계도를 <strong>한 화면</strong>에서 무료로 살펴볼 수 있는
+        개인 투자자용 데이터 시각화 도구입니다. 데이터는 <strong>한국거래소 공시</strong>(FinanceDataReader),
+        <strong>Naver Finance</strong>, <strong>금융감독원 DART</strong> 공시를 매일 또는 매월 1회 배치 수집해 가공합니다.
+        실시간 시세가 아닌 일·주·월 단위의 거시적인 흐름을 <em>전종목 단위로 비교</em>하는 데 특화돼 있습니다.
+      </p>
+
+      <h3>이 사이트가 제공하는 것</h3>
+      <ul>
+        <li><strong><a href="/chart">전종목 차트</a></strong> — 4,256개 종목의 120일 캔들 + 5/20/60/120일 이평선 + 외국인·기관 60일 누적 수급을 동시에 볼 수 있는 메인 화면. 시가총액·거래량·등락률 정렬, 종목명·코드 검색 지원.</li>
+        <li><strong><a href="/relations">그룹사 관계도</a></strong> — 삼성·SK·LG·현대차 등 한국 주요 그룹의 출자 구조를 노드·트리·테이블 뷰로 시각화. DART 공시 기반.</li>
+        <li><strong><a href="/blog">블로그</a></strong> — 시황 분석과 가이드 콘텐츠. 일일 랭킹 글은 데이터 스냅샷으로 제공.</li>
+        <li><strong>관심종목</strong> — 카카오 간편 로그인 후 ☆ 버튼 한 번으로 저장. 기기 간 자동 동기화.</li>
+      </ul>
+
+      <h3>처음 오신 분께</h3>
+      <p>
+        주식 차트와 지표가 익숙하지 않다면, 다음 가이드부터 읽어보시기를 권합니다. 모두 무료이며 깔끔하게 정리되어 있습니다.
+      </p>
+      <ul>
+        <li><a href="/guide/technical-indicators">📊 기술적 지표 완전 가이드</a> — MACD · RSI · 볼린저밴드 등 6개 지표</li>
+        <li><a href="/guide/supply-demand">🏦 투자자 수급 읽는 법</a> — 외국인·기관·개인 매매의 의미와 함정</li>
+        <li><a href="/guide/candle-patterns">🕯️ 캔들 차트 기초</a> — 봉 구조부터 망치형·도지·장악형까지</li>
+        <li><a href="/glossary">📖 주식 용어집</a> — 시가총액·PER·ROE·공매도 등 30개 용어</li>
+      </ul>
+
+      <h3>왜 만들었나요?</h3>
+      <p>
+        한국 주식 데이터를 한눈에 비교할 수 있는 화면은 의외로 많지 않습니다. HTS는 종목별로 봐야 하고,
+        포털 사이트는 광고와 가십 기사가 많아 차트 자체에 집중하기 어렵습니다.
+        세콤달.콤 주식맛집은 <strong>"전종목을 같은 형식으로, 빠르게 스크롤하며 비교하기"</strong>
+        하나에 집중한 도구입니다. 데이터는 매일 자동 갱신되며, 코드는 모두 공개돼 있습니다.
+      </p>
+
+      <h3>면책 조항</h3>
+      <p class="page-intro-note">
+        ⚠️ 본 사이트의 모든 데이터와 분석은 <strong>참고용</strong>이며, 매수·매도 권유가 아닙니다.
+        모든 데이터는 1일 단위 배치로 갱신되며 실시간 시세가 아닙니다. 데이터 가공·표시 과정에서
+        오류가 있을 수 있으니 중요한 의사결정 시 반드시 공식 출처(한국거래소·DART)에서 재확인하시기 바랍니다.
+        투자 판단과 그 결과에 대한 책임은 전적으로 이용자 본인에게 있습니다.
+      </p>
     </section>
 
   </main>

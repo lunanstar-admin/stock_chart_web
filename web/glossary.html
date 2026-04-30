@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>주식 용어집 — 시가총액 · PER · ROE · 외국인 순매수 — 세콤달.콤 주식맛집</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="주식 투자에서 자주 쓰는 30개 용어의 정확한 정의 — 가격·거래, 가치 평가(PER·PBR·EPS·ROE), 시장 구조(KOSPI·지주회사·우선주), 매매·수급(공매도·VI) 정리." />
+<meta name="keywords" content="주식용어, 시가총액, PER, PBR, EPS, ROE, KOSPI, KOSDAQ, 지주회사, 우선주, 공매도, 외국인순매수" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://secomdal.com/glossary" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="세콤달.콤 주식맛집" />
+<meta property="og:title" content="주식 용어집 — 시가총액 · PER · ROE · 외국인 순매수" />
+<meta property="og:description" content="주식 투자에서 자주 쓰는 30개 용어의 정확한 정의 — 가격·거래, 가치 평가(PER·PBR·EPS·ROE), 시장 구조(KOSPI·지주회사·우선주), 매매·수급(공매도·VI) 정리." />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:image" content="https://secomdal.com/og-image.png" />
+<meta property="og:url" content="https://secomdal.com/glossary" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css?v=20260430a" />
+<style>
+.guide-content h2 { font-size: 26px; margin: 0 0 8px; }
+.guide-content .lead { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; line-height: 1.7; }
+.guide-content section { margin: 24px 0; padding: 16px 18px; background: var(--card,#fff); border: 1px solid var(--border,#e5e7eb); border-radius: 8px; }
+.guide-content section h3 { font-size: 18px; margin: 0 0 10px; color: var(--text-primary); }
+.guide-content section h4 { font-size: 15px; margin: 14px 0 6px; }
+.guide-content p, .guide-content li { line-height: 1.75; font-size: 14px; }
+.guide-content ul, .guide-content ol { padding-left: 22px; }
+.guide-content code.formula { display: inline-block; background: var(--bg-secondary,#f1f5f9); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace,monospace; font-size: 13px; }
+.guide-content .callout { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.guide-content .callout strong { color: #b45309; }
+.guide-toc { background: var(--bg-secondary,#f8fafc); padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; }
+.guide-toc strong { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
+.guide-toc a { display: inline-block; margin-right: 12px; font-size: 13px; }
+.guide-related { margin-top: 30px; padding: 16px; background: var(--bg-secondary,#f8fafc); border-radius: 8px; }
+.guide-related a { display: inline-block; margin-right: 14px; font-size: 13px; }
+</style>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Glossary · 용어집</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/relations">그룹사 관계도</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">투자자 수급</a>
+  <a href="/guide/candle-patterns">캔들 차트</a>
+  <a href="/glossary">용어집</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content guide-content">
+    
+<h2>📖 주식 용어집 — 가장 자주 쓰는 30개 용어 정리</h2>
+<p class="lead">
+  주식 차트와 뉴스에서 자주 마주치지만 정확한 의미가 모호한 용어들을 한 페이지에 정리했습니다.
+  세콤달.콤 주식맛집의 차트와 데이터를 더 깊이 이해할 수 있도록, 가장 빈번하게 쓰이는
+  30개 용어의 뜻과 활용 맥락을 함께 담았습니다.
+</p>
+
+<section>
+  <h3>📊 가격·거래 용어</h3>
+  <h4>시가 (Open)</h4>
+  <p>장이 시작될 때 첫 체결가. 한국 주식시장은 9시 정규장 시작 시 단일가로 결정됩니다.</p>
+  <h4>종가 (Close)</h4>
+  <p>그날 장이 마감될 때 마지막 체결가. 보통 차트의 캔들 색깔·이동평균선 계산의 기준이 됩니다.</p>
+  <h4>고가·저가 (High/Low)</h4>
+  <p>그 기간 동안 거래된 최고가·최저가. 캔들 꼬리 끝이 이 가격을 표시합니다.</p>
+  <h4>거래량 (Volume)</h4>
+  <p>해당 기간 동안 거래된 주식 수. 가격 변화의 신뢰도를 가늠하는 핵심 지표입니다.</p>
+  <h4>거래대금</h4>
+  <p>거래량 × 평균 거래가격. 시가총액이 큰 종목 비교에 더 적합합니다.</p>
+  <h4>등락률</h4>
+  <p>전일 종가 대비 오늘 종가의 변동 비율. <code class="formula">(오늘종가 − 전일종가) / 전일종가 × 100</code></p>
+  <h4>호가</h4>
+  <p>매수·매도 주문 가격 단위. 한국은 가격대별로 호가 단위가 다릅니다(예: 5만원 미만 100원, 5~10만원 500원 등).</p>
+</section>
+
+<section>
+  <h3>💰 가치 평가 지표</h3>
+  <h4>시가총액 (Market Cap)</h4>
+  <p>발행주식수 × 현재 주가. 회사의 시장가치를 단순화한 지표로, 보통 회사 규모를 비교할 때 씁니다.</p>
+  <h4>PER (Price Earnings Ratio, 주가수익비율)</h4>
+  <p>주가 / 주당순이익(EPS). 1주당 이익 대비 몇 배에 거래되고 있는지 — 보통 낮으면 저평가, 높으면 고평가로 해석되나 산업·성장률에 따라 적정 수준이 다릅니다.</p>
+  <h4>PBR (Price Book-value Ratio, 주가순자산비율)</h4>
+  <p>주가 / 주당순자산(BPS). 회사의 청산가치 대비 시장가치 비교. 1배 미만이면 장부상 자산보다 싸게 거래되는 셈.</p>
+  <h4>EPS (Earnings Per Share, 주당순이익)</h4>
+  <p>당기순이익 / 발행주식수. 1주가 1년간 벌어들인 이익.</p>
+  <h4>BPS (Book-value Per Share, 주당순자산)</h4>
+  <p>자기자본 / 발행주식수. 1주에 해당하는 회사 순자산.</p>
+  <h4>ROE (Return on Equity, 자기자본이익률)</h4>
+  <p>당기순이익 / 자기자본. 주주 자본을 얼마나 효율적으로 쓰고 있는지 — 워런 버핏이 가장 중시한다고 알려진 지표.</p>
+  <h4>ROA (Return on Assets, 총자산이익률)</h4>
+  <p>당기순이익 / 총자산. 부채까지 포함한 자산 전체의 수익률.</p>
+  <h4>배당수익률</h4>
+  <p>주당 배당금 / 현재 주가. 주가에 대한 배당의 매력도를 보여줍니다.</p>
+</section>
+
+<section>
+  <h3>🏦 시장 구조 용어</h3>
+  <h4>KOSPI (코스피)</h4>
+  <p>한국 종합주가지수. 한국거래소 유가증권시장에 상장된 대형주 중심. 1980년 1월 4일 = 100.</p>
+  <h4>KOSDAQ (코스닥)</h4>
+  <p>코스닥시장 종합지수. 중·소형주, 벤처·IT기업 비중이 높음. 1996년 7월 1일 = 1000.</p>
+  <h4>KOSPI200</h4>
+  <p>코스피 시가총액 상위 200종목으로 구성된 지수. 선물·옵션·ETF의 기초 지수로 사용.</p>
+  <h4>지주회사 (Holding Company)</h4>
+  <p>다른 회사 주식을 보유해 그 회사를 지배하는 것을 본업으로 하는 회사. 예: SK, LG, 한화 등 그룹 지주사.</p>
+  <h4>관계회사·자회사</h4>
+  <p>지분율로 구분 — 자회사는 50% 초과 보유(연결 대상), 관계회사는 20~50% 보유(지분법 적용).</p>
+  <h4>액면가</h4>
+  <p>주식 발행 시 정한 명목 가격(보통 5,000원·500원·100원). 시장 가격과 무관.</p>
+  <h4>액면분할</h4>
+  <p>1주를 N주로 쪼개는 것. 주가가 명목상 낮아져 거래가 활발해지는 효과를 노림(가치 변화는 없음).</p>
+  <h4>우선주</h4>
+  <p>의결권은 없지만 배당·잔여재산 분배에 우선권이 있는 주식. 종목코드가 일반적으로 5/7/9/K로 끝납니다(예: 005935 삼성전자우).</p>
+  <h4>보통주</h4>
+  <p>일반적으로 거래되는 주식. 의결권 있음.</p>
+</section>
+
+<section>
+  <h3>📈 매매·수급 용어</h3>
+  <h4>외국인 순매수</h4>
+  <p>외국인의 매수 금액 − 매도 금액. 양수면 외국인 자금이 유입, 음수면 유출.</p>
+  <h4>기관 순매수</h4>
+  <p>국내 기관(연기금·운용사·보험·은행 등)의 매매 차이. 같은 방식으로 산출.</p>
+  <h4>개인 순매수</h4>
+  <p>개인 투자자의 순매수. 외국인+기관과의 항등식 관계로 자주 반대 방향으로 보임.</p>
+  <h4>공매도</h4>
+  <p>주식을 빌려서 먼저 팔고, 가격이 내려가면 다시 사서 갚는 거래. 하락에 베팅하는 매매.</p>
+  <h4>대차거래</h4>
+  <p>주식을 빌려주고 빌리는 거래. 공매도의 사전 단계로 활용되기도 합니다.</p>
+  <h4>프로그램 매매</h4>
+  <p>컴퓨터 알고리즘으로 일정 조건에 따라 자동 발주되는 매매. 차익거래·비차익거래로 분류됩니다.</p>
+  <h4>상한가·하한가</h4>
+  <p>한국 주식은 하루 ±30% 가격 변동 제한이 있으며, 그 한도까지 오르거나 내린 가격을 말합니다.</p>
+  <h4>VI (Volatility Interruption)</h4>
+  <p>변동성 완화장치. 단기간에 가격이 급변할 때 2분간 단일가매매로 전환되는 제도.</p>
+</section>
+
+<section>
+  <h3>마치며</h3>
+  <p>
+    용어를 정확히 알면 차트와 뉴스가 훨씬 또렷이 보입니다. 헷갈리는 용어가 있을 때마다
+    이 페이지를 북마크해 두고 참고하세요. 세콤달.콤 주식맛집은 가능한 모든 데이터를
+    원본 그대로 제공하되, 사용자가 의미를 이해하는 데 도움이 되는 가이드를 함께 발행하고 있습니다.
+    질문이나 제안은 <a href="/contact">Contact</a> 로 자유롭게 남겨주세요.
+  </p>
+</section>
+
+
+    <div class="guide-related">
+      <strong>📚 함께 읽기</strong><br>
+      <a href="/guide/technical-indicators">기술적 지표 완전 가이드</a>
+      <a href="/guide/supply-demand">투자자 수급 읽는 법</a>
+      <a href="/guide/candle-patterns">캔들 차트 기초</a>
+      <a href="/glossary">주식 용어집</a>
+      <a href="/chart">전종목 차트 보기 →</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+</footer>
+</body>
+</html>
