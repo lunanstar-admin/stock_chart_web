@@ -182,6 +182,13 @@ def run(output_dir: Path, limit: int | None, workers: int) -> None:
     except Exception as e:
         logger.warning("daily_post.generate 실패(무시): %s", e)
 
+    # 시장 주도주·급등주 분석 (뉴스 + 테마 자동 분석) — 색인 허용 콘텐츠
+    try:
+        from batch import build_market_brief
+        build_market_brief.generate()
+    except Exception as e:
+        logger.warning("build_market_brief.generate 실패(무시): %s", e)
+
     try:
         from batch import build_blog
         build_blog.build()
