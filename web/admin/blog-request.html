@@ -328,17 +328,18 @@
       currentUser = user;
       dbg('3/4 관리자 권한 확인 중… (uid=' + user.id.slice(0, 8) + '…)');
 
-      // admins 테이블 조회 — RLS 로 본인 행만 보임
+      // admins 테이블 조회 — RLS 로 본인 행만 보임 (5초 타임아웃)
       let isAdminRow = null;
       try {
-        const { data, error } = await window.sb
-          .from('admins')
-          .select('user_id')
-          .eq('user_id', user.id)
-          .maybeSingle();
+        const result = await Promise.race([
+          window.sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle(),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('admins query timeout 5s')), 5000)),
+        ]);
+        const { data, error } = result;
         if (error) {
           console.error('[admin] admins lookup failed:', error);
           $('gateMyUuid').textContent = user.id;
+          $('debugPanel').style.display = 'none';
           showGate('gateNotAdmin');
           return;
         }
@@ -346,6 +347,7 @@
       } catch (e) {
         console.error('[admin] admins lookup exception:', e);
         $('gateMyUuid').textContent = user.id;
+        $('debugPanel').style.display = 'none';
         showGate('gateNotAdmin');
         return;
       }
