@@ -1331,6 +1331,43 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
   color: var(--text-primary, #1e293b);
 }
 
+/* 메인페이지 최신 글 미리보기 */
+.recent-posts {
+  max-width: 960px;
+  margin: 24px auto 12px;
+  padding: 0 8px;
+}
+.recent-posts-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.recent-posts-title {
+  margin: 0;
+  padding: 0;
+}
+.recent-posts-more {
+  font-size: 14px;
+  color: var(--text-secondary, #64748b);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.recent-posts-more:hover { color: var(--text-primary, #1e293b); }
+.recent-posts-loading,
+.recent-posts-empty {
+  grid-column: 1 / -1;
+  padding: 30px;
+  text-align: center;
+  color: var(--text-secondary, #64748b);
+  font-size: 14px;
+}
+.recent-posts .blog-grid {
+  /* 메인 페이지에서는 좀 더 컴팩트한 그리드 */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
 /* ─────────────────────────────────────────────
    페이지 설명 박스 — SEO + 사용자 가이드
    ───────────────────────────────────────────── */

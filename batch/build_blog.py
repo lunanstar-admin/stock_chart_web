@@ -26,6 +26,7 @@ Frontmatter 예시:
 from __future__ import annotations
 
 import html
+import json
 import re
 import shutil
 import sys
@@ -517,6 +518,30 @@ def build() -> int:
     # Sitemap
     SITEMAP_PATH.write_text(render_sitemap(posts), encoding="utf-8")
     print(f"[blog] web/sitemap.xml")
+
+    # 메인 페이지 '최신 글 미리보기' 용 JSON — 색인 가능한 글만(자동 포스트 제외)
+    recent = [p for p in posts
+              if not (p.slug.startswith("daily-") or p.slug.startswith("batch-"))][:6]
+    recent_json = {
+        "updated": datetime.now(KST).isoformat(timespec="seconds"),
+        "posts": [
+            {
+                "slug": p.slug,
+                "title": p.title,
+                "date": p.date,
+                "summary": (p.summary or "")[:160],
+                "tags": p.tags[:4],
+            }
+            for p in recent
+        ],
+    }
+    recent_path = ROOT / "web" / "data" / "recent-posts.json"
+    recent_path.parent.mkdir(parents=True, exist_ok=True)
+    recent_path.write_text(
+        json.dumps(recent_json, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    print(f"[blog] web/data/recent-posts.json ({len(recent)} posts)")
 
     print(f"[blog] 완료: {len(posts)} 글 생성")
     return 0

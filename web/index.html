@@ -67,7 +67,7 @@
     <script src="/assets/nav.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/assets/auth.js"></script>
-    <link rel="stylesheet" href="/assets/styles.css?v=20260503a" />
+    <link rel="stylesheet" href="/assets/styles.css?v=20260503b" />
 </head>
 
 <body class="page-home">
@@ -140,6 +140,53 @@
         <a class="cta cta-secondary" href="/blog">블로그 보러가기 →</a>
       </div>
     </section>
+
+    <!-- 최신 글 미리보기 — /data/recent-posts.json 에서 동적 로드 -->
+    <section class="recent-posts" aria-label="최신 글">
+      <div class="recent-posts-head">
+        <h2 class="section-heading recent-posts-title">📝 최신 블로그 글</h2>
+        <a class="recent-posts-more" href="/blog">전체 보기 →</a>
+      </div>
+      <div id="recentPostsGrid" class="blog-grid">
+        <div class="recent-posts-loading">최신 글 불러오는 중…</div>
+      </div>
+    </section>
+    <script>
+      (function () {
+        function escapeHTML(s) {
+          return String(s == null ? "" : s)
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+        fetch("/data/recent-posts.json", { cache: "no-cache" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            var grid = document.getElementById("recentPostsGrid");
+            if (!grid) return;
+            var posts = (d && d.posts) || [];
+            if (!posts.length) {
+              grid.innerHTML = '<div class="recent-posts-empty">아직 글이 없습니다.</div>';
+              return;
+            }
+            grid.innerHTML = posts.slice(0, 6).map(function (p) {
+              var tags = (p.tags || []).slice(0, 3).map(function (t) {
+                return '<span class="blog-tag">#' + escapeHTML(t) + "</span>";
+              }).join("");
+              return '<a class="blog-card" href="/blog/' + encodeURIComponent(p.slug) + '">' +
+                '<div class="blog-card-body">' +
+                  '<div class="blog-card-date">' + escapeHTML(p.date || "") + "</div>" +
+                  '<h3 class="blog-card-title">' + escapeHTML(p.title || "") + "</h3>" +
+                  (p.summary ? '<p class="blog-card-summary">' + escapeHTML(p.summary) + "</p>" : "") +
+                  (tags ? '<div class="blog-tags">' + tags + "</div>" : "") +
+                "</div></a>";
+            }).join("");
+          })
+          .catch(function () {
+            var grid = document.getElementById("recentPostsGrid");
+            if (grid) grid.innerHTML = '<div class="recent-posts-empty"><a href="/blog">블로그 페이지에서 전체 글 보기 →</a></div>';
+          });
+      })();
+    </script>
 
     <h2 class="section-heading">세콤달.콤 주식맛집은 어떤 사이트인가요?</h2>
 
