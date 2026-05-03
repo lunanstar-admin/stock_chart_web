@@ -144,6 +144,98 @@ def fetch_news(code: str, n: int = 3, timeout: float = 4.0) -> list[dict]:
     return items[:n]
 
 
+def fetch_article_body(url: str, timeout: float = 5.0) -> str:
+    """네이버 뉴스 본문 크롤. 실패 시 빈 문자열. 본문 텍스트만 반환."""
+    if not url or "n.news.naver.com" not in url:
+        return ""
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (compatible; secomdal-bot/1.0)",
+            "Accept": "text/html,application/xhtml+xml",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            html = r.read().decode("utf-8", errors="ignore")
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
+        logger.debug("[market-brief] article fetch fail %s: %s", url, e)
+        return ""
+    # 본문 영역 추출: <article id="dic_area" ...> ~ </article>
+    m = re.search(r'id="dic_area"[^>]*>(.*?)</article>', html, re.DOTALL)
+    if not m:
+        return ""
+    text = m.group(1)
+    # 스크립트/이미지 캡션/광고 제거
+    text = re.sub(r"<script.*?</script>", " ", text, flags=re.DOTALL)
+    text = re.sub(r"<style.*?</style>", " ", text, flags=re.DOTALL)
+    text = re.sub(r'<em class="img_desc[^>]*>.*?</em>', " ", text, flags=re.DOTALL)
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html_unescape(text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+# ── 본문에서 사실(fact) 추출 ────────────────────────────
+# 저작권 보호를 위해 원문 그대로 복제하지 않고, 핵심 데이터/키워드만 추출.
+ACTION_KEYWORDS = (
+    "상장유지|거래재개|거래정지|상장폐지|회복|어닝서프라이즈|호실적|"
+    "수주|계약체결|MOU|체결|공급계약|납품|"
+    "인수|합병|매각|지분|투자유치|증자|감자|"
+    "신약|임상|승인|허가|FDA|"
+    "특허|소송|승소|패소|"
+    "흑자전환|적자전환|영업이익|매출|순이익|"
+    "신고가|상한가|급등|급락|"
+    "수혜|호조|진출|수출|확장|증설|"
+    "배당|자사주|소각|주주환원"
+)
+
+
+def extract_facts(text: str, max_facts: int = 6) -> list[str]:
+    """본문에서 키워드 + 주변 문맥(8단어 이내)을 짧은 facts 리스트로 추출.
+    저작권 회피를 위해 ≤15단어 단위 짧은 fact 만 보관.
+    """
+    if not text:
+        return []
+    facts: list[str] = []
+    seen = set()
+
+    # 1) 액션 키워드 + 주변 8단어
+    for m in re.finditer(rf"([가-힣A-Za-z0-9·]+(?:\s+[가-힣A-Za-z0-9·]+){{0,4}}\s+(?:{ACTION_KEYWORDS})(?:\s+[가-힣A-Za-z0-9·\.]+){{0,4}})", text):
+        f = m.group(1).strip()
+        if 4 < len(f) < 60 and f not in seen:
+            seen.add(f)
+            facts.append(f)
+        if len(facts) >= max_facts:
+            break
+
+    # 2) 숫자 + 단위 (등락률/금액/기간)
+    if len(facts) < max_facts:
+        for m in re.finditer(r"(\d+(?:[,\.]\d+)?\s*(?:%|원|억원|조원|배|개월|일\s*만에|년\s*만에|개월\s*만에))", text):
+            f = m.group(1).strip()
+            # 주변 한 단어 추가
+            start = max(0, m.start() - 20)
+            ctx = text[start:m.end()]
+            ctx = re.sub(r"^.*?[\.,!?]\s*", "", ctx)  # 직전 문장 컷
+            ctx = re.sub(r"\s+", " ", ctx).strip()
+            if 5 < len(ctx) < 60 and ctx not in seen:
+                seen.add(ctx)
+                facts.append(ctx)
+            if len(facts) >= max_facts:
+                break
+    return facts[:max_facts]
+
+
+def first_sentence(text: str, max_chars: int = 80) -> str:
+    """본문의 첫 문장(≤max_chars)을 짧게 발췌. 이상 시 자름."""
+    if not text:
+        return ""
+    # 한국어 문장 종결 패턴
+    m = re.search(r"^(.{10,%d}?(?:다\.|\.|!|\?))" % max_chars, text)
+    s = m.group(1) if m else text[:max_chars]
+    return s.strip()
+
+
 # ── 테마 추출 ──────────────────────────────────────────
 KEYWORD_THEMES = [
     # (키워드 패턴, 테마명)
@@ -179,13 +271,38 @@ def detect_themes(text: str) -> list[str]:
 
 
 # ── 종목 정보 빌드 ──────────────────────────────────────
-def enrich(stock: dict, meta: dict, news_cache: dict) -> dict:
+def enrich(stock: dict, meta: dict, news_cache: dict, article_cache: dict, fetch_article: bool = True) -> dict:
+    """종목 + 뉴스 + 본문 요약 + 테마.
+
+    fetch_article=True 인 경우 상위 2개 뉴스의 본문을 추가 수집해 facts 추출.
+    """
     code = stock["code"]
     m = meta.get(code, {})
-    news = news_cache.get(code) or fetch_news(code, n=3)
+    news = news_cache.get(code) or fetch_news(code, n=4)
     news_cache[code] = news
-    blob = " ".join(n["title"] + " " + n["body"] for n in news)
+
+    # 상위 2개 뉴스의 본문을 가져와 facts 추출
+    if fetch_article:
+        for it in news[:2]:
+            link = it.get("link")
+            if not link:
+                continue
+            body = article_cache.get(link)
+            if body is None:
+                body = fetch_article_body(link)
+                article_cache[link] = body
+            it["fullBody"] = body
+            it["facts"] = extract_facts(body) if body else []
+            it["lead"] = first_sentence(body) if body else ""
+
+    blob = " ".join((n.get("title") or "") + " " + (n.get("fullBody") or n.get("body") or "")
+                    for n in news)
     themes = detect_themes(blob)
+    # 가장 자주 등장하는 테마 1~2개를 대표 테마로
+    seen: list[str] = []
+    for t in themes:
+        if t not in seen:
+            seen.append(t)
     return {
         **stock,
         "sector": m.get("sector"),
@@ -193,13 +310,100 @@ def enrich(stock: dict, meta: dict, news_cache: dict) -> dict:
         "group": m.get("group"),
         "products": m.get("products"),
         "news": news,
-        "themes": themes,
+        "themes": seen,
     }
+
+
+def has_jongseong(ch: str) -> bool:
+    """한글 마지막 글자에 받침이 있는지."""
+    if not ch:
+        return False
+    o = ord(ch)
+    if 0xAC00 <= o <= 0xD7A3:
+        return ((o - 0xAC00) % 28) != 0
+    return False  # 영문/숫자/기호는 받침 없는 것으로 처리(쏘카·SK 등 한글로 끝나는 경우만 확인)
+
+
+def topic(name: str) -> str:
+    """은/는 자동 부착."""
+    last = name.strip()[-1] if name else ""
+    return name + ("은" if has_jongseong(last) else "는")
+
+
+def synth_paragraph(stock: dict, kind: str) -> str:
+    """수집한 데이터·뉴스 facts·테마를 바탕으로 세콤달의 분석 문단 작성.
+    원문을 인용하지 않고, 데이터 + 키워드 + 테마를 자체 문장으로 조합.
+    """
+    name = stock["name"]
+    rate = parse_num(stock.get("changeRate"))
+    rate_str = f"+{rate:.2f}%" if rate > 0 else f"{rate:.2f}%"
+    vol = fmt_num(stock.get("volume"))
+    mcap = fmt_mcap(stock.get("marketCap"))
+    industry = stock.get("industry") or stock.get("sector") or ""
+    themes = stock.get("themes") or []
+    theme_phrase = " · ".join(themes[:2]) if themes else ""
+
+    # 뉴스 facts 통합 — 중복 제거하고 상위 4개
+    all_facts: list[str] = []
+    for n in stock.get("news") or []:
+        for f in (n.get("facts") or []):
+            if f not in all_facts:
+                all_facts.append(f)
+    fact_summary = ", ".join(all_facts[:4]) if all_facts else ""
+
+    parts: list[str] = []
+
+    # 업종 표현 — 'industry' 자체가 이미 "기계", "전기·전자" 같은 업종 분류명
+    industry_clause = f"{industry} 업종에 속한 " if industry else ""
+
+    # 1) 시작 — 종목 정체성 + 가격 액션 (이 종목은 — '종목' 받침 ㄱ 이므로 항상 '은')
+    if rate >= 25:
+        opening = f"**{name}** — {industry_clause}이 종목은 오늘 {rate_str}의 상한가 인접 급등을 기록했습니다."
+    elif rate >= 10:
+        opening = f"**{name}** — {industry_clause}이 종목은 오늘 {rate_str}의 두자릿수 상승을 보였습니다."
+    elif rate >= 3:
+        opening = f"**{name}** — {industry_clause}이 종목은 오늘 {rate_str} 상승 마감했습니다."
+    elif kind == "volume":
+        opening = f"**{name}** — {industry_clause}이 종목은 오늘 {vol}주의 대량 거래를 동반했습니다."
+    elif kind == "leader":
+        opening = f"**{name}** — 시가총액 {mcap}의 대형주로, 오늘 {rate_str} 변동을 보이며 지수 흐름을 주도했습니다."
+    else:
+        opening = f"**{name}** — {industry_clause}이 종목은 오늘 {rate_str}의 변동을 기록했습니다."
+    parts.append(opening)
+
+    # 2) 뉴스로 본 배경 — facts 기반 자체 서술
+    if fact_summary:
+        parts.append(
+            f"최근 보도된 뉴스에서는 **{fact_summary}** 등의 키워드가 공통적으로 확인됩니다. "
+            f"이는 단순 차트 수급 외에도 펀더멘털·이벤트 차원에서 시장의 관심을 끌만한 재료가 있음을 시사합니다."
+        )
+    elif stock.get("news"):
+        # facts 추출 실패 시 헤드라인 기반 일반 코멘트
+        parts.append(
+            f"최근 발행된 뉴스 헤드라인을 보면 종목 관련 이슈가 여러 매체에서 다뤄지고 있어, "
+            f"단기 시장의 관심이 집중된 상태로 판단됩니다."
+        )
+
+    # 3) 테마 연결
+    if theme_phrase:
+        parts.append(
+            f"키워드 분포로 추정한 테마는 **{theme_phrase}** 로, "
+            f"동일 테마 종목들의 동조 흐름이 함께 나타나는지 확인할 가치가 있습니다."
+        )
+
+    # 4) 거래량/시총 코멘트
+    if kind == "gainer" and rate >= 10:
+        parts.append(
+            f"오늘 거래량 {vol}주는 단기 매수세 유입의 직접적인 증거로, "
+            f"내일 시가에서 차익실현 매물이 어떻게 소화되는지가 추세 지속의 관건입니다."
+        )
+
+    return " ".join(parts)
 
 
 # ── 마크다운 렌더링 ──────────────────────────────────────
 def stock_block(s: dict, rank: int, kind: str) -> str:
-    """한 종목에 대한 분석 단락 생성."""
+    """한 종목에 대한 분석 단락 생성. 뉴스 facts → 자체 서술 paragraph + 참고 헤드라인."""
     code = s["code"]
     name = s["name"]
     market = s.get("market") or ""
@@ -212,54 +416,45 @@ def stock_block(s: dict, rank: int, kind: str) -> str:
     lines = []
     title_emoji = {"gainer": "🚀", "volume": "🔥", "leader": "👑"}.get(kind, "📈")
     lines.append(f"### {rank}. {title_emoji} {name} (`{code}`) — {rate_str}")
+    lines.append("")
 
+    # 데이터 카드
     sector = s.get("sector") or "-"
     industry = s.get("industry") or sector
     group = s.get("group")
-    info = f"- **시장/업종**: {market} · {industry}"
+    meta_line = f"**시장**: {market}"
+    if industry and industry != "-":
+        meta_line += f" · **업종**: {industry}"
     if group:
-        info += f" · {group}"
-    info += f"\n- **종가**: {price}원 · **거래량**: {vol}주 · **시가총액**: {mcap}"
-    lines.append(info)
-
+        meta_line += f" · **그룹**: {group}"
+    meta_line += f"  \n**종가**: {price}원 · **거래량**: {vol}주 · **시가총액**: {mcap}"
     if s.get("products"):
-        lines.append(f"- **사업**: {s['products'][:80]}{'…' if len(s['products']) > 80 else ''}")
+        meta_line += f"  \n**사업**: {s['products'][:90]}{'…' if len(s['products']) > 90 else ''}"
+    lines.append(meta_line)
+    lines.append("")
 
-    themes = s.get("themes") or []
-    if themes:
-        # dedupe, 상위 3개
-        seen = []
-        for t in themes:
-            if t not in seen:
-                seen.append(t)
-        lines.append(f"- **추정 테마**: {' · '.join(seen[:3])}")
+    # 🔍 세콤달의 분석 — 데이터 + 뉴스 facts + 테마를 자체 서술
+    analysis = synth_paragraph(s, kind)
+    lines.append(f"> 🔍 **세콤달의 분석**  \n> {analysis}")
+    lines.append("")
 
+    # 📰 참고한 뉴스 — 헤드라인 + 출처 + 링크 (원문 본문은 인용하지 않음)
     news = s.get("news") or []
     if news:
-        lines.append("- **주요 뉴스** (네이버 종목 뉴스 발췌):")
+        lines.append("**📰 참고한 뉴스**")
         for n in news[:3]:
-            t = n["title"][:80]
+            t = (n.get("title") or "")[:90]
             office = n.get("office") or ""
+            dt_raw = (n.get("datetime") or "")[:8]
+            dt_fmt = f"{dt_raw[:4]}-{dt_raw[4:6]}-{dt_raw[6:8]}" if len(dt_raw) >= 8 else ""
             link = n.get("link") or ""
+            byline = " · ".join([x for x in [office, dt_fmt] if x])
             if link:
-                lines.append(f"  - [{t}]({link}) — {office}")
+                lines.append(f"- [{t}]({link}) — _{byline}_")
             else:
-                lines.append(f"  - {t} — {office}")
+                lines.append(f"- {t} — _{byline}_")
     else:
-        lines.append("- _최근 뉴스를 가져오지 못했습니다._")
-
-    # 한 줄 해설
-    reason = ""
-    if rate >= 25:
-        reason = "**상한가 인접 급등** — 단기 모멘텀이 매우 강하나 변동성도 함께 큽니다. 진입 시 분할 매수와 손절선 설정이 필수입니다."
-    elif rate >= 10:
-        reason = "**두자릿수 급등** — 호재성 뉴스 또는 수급 유입이 확인됩니다. 추격보다 눌림 후 재진입을 검토하세요."
-    elif kind == "volume":
-        reason = "**거래량 급증** — 신규 자금 유입 또는 매물 소화 가능성. 거래량 증가가 가격 상승을 동반했는지 확인이 필요합니다."
-    elif kind == "leader":
-        reason = "**시장 주도주** — 시가총액·거래대금 상위로 시장 방향을 이끄는 종목. 지수 흐름과 함께 봐야 합니다."
-    if reason:
-        lines.append(f"- {reason}")
+        lines.append("_(현재 종목 뉴스를 가져오지 못했습니다. 공시 원문은 [DART](https://dart.fss.or.kr) 에서 직접 확인하실 수 있습니다.)_")
 
     return "\n".join(lines)
 
@@ -269,6 +464,7 @@ def render_market_brief(stocks: list[dict], date: datetime) -> Optional[str]:
         return None
     meta = load_db_meta()
     news_cache: dict[str, list[dict]] = {}
+    article_cache: dict[str, str] = {}
 
     # 필터: 시총 300억+, 거래량 5만+ (관리종목/저유동성 제외)
     def usable(s: dict) -> bool:
@@ -293,7 +489,7 @@ def render_market_brief(stocks: list[dict], date: datetime) -> Optional[str]:
     enriched: dict[str, dict] = {}
     for s in stocks:
         if s["code"] in all_codes:
-            enriched[s["code"]] = enrich(s, meta, news_cache)
+            enriched[s["code"]] = enrich(s, meta, news_cache, article_cache, fetch_article=True)
 
     gainers = [enriched[s["code"]] for s in gainers]
     volumes = [enriched[s["code"]] for s in volumes]
