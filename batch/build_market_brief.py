@@ -44,7 +44,7 @@ LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "").strip().lower()  # "anthropic"
 
 # Gemini (Google AI Studio)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash-lite").strip()
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip()
 GEMINI_MIN_INTERVAL = float(os.environ.get("GEMINI_MIN_INTERVAL", "5.0"))
 _GEMINI_LAST_CALL_AT: float = 0.0
 
