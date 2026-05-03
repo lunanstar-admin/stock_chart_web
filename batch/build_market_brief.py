@@ -301,6 +301,82 @@ def _looks_like_other_stock(fragment: str, stock_name: str) -> bool:
     return False
 
 
+def split_sentences(text: str) -> list[str]:
+    """한국어 본문을 문장 단위로 분리.
+    종결 패턴: '다.', '습니다.', '니다.', '요.', '죠.', '음.', '함.', '?', '!' 또는 '.'
+    """
+    if not text:
+        return []
+    # 줄바꿈/탭 정규화
+    t = re.sub(r"\s+", " ", text).strip()
+    # 종결 어미 뒤에 split
+    parts = re.split(r"(?<=[다요죠][\.!?])\s+|(?<=[\.!?])\s+(?=[가-힣A-Z])", t)
+    return [p.strip() for p in parts if p and len(p.strip()) > 8]
+
+
+# 분석 가치가 높은 어구 — 인과/배경 설명에 자주 등장
+ANALYTICAL_PHRASES = (
+    "풀이된|영향으로|기대감|해석된|로 보인다|로 분석된|배경에는|"
+    "수혜|관련주|동반 상승|동반 급등|전망이다|예상된|기대된|"
+    "데이터센터|AI|반도체|전력|수출|수주|체결|발표|공시"
+)
+
+
+def extract_relevant_sentences(text: str, stock_name: str,
+                               max_sents: int = 6, max_chars: int = 700) -> list[str]:
+    """기사 본문에서 종목명이 언급된 문장 + 그 직전·직후 문장(맥락) 을 추출.
+    분석 톤이 강한 문장(원인·영향·기대 등) 을 우선 포함.
+
+    Gemini 가 인과 흐름을 파악할 수 있도록 충분한 문맥을 제공하기 위함.
+    원문 그대로 LLM 에 입력하되, **출력 단계에서 LLM 이 paraphrase** 하도록 프롬프트로 강제.
+    """
+    if not text or not stock_name:
+        return []
+    sents = split_sentences(text)
+    if not sents:
+        return []
+
+    bare = stock_name.replace(" ", "")
+    pick: list[tuple[int, int, str]] = []  # (priority, idx, sentence)
+
+    for i, s in enumerate(sents):
+        s_bare = s.replace(" ", "")
+        contains_name = bool(bare and bare in s_bare)
+        has_analysis = bool(re.search(ANALYTICAL_PHRASES, s))
+        if contains_name:
+            pri = 1 if has_analysis else 2
+            pick.append((pri, i, s))
+            # 직전·직후 문장이 분석 톤이면 같이 포함 (맥락)
+            if i > 0 and re.search(ANALYTICAL_PHRASES, sents[i - 1]):
+                pick.append((3, i - 1, sents[i - 1]))
+            if i + 1 < len(sents) and re.search(ANALYTICAL_PHRASES, sents[i + 1]):
+                pick.append((3, i + 1, sents[i + 1]))
+
+    if not pick:
+        return []
+
+    # 우선순위 → 본문 등장 순으로 정렬, 중복 idx 제거
+    pick.sort(key=lambda x: (x[0], x[1]))
+    seen_idx = set()
+    out: list[str] = []
+    total = 0
+    for _pri, idx, s in pick:
+        if idx in seen_idx:
+            continue
+        if len(s) > 250:  # 너무 긴 문장은 자름
+            s = s[:240] + "…"
+        if total + len(s) > max_chars:
+            break
+        seen_idx.add(idx)
+        out.append(s)
+        total += len(s)
+        if len(out) >= max_sents:
+            break
+    # 본문 등장 순서로 재정렬
+    out.sort(key=lambda s: text.find(s[:30]) if not s.endswith("…") else text.find(s[:20]))
+    return out
+
+
 def first_sentence(text: str, max_chars: int = 80) -> str:
     """본문의 첫 문장(≤max_chars)을 짧게 발췌. 이상 시 자름."""
     if not text:
@@ -382,6 +458,8 @@ def enrich(stock: dict, meta: dict, news_cache: dict, article_cache: dict, fetch
             it["fullBody"] = body
             # 종목명 근처 문장에서만 facts 추출 — 시황 기사에 섞인 다른 종목 오염 방지
             it["facts"] = extract_facts(body, stock_name=stock["name"]) if body else []
+            # 인과·배경 분석을 위해 완성된 문장 단위 추출 (Gemini 입력용)
+            it["relevantSents"] = extract_relevant_sentences(body, stock["name"]) if body else []
             it["lead"] = first_sentence(body) if body else ""
 
     blob = " ".join((n.get("title") or "") + " " + (n.get("fullBody") or n.get("body") or "")
@@ -532,6 +610,14 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
                 all_facts.append(f)
     facts_str = "\n".join(f"- {f}" for f in all_facts[:6]) if all_facts else "- (추출된 facts 없음)"
 
+    # 인과·배경 문장 — Gemini 가 직접 paraphrase 해서 분석문에 녹이도록 입력
+    rel_sents: list[str] = []
+    for n in stock.get("news") or []:
+        for s in (n.get("relevantSents") or []):
+            if s not in rel_sents:
+                rel_sents.append(s)
+    rel_sents_str = "\n".join(f"- {s}" for s in rel_sents[:6]) if rel_sents else "- (관련 문장 없음)"
+
     # 헤드라인 (참고용 — 직접 인용하지 말 것)
     headlines = [n.get("title") or "" for n in (stock.get("news") or [])[:3]]
     headlines_str = "\n".join(f"- {h}" for h in headlines if h) or "- (없음)"
@@ -547,15 +633,16 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
 세콤달.콤 주식맛집의 자동 발행 블로그를 위해 한 종목의 분석 문단을 작성하세요.
 
 # 절대 규칙
-1. 아래 [데이터] 와 [뉴스 키워드] 만 사용. 추가 정보 절대 추측·창작 금지.
-2. 매수/매도 권유 금지. 구체적 목표가·손절가 제시 금지.
-3. 환각 방지: 데이터에 없는 인물·기업명·계약·실적 수치 절대 만들지 마세요.
-4. 한국어. 평이체 ('~합니다' 톤). 분량: 4~5문장, 약 200~280자.
-5. 마크다운 헤더 없음. 종목명은 **굵게** 한 번만.
-6. 제공된 [뉴스 키워드] 는 부분 발췌이므로 의미가 모호하면 무리하게 해석 말고 일반화.
-7. **다른 종목 이름이 키워드에 보이면 무시하세요** (시황 기사 부산물). 분석 대상은 오직 위 [데이터] 의 종목명입니다.
-8. 키워드가 종목과 분명히 무관해 보이면 "구체적 호재가 보도에서 명확히 드러나지 않아…" 식으로 일반화 처리.
-9. {kind_hint}
+1. 아래 [데이터] 와 [관련 문장] 만 사용. 추가 정보 절대 추측·창작 금지.
+2. **[관련 문장]은 원문 그대로 복제하지 말고, 본인 표현으로 paraphrase**. 직접 인용은 안에 짧게(≤15자) 한 번만 허용.
+3. 매수/매도 권유 금지. 구체적 목표가·손절가 제시 금지.
+4. 환각 방지: 자료에 없는 인물·기업명·계약·실적 수치 절대 만들지 마세요.
+5. 한국어. 평이체 ('~합니다' 톤). 분량: 4~6문장, 약 240~340자.
+6. 마크다운 헤더 없음. 종목명은 **굵게** 한 번만.
+7. 다른 종목 이름이 자료에 보이면 무시 (시황 기사 부산물). 분석 대상은 오직 위 [데이터] 의 종목명.
+8. **인과 흐름 강조** — 왜 올랐는지 / 어떤 매크로 흐름과 연결되는지 / 종목 고유 이벤트가 무엇인지 를 자연스러운 한 단락으로.
+9. 자료가 모호하면 "구체적 호재가 보도에서 명확히 드러나지 않아…" 식으로 일반화 처리.
+10. {kind_hint}
 
 # 데이터
 - 종목명: {name}
@@ -567,7 +654,10 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
 - 거래량: {vol}주
 - 시가총액: {mcap}
 
-# 뉴스 키워드 (네이버 종목 뉴스에서 자동 추출, 부분 발췌)
+# 관련 문장 (네이버 종목 뉴스 본문에서 자동 발췌 — 종목명 근처의 인과·배경 문장)
+{rel_sents_str}
+
+# 보조 키워드 (위 문장에서 자동 추출, 의미 모호 시 무시 가능)
 {facts_str}
 
 # 참고 헤드라인 (직접 인용·복제 금지, 분위기 파악용)
