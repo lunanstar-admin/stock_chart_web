@@ -312,14 +312,17 @@ def process_one(req: dict) -> Optional[Path]:
             raise RuntimeError(f"LLM 응답 부족 (길이 {len(body)})")
         body = re.sub(r"^\s*```.*?\n|```\s*$", "", body, flags=re.MULTILINE).strip()
 
-        # 5) 마크다운 파일 작성 — slug 는 ASCII (code + timestamp). 한글 주제는 제목에만.
+        # 5) 마크다운 파일 작성 — slug 는 ASCII (code + timestamp + 요청 ID 짧은 prefix).
+        # 같은 분에 같은 종목 여러 요청 들어와도 충돌 안 나도록 request id 8자 포함.
         date = datetime.now(KST).strftime("%Y-%m-%d")
         ts = datetime.now(KST).strftime('%y%m%d%H%M')
-        topic_ascii = slugify(topic, 20)  # 영문이 있으면 사용, 없으면 빈 문자열
+        topic_ascii = slugify(topic, 20)
+        rid_short = rid.replace("-", "")[:8]
         slug_parts = ["custom", code]
         if topic_ascii:
             slug_parts.append(topic_ascii)
         slug_parts.append(ts)
+        slug_parts.append(rid_short)
         slug = "-".join(slug_parts)
         title = f"{name} — {topic[:60]}"
         summary = (
