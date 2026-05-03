@@ -286,20 +286,36 @@
 
       dbg('2/4 세션 조회 중…');
 
-      // 세션 우선 시도 (로컬 즉시), 실패 시 getUser 폴백 (네트워크 검증)
+      // localStorage 직접 확인 (가장 빠름) — supabase-js getSession 행 회피
       let user = null;
+      const sbProjectRef = 'axbbjjpxspvvxbxvuzsz';
       try {
-        const ses = await Promise.race([
-          window.sb.auth.getSession(),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('getSession timeout')), 8000)),
-        ]);
-        user = ses?.data?.session?.user || null;
-      } catch (e) { console.warn('[admin] getSession failed', e); }
+        const tokenStr = localStorage.getItem(`sb-${sbProjectRef}-auth-token`);
+        if (tokenStr) {
+          const parsed = JSON.parse(tokenStr);
+          user = parsed?.user || parsed?.currentSession?.user || null;
+        }
+      } catch (e) { console.warn('[admin] localStorage read failed', e); }
 
+      // localStorage 에 없으면 getSession (3초 타임아웃)
       if (!user) {
         try {
-          const { data } = await window.sb.auth.getUser();
-          user = data?.user || null;
+          const ses = await Promise.race([
+            window.sb.auth.getSession(),
+            new Promise((_, rej) => setTimeout(() => rej(new Error('getSession timeout 3s')), 3000)),
+          ]);
+          user = ses?.data?.session?.user || null;
+        } catch (e) { console.warn('[admin] getSession failed', e); }
+      }
+
+      // 그래도 없으면 getUser (3초 타임아웃)
+      if (!user) {
+        try {
+          const u = await Promise.race([
+            window.sb.auth.getUser(),
+            new Promise((_, rej) => setTimeout(() => rej(new Error('getUser timeout 3s')), 3000)),
+          ]);
+          user = u?.data?.user || null;
         } catch (e) { console.warn('[admin] getUser failed', e); }
       }
 
