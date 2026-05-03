@@ -519,9 +519,9 @@ def build() -> int:
     SITEMAP_PATH.write_text(render_sitemap(posts), encoding="utf-8")
     print(f"[blog] web/sitemap.xml")
 
-    # 메인 페이지 '최신 글 미리보기' 용 JSON — 색인 가능한 글만(자동 포스트 제외)
-    recent = [p for p in posts
-              if not (p.slug.startswith("daily-") or p.slug.startswith("batch-"))][:6]
+    # 메인 페이지 '최신 글 미리보기' 용 JSON — 최신순 6개, 자동 포스트도 포함
+    # 각 글이 자동(daily-/batch-) 인지 표시해 카드에서 시각적 구분 가능.
+    recent = posts[:6]
     recent_json = {
         "updated": datetime.now(KST).isoformat(timespec="seconds"),
         "posts": [
@@ -531,6 +531,7 @@ def build() -> int:
                 "date": p.date,
                 "summary": (p.summary or "")[:160],
                 "tags": p.tags[:4],
+                "auto": p.slug.startswith("daily-") or p.slug.startswith("batch-"),
             }
             for p in recent
         ],

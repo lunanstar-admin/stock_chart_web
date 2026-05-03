@@ -67,7 +67,7 @@
     <script src="/assets/nav.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/assets/auth.js"></script>
-    <link rel="stylesheet" href="/assets/styles.css?v=20260503d" />
+    <link rel="stylesheet" href="/assets/styles.css?v=20260503e" />
 </head>
 
 <body class="page-home">
@@ -163,9 +163,11 @@
               var tags = (p.tags || []).slice(0, 3).map(function (t) {
                 return '<span class="blog-tag">#' + escapeHTML(t) + "</span>";
               }).join("");
-              return '<a class="blog-card" href="/blog/' + encodeURIComponent(p.slug) + '">' +
+              var autoBadge = p.auto ? '<span class="blog-card-badge">데이터</span>' : "";
+              var cardCls = p.auto ? "blog-card blog-card--auto" : "blog-card";
+              return '<a class="' + cardCls + '" href="/blog/' + encodeURIComponent(p.slug) + '">' +
                 '<div class="blog-card-body">' +
-                  '<div class="blog-card-date">' + escapeHTML(p.date || "") + "</div>" +
+                  '<div class="blog-card-date">' + escapeHTML(p.date || "") + autoBadge + "</div>" +
                   '<h3 class="blog-card-title">' + escapeHTML(p.title || "") + "</h3>" +
                   (p.summary ? '<p class="blog-card-summary">' + escapeHTML(p.summary) + "</p>" : "") +
                   (tags ? '<div class="blog-tags">' + tags + "</div>" : "") +

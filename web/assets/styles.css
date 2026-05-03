@@ -1421,6 +1421,23 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 }
 
+/* 자동 데이터 포스트(daily-/batch-) 카드 — 약간 옅고 '데이터' 배지 */
+.blog-card-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 3px;
+  background: rgba(100, 116, 139, 0.15);
+  color: #475569;
+  vertical-align: middle;
+}
+[data-theme="dark"] .blog-card-badge {
+  background: rgba(148, 163, 184, 0.18);
+  color: #cbd5e1;
+}
+
 /* ─────────────────────────────────────────────
    페이지 설명 박스 — SEO + 사용자 가이드
    ───────────────────────────────────────────── */
