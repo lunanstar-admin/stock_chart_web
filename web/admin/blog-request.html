@@ -286,29 +286,29 @@
 
       dbg('2/4 세션 조회 중…');
 
-      // localStorage 직접 확인 (가장 빠름) — supabase-js getSession 행 회피
+      // 1순위: getSession (supabase-js 의 정식 세션 — JWT 가 자동 attach 되도록)
       let user = null;
       const sbProjectRef = 'axbbjjpxspvvxbxvuzsz';
       try {
-        const tokenStr = localStorage.getItem(`sb-${sbProjectRef}-auth-token`);
-        if (tokenStr) {
-          const parsed = JSON.parse(tokenStr);
-          user = parsed?.user || parsed?.currentSession?.user || null;
-        }
-      } catch (e) { console.warn('[admin] localStorage read failed', e); }
+        const ses = await Promise.race([
+          window.sb.auth.getSession(),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('getSession timeout 4s')), 4000)),
+        ]);
+        user = ses?.data?.session?.user || null;
+      } catch (e) { console.warn('[admin] getSession failed', e); }
 
-      // localStorage 에 없으면 getSession (3초 타임아웃)
+      // 2순위: localStorage 직접 (행 회피용 폴백)
       if (!user) {
         try {
-          const ses = await Promise.race([
-            window.sb.auth.getSession(),
-            new Promise((_, rej) => setTimeout(() => rej(new Error('getSession timeout 3s')), 3000)),
-          ]);
-          user = ses?.data?.session?.user || null;
-        } catch (e) { console.warn('[admin] getSession failed', e); }
+          const tokenStr = localStorage.getItem(`sb-${sbProjectRef}-auth-token`);
+          if (tokenStr) {
+            const parsed = JSON.parse(tokenStr);
+            user = parsed?.user || parsed?.currentSession?.user || null;
+          }
+        } catch (e) { console.warn('[admin] localStorage read failed', e); }
       }
 
-      // 그래도 없으면 getUser (3초 타임아웃)
+      // 3순위: getUser (3초)
       if (!user) {
         try {
           const u = await Promise.race([
@@ -569,13 +569,29 @@
     });
   };
 
-  // 인증 상태 변경 시 재초기화
+  // 인증 상태 변경 시 재초기화 — debounce 로 짧은 시간 내 중복 init 차단
+  let _initTimer = null;
+  let _lastInitAt = 0;
   function watchAuth() {
     if (!window.sb) return setTimeout(watchAuth, 200);
-    window.sb.auth.onAuthStateChange(() => init());
+    window.sb.auth.onAuthStateChange((event) => {
+      // 무관한 이벤트는 스킵 — TOKEN_REFRESHED, USER_UPDATED 시 굳이 재렌더 안 함
+      if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') return;
+      // 직전 init 후 2초 이내면 스킵
+      if (Date.now() - _lastInitAt < 2000) return;
+      clearTimeout(_initTimer);
+      _initTimer = setTimeout(() => {
+        _lastInitAt = Date.now();
+        init();
+      }, 200);
+    });
   }
 
-  document.addEventListener('DOMContentLoaded', () => { init(); watchAuth(); });
+  document.addEventListener('DOMContentLoaded', () => {
+    _lastInitAt = Date.now();
+    init();
+    watchAuth();
+  });
 })();
 </script>
 </body>
