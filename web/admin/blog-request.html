@@ -132,6 +132,11 @@
 
 <main class="admin-main">
 
+  <!-- 디버그 패널 — 초기화 실패 시 마지막 상태 표시 -->
+  <div id="debugPanel" style="max-width:880px;margin:20px auto;padding:14px;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;font-size:12px;font-family:ui-monospace,monospace;color:#78350f;">
+    🔧 초기화 진행 중… (1/4)
+  </div>
+
   <!-- 게이트: 비로그인/비관리자 시 표시 -->
   <div id="gateLoggedOut" class="gate-message" style="display:none">
     <h2>🔒 로그인이 필요합니다</h2>
@@ -245,16 +250,25 @@
     });
   }
 
+  function dbg(msg) {
+    const el = $('debugPanel');
+    if (el) el.textContent = '🔧 ' + msg;
+    console.log('[admin]', msg);
+  }
+
   // ─── 인증 + 관리자 체크 ──────────────────────────
   async function init() {
     try {
+      dbg('1/4 supabase-js 로드 대기…');
       // supabase-js 로드 대기 (최대 6초)
       for (let i = 0; i < 100 && !window.sb; i++) await new Promise(r => setTimeout(r, 60));
       if (!window.sb) {
+        dbg('❌ window.sb 미등록 — auth.js 로드 실패');
         $('gateLoggedOut').innerHTML = '<h2>⚠️ 인증 모듈 로드 실패</h2><p>새로고침 후 다시 시도해 주세요.</p>';
         showGate('gateLoggedOut');
         return;
       }
+      dbg('2/4 세션 조회 중…');
 
       // 세션 우선 시도 (로컬 즉시), 실패 시 getUser 폴백 (네트워크 검증)
       let user = null;
@@ -271,10 +285,13 @@
       }
 
       if (!user) {
+        dbg('세션 없음 — 로그인 게이트 표시');
         showGate('gateLoggedOut');
+        $('debugPanel').style.display = 'none';
         return;
       }
       currentUser = user;
+      dbg('3/4 관리자 권한 확인 중… (uid=' + user.id.slice(0, 8) + '…)');
 
       // admins 테이블 조회 — RLS 로 본인 행만 보임
       let isAdminRow = null;
@@ -300,16 +317,20 @@
 
       isAdmin = !!isAdminRow;
       if (!isAdmin) {
+        dbg('관리자 미등록 — UUID 표시');
         $('gateMyUuid').textContent = user.id;
         showGate('gateNotAdmin');
+        $('debugPanel').style.display = 'none';
         return;
       }
 
       // 관리자 ✅
+      dbg('4/4 관리자 ✅ — 폼 로드 중');
       $('myUuid').textContent = user.id;
       showGate('adminArea');
       setupForm();
       await loadRequests();
+      $('debugPanel').style.display = 'none';
     } catch (e) {
       console.error('[admin] init() unexpected error:', e);
       $('gateLoggedOut').innerHTML = '<h2>⚠️ 페이지 초기화 실패</h2><p>콘솔 에러를 확인 후 새로고침해 주세요.</p><pre style="text-align:left;font-size:11px;background:#f1f5f9;padding:10px;margin-top:10px;border-radius:6px;overflow:auto">' + escapeHtml(String(e && e.message || e)) + '</pre>';
