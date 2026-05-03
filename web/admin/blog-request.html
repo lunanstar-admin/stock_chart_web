@@ -268,13 +268,32 @@
         showGate('gateLoggedOut');
         return;
       }
+      // OAuth callback ?code= 가 URL 에 남아 있으면 명시적으로 교환 (10초 타임아웃)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('code')) {
+        dbg('1.5/4 OAuth code 교환 중…');
+        try {
+          await Promise.race([
+            window.sb.auth.exchangeCodeForSession(window.location.href),
+            new Promise((_, rej) => setTimeout(() => rej(new Error('exchange timeout')), 10000)),
+          ]);
+          // URL 정리
+          window.history.replaceState({}, '', window.location.pathname);
+        } catch (e) {
+          console.warn('[admin] code exchange failed:', e);
+        }
+      }
+
       dbg('2/4 세션 조회 중…');
 
       // 세션 우선 시도 (로컬 즉시), 실패 시 getUser 폴백 (네트워크 검증)
       let user = null;
       try {
-        const { data: { session } } = await window.sb.auth.getSession();
-        user = session?.user || null;
+        const ses = await Promise.race([
+          window.sb.auth.getSession(),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('getSession timeout')), 8000)),
+        ]);
+        user = ses?.data?.session?.user || null;
       } catch (e) { console.warn('[admin] getSession failed', e); }
 
       if (!user) {
