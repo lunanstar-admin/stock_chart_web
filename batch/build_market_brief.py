@@ -41,7 +41,7 @@ KST = timezone(timedelta(hours=9))
 # ── LLM 설정 (Gemini) ──────────────────────────────────
 # GEMINI_API_KEY 환경변수가 있으면 자체 서술을 LLM 으로 생성, 없으면 템플릿 폴백.
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash").strip()
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash-lite").strip()
 # 무료 티어 RPM 보호 — 호출 간 지연(초). 기본 5초 = 분당 12콜 (모델별 RPM ≥ 15 가정).
 GEMINI_MIN_INTERVAL = float(os.environ.get("GEMINI_MIN_INTERVAL", "5.0"))
 _GEMINI_LAST_CALL_AT: float = 0.0
@@ -462,7 +462,7 @@ def call_gemini(prompt: str, timeout: float = 25.0,
         except urllib.error.HTTPError as e:
             body_txt = ""
             try:
-                body_txt = e.read().decode("utf-8", errors="ignore")[:300]
+                body_txt = e.read().decode("utf-8", errors="ignore")
             except Exception:
                 pass
             # 429 (Rate limit) 는 백오프 재시도
