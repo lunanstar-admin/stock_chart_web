@@ -23,6 +23,7 @@ import os
 import re
 import sqlite3
 import sys
+import time
 import urllib.request
 import urllib.error
 from collections import Counter, defaultdict
@@ -41,7 +42,9 @@ KST = timezone(timedelta(hours=9))
 # GEMINI_API_KEY 환경변수가 있으면 자체 서술을 LLM 으로 생성, 없으면 템플릿 폴백.
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash").strip()
-# 무료 티어: 일 1,500콜 / 분 15콜 — 글당 약 14콜이면 충분.
+# 무료 티어 RPM 보호 — 호출 간 지연(초). 기본 5초 = 분당 12콜 (모델별 RPM ≥ 15 가정).
+GEMINI_MIN_INTERVAL = float(os.environ.get("GEMINI_MIN_INTERVAL", "5.0"))
+_GEMINI_LAST_CALL_AT: float = 0.0
 
 DB_CANDIDATES = [
     Path.home() / "Project_AI/stock_db/data/stock_db.sqlite",
@@ -401,11 +404,23 @@ def enrich(stock: dict, meta: dict, news_cache: dict, article_cache: dict, fetch
 
 
 # ── Gemini LLM 호출 ──────────────────────────────────────
+def _gemini_throttle() -> None:
+    """RPM 한도 보호 — 직전 콜로부터 GEMINI_MIN_INTERVAL 초 미만이면 sleep."""
+    global _GEMINI_LAST_CALL_AT
+    now = time.monotonic()
+    elapsed = now - _GEMINI_LAST_CALL_AT
+    if elapsed < GEMINI_MIN_INTERVAL:
+        time.sleep(GEMINI_MIN_INTERVAL - elapsed)
+    _GEMINI_LAST_CALL_AT = time.monotonic()
+
+
 def call_gemini(prompt: str, timeout: float = 25.0,
-                temperature: float = 0.6, max_tokens: int = 600) -> str:
+                temperature: float = 0.6, max_tokens: int = 600,
+                retries: int = 2) -> str:
     """Gemini API 호출. 실패 시 빈 문자열 반환 (호출자가 폴백 처리).
 
     Endpoint: generativelanguage.googleapis.com (AI Studio 무료 티어)
+    호출 간 GEMINI_MIN_INTERVAL 초 throttle + 429 시 백오프 재시도.
     """
     if not GEMINI_API_KEY:
         return ""
@@ -431,26 +446,40 @@ def call_gemini(prompt: str, timeout: float = 25.0,
         ],
     }
     data = json.dumps(body).encode("utf-8")
-    req = urllib.request.Request(
-        url,
-        data=data,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            res = json.loads(r.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        body_txt = ""
+
+    for attempt in range(retries + 1):
+        _gemini_throttle()
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
         try:
-            body_txt = e.read().decode("utf-8", errors="ignore")[:300]
-        except Exception:
-            pass
-        logger.warning("[market-brief] Gemini HTTP %s: %s", e.code, body_txt)
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                res = json.loads(r.read().decode("utf-8"))
+            break  # 성공
+        except urllib.error.HTTPError as e:
+            body_txt = ""
+            try:
+                body_txt = e.read().decode("utf-8", errors="ignore")[:300]
+            except Exception:
+                pass
+            # 429 (Rate limit) 는 백오프 재시도
+            if e.code == 429 and attempt < retries:
+                wait = 30 + 30 * attempt  # 30s, 60s
+                logger.warning("[market-brief] Gemini 429 — %ds 백오프 후 재시도 (%d/%d)",
+                               wait, attempt + 1, retries)
+                time.sleep(wait)
+                continue
+            logger.warning("[market-brief] Gemini HTTP %s: %s", e.code, body_txt)
+            return ""
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+            logger.warning("[market-brief] Gemini call failed: %s", e)
+            return ""
+    else:
         return ""
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
-        logger.warning("[market-brief] Gemini call failed: %s", e)
-        return ""
+
     # 응답 파싱
     try:
         cands = res.get("candidates") or []
