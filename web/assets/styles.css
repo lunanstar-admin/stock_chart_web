@@ -1321,6 +1321,16 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
 .feedback-form .actions .status.ok { color: var(--green); }
 .feedback-form .actions .status.err { color: var(--red); }
 
+/* 메인 섹션 소제목 */
+.section-heading {
+  max-width: 960px;
+  margin: 28px auto 12px;
+  padding: 0 8px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+}
+
 /* ─────────────────────────────────────────────
    페이지 설명 박스 — SEO + 사용자 가이드
    ───────────────────────────────────────────── */

@@ -331,7 +331,7 @@ def topic(name: str) -> str:
 
 
 def synth_paragraph(stock: dict, kind: str) -> str:
-    """수집한 데이터·뉴스 facts·테마를 바탕으로 세콤달의 분석 문단 작성.
+    """수집한 데이터·뉴스 facts·테마를 바탕으로 세콤달.콤의 분석 문단 작성.
     원문을 인용하지 않고, 데이터 + 키워드 + 테마를 자체 문장으로 조합.
     """
     name = stock["name"]
@@ -433,9 +433,9 @@ def stock_block(s: dict, rank: int, kind: str) -> str:
     lines.append(meta_line)
     lines.append("")
 
-    # 🔍 세콤달의 분석 — 데이터 + 뉴스 facts + 테마를 자체 서술
+    # 🔍 세콤달.콤의 분석 — 데이터 + 뉴스 facts + 테마를 자체 서술
     analysis = synth_paragraph(s, kind)
-    lines.append(f"> 🔍 **세콤달의 분석**  \n> {analysis}")
+    lines.append(f"> 🔍 **세콤달.콤의 분석**  \n> {analysis}")
     lines.append("")
 
     # 📰 참고한 뉴스 — 헤드라인 + 출처 + 링크 (원문 본문은 인용하지 않음)
