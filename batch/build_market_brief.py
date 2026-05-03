@@ -198,12 +198,58 @@ ACTION_KEYWORDS = (
 )
 
 
-def extract_facts(text: str, max_facts: int = 6) -> list[str]:
+def _stock_relevant_sentences(text: str, stock_name: str, window_chars: int = 250) -> str:
+    """기사 본문에서 종목명이 등장한 문장과 그 주변(±window_chars)만 잘라낸다.
+    시황·테마 기사처럼 다른 종목 이야기와 뒤섞이는 경우, 해당 종목과 무관한
+    문맥에서 facts 가 추출되는 것을 방지하기 위함.
+    """
+    if not text or not stock_name:
+        return text or ""
+    # 종목명 변형 — 풀네임, 공백 제거, 짧은 별칭(2자 이상)
+    needles = {stock_name}
+    bare = stock_name.replace(" ", "")
+    if bare and bare != stock_name:
+        needles.add(bare)
+
+    spans: list[tuple[int, int]] = []
+    for needle in needles:
+        idx = 0
+        while True:
+            i = text.find(needle, idx)
+            if i < 0:
+                break
+            start = max(0, i - window_chars)
+            end = min(len(text), i + len(needle) + window_chars)
+            spans.append((start, end))
+            idx = i + len(needle)
+    if not spans:
+        return ""  # 기사 본문에 종목명이 한 번도 안 나오면 facts 추출 포기
+
+    # 겹치는 구간 병합
+    spans.sort()
+    merged: list[list[int]] = []
+    for s, e in spans:
+        if merged and s <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], e)
+        else:
+            merged.append([s, e])
+    return " ".join(text[s:e] for s, e in merged)
+
+
+def extract_facts(text: str, max_facts: int = 6, stock_name: str = "") -> list[str]:
     """본문에서 키워드 + 주변 문맥(8단어 이내)을 짧은 facts 리스트로 추출.
-    저작권 회피를 위해 ≤15단어 단위 짧은 fact 만 보관.
+    저작권 회피를 위해 ≤60자 단위 짧은 fact 만 보관.
+
+    stock_name 이 주어지면 해당 종목명이 등장한 문장 주변에서만 추출 —
+    시황 기사에 섞인 다른 종목 facts 가 흘러드는 것을 차단.
     """
     if not text:
         return []
+    if stock_name:
+        text = _stock_relevant_sentences(text, stock_name)
+        if not text:
+            return []
+
     facts: list[str] = []
     seen = set()
 
@@ -211,6 +257,9 @@ def extract_facts(text: str, max_facts: int = 6) -> list[str]:
     for m in re.finditer(rf"([가-힣A-Za-z0-9·]+(?:\s+[가-힣A-Za-z0-9·]+){{0,4}}\s+(?:{ACTION_KEYWORDS})(?:\s+[가-힣A-Za-z0-9·\.]+){{0,4}})", text):
         f = m.group(1).strip()
         if 4 < len(f) < 60 and f not in seen:
+            # 다른 종목 이름이 fact 안에 박힌 경우는 우선순위 낮춤(스킵)
+            if stock_name and _looks_like_other_stock(f, stock_name):
+                continue
             seen.add(f)
             facts.append(f)
         if len(facts) >= max_facts:
@@ -220,17 +269,33 @@ def extract_facts(text: str, max_facts: int = 6) -> list[str]:
     if len(facts) < max_facts:
         for m in re.finditer(r"(\d+(?:[,\.]\d+)?\s*(?:%|원|억원|조원|배|개월|일\s*만에|년\s*만에|개월\s*만에))", text):
             f = m.group(1).strip()
-            # 주변 한 단어 추가
             start = max(0, m.start() - 20)
             ctx = text[start:m.end()]
-            ctx = re.sub(r"^.*?[\.,!?]\s*", "", ctx)  # 직전 문장 컷
+            ctx = re.sub(r"^.*?[\.,!?]\s*", "", ctx)
             ctx = re.sub(r"\s+", " ", ctx).strip()
             if 5 < len(ctx) < 60 and ctx not in seen:
+                if stock_name and _looks_like_other_stock(ctx, stock_name):
+                    continue
                 seen.add(ctx)
                 facts.append(ctx)
             if len(facts) >= max_facts:
                 break
     return facts[:max_facts]
+
+
+def _looks_like_other_stock(fragment: str, stock_name: str) -> bool:
+    """짧은 문구 안에 '~는/은/이/가' 형태로 다른 회사명이 주어로 등장하면 True.
+    예: '광전자는 광통신' 같은 fragment 는 광전자에 관한 facts.
+    완벽하지는 않지만 명백한 오염 케이스는 막을 수 있다.
+    """
+    # 종목명 자체가 들어 있으면 OK
+    if stock_name and stock_name.replace(" ", "") in fragment.replace(" ", ""):
+        return False
+    # '회사명은/는/이/가' 패턴 — 한글 2~6자 + 조사
+    m = re.search(r"([가-힣A-Z][가-힣A-Z0-9]{1,5})(은|는|이|가)\s", fragment)
+    if m and m.group(1) != stock_name:
+        return True
+    return False
 
 
 def first_sentence(text: str, max_chars: int = 80) -> str:
@@ -285,7 +350,20 @@ def enrich(stock: dict, meta: dict, news_cache: dict, article_cache: dict, fetch
     """
     code = stock["code"]
     m = meta.get(code, {})
-    news = news_cache.get(code) or fetch_news(code, n=4)
+    news = news_cache.get(code) or fetch_news(code, n=6)
+    # 종목 관련성 우선 정렬: 헤드라인에 종목명 포함 > 본문에 포함 가능성
+    sname = stock["name"]
+    sname_bare = sname.replace(" ", "")
+    def _score(it: dict) -> int:
+        title = (it.get("title") or "").replace(" ", "")
+        body = (it.get("body") or "").replace(" ", "")
+        s = 0
+        if sname_bare and sname_bare in title:
+            s += 10
+        if sname_bare and sname_bare in body:
+            s += 3
+        return -s
+    news = sorted(news, key=_score)
     news_cache[code] = news
 
     # 상위 2개 뉴스의 본문을 가져와 facts 추출
@@ -299,7 +377,8 @@ def enrich(stock: dict, meta: dict, news_cache: dict, article_cache: dict, fetch
                 body = fetch_article_body(link)
                 article_cache[link] = body
             it["fullBody"] = body
-            it["facts"] = extract_facts(body) if body else []
+            # 종목명 근처 문장에서만 facts 추출 — 시황 기사에 섞인 다른 종목 오염 방지
+            it["facts"] = extract_facts(body, stock_name=stock["name"]) if body else []
             it["lead"] = first_sentence(body) if body else ""
 
     blob = " ".join((n.get("title") or "") + " " + (n.get("fullBody") or n.get("body") or "")
@@ -445,7 +524,9 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
 4. 한국어. 평이체 ('~합니다' 톤). 분량: 4~5문장, 약 200~280자.
 5. 마크다운 헤더 없음. 종목명은 **굵게** 한 번만.
 6. 제공된 [뉴스 키워드] 는 부분 발췌이므로 의미가 모호하면 무리하게 해석 말고 일반화.
-7. {kind_hint}
+7. **다른 종목 이름이 키워드에 보이면 무시하세요** (시황 기사 부산물). 분석 대상은 오직 위 [데이터] 의 종목명입니다.
+8. 키워드가 종목과 분명히 무관해 보이면 "구체적 호재가 보도에서 명확히 드러나지 않아…" 식으로 일반화 처리.
+9. {kind_hint}
 
 # 데이터
 - 종목명: {name}
