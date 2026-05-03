@@ -191,6 +191,22 @@
     renderAuthChipForUser(cached.user, signOut, function () { openMyInfo(cached.user); });
   }
 
+  // 관리자 여부 검증 → <html.is-admin> 토글. nav 의 .admin-only 가 이를 따라 보임.
+  // RLS 가 본인 행만 보이게 하므로 select 자체로 권한 검증됨. 실패해도 조용히 무시.
+  async function checkAdminStatus(userId) {
+    try {
+      const { data, error } = await sb
+        .from('admins')
+        .select('user_id')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (error) { console.debug('[auth] admin check failed', error); return; }
+      document.documentElement.classList.toggle('is-admin', !!data);
+    } catch (e) {
+      console.debug('[auth] admin check exception', e);
+    }
+  }
+
   // 로그인 상태에 따라 <html> 의 is-signed-in 클래스와 [data-signed-in-nick]
   // 주입점을 갱신한다. hero 의 signed-in / signed-out only 엘리먼트 토글 공용.
   function applySignedInClass(signedIn, nick) {
@@ -214,8 +230,11 @@
       renderAuthChipForUser(session.user, signOut, function () { openMyInfo(session.user); });
       // 로그인 상태 확정 직후, 저장된 테마가 있으면 당겨와 적용.
       loadThemeFromSupabase(session.user.id);
+      // 관리자 여부 확인 → <html> 에 is-admin 클래스 → nav 의 .admin-only 노출
+      checkAdminStatus(session.user.id);
     } else {
       applySignedInClass(false);
+      document.documentElement.classList.remove('is-admin');
       closeAuthMenu();
       slot.innerHTML =
         '<button type="button" class="kakao-btn" id="authKakaoSignIn" aria-label="카카오로 로그인">' +

@@ -1374,6 +1374,10 @@ html.is-signed-in .kakao-btn.signed-in-only { display: inline-flex !important; }
 .feedback-form .actions .status.ok { color: var(--green); }
 .feedback-form .actions .status.err { color: var(--red); }
 
+/* 관리자 전용 메뉴 — 기본 숨김. auth.js 가 admins 검증 후 html.is-admin 추가 시 노출 */
+.admin-only { display: none !important; }
+html.is-admin .admin-only { display: revert !important; }
+
 /* 메인 섹션 소제목 */
 .section-heading {
   max-width: 960px;

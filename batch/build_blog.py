@@ -237,6 +237,7 @@ def layout(title: str, subtitle: str, body: str, description: str = "", canonica
   <a href="/blog">Blog</a>
   <a href="/about">About</a>
   <a href="/contact">Contact Us</a>
+  <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
 </nav>
 <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
 
