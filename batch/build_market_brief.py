@@ -38,13 +38,37 @@ POSTS_DIR = ROOT / "web" / "posts"
 DATA_DIR = ROOT / "web" / "data"
 KST = timezone(timedelta(hours=9))
 
-# ── LLM 설정 (Gemini) ──────────────────────────────────
-# GEMINI_API_KEY 환경변수가 있으면 자체 서술을 LLM 으로 생성, 없으면 템플릿 폴백.
+# ── LLM 설정 ──────────────────────────────────────────
+# Provider 우선순위: 환경변수 LLM_PROVIDER 명시 > anthropic 키 있으면 anthropic > gemini > 템플릿 폴백
+LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "").strip().lower()  # "anthropic" | "gemini" | ""
+
+# Gemini (Google AI Studio)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash-lite").strip()
-# 무료 티어 RPM 보호 — 호출 간 지연(초). 기본 5초 = 분당 12콜 (모델별 RPM ≥ 15 가정).
 GEMINI_MIN_INTERVAL = float(os.environ.get("GEMINI_MIN_INTERVAL", "5.0"))
 _GEMINI_LAST_CALL_AT: float = 0.0
+
+# Anthropic (Claude)
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5").strip()
+# Anthropic 표준 티어 RPM 은 50 이상 — 1.5s 면 충분히 안전 (분당 40콜)
+ANTHROPIC_MIN_INTERVAL = float(os.environ.get("ANTHROPIC_MIN_INTERVAL", "1.5"))
+_ANTHROPIC_LAST_CALL_AT: float = 0.0
+
+
+def _select_provider() -> str:
+    """현재 우선순위의 LLM provider 반환. 'anthropic' / 'gemini' / '' (없음)."""
+    if LLM_PROVIDER == "anthropic" and ANTHROPIC_API_KEY:
+        return "anthropic"
+    if LLM_PROVIDER == "gemini" and GEMINI_API_KEY:
+        return "gemini"
+    if LLM_PROVIDER and LLM_PROVIDER not in ("anthropic", "gemini"):
+        logger.warning("[market-brief] 알 수 없는 LLM_PROVIDER='%s' — 자동 선택 사용", LLM_PROVIDER)
+    if ANTHROPIC_API_KEY:
+        return "anthropic"
+    if GEMINI_API_KEY:
+        return "gemini"
+    return ""
 
 DB_CANDIDATES = [
     Path.home() / "Project_AI/stock_db/data/stock_db.sqlite",
@@ -492,6 +516,81 @@ def _gemini_throttle() -> None:
     _GEMINI_LAST_CALL_AT = time.monotonic()
 
 
+def _anthropic_throttle() -> None:
+    global _ANTHROPIC_LAST_CALL_AT
+    now = time.monotonic()
+    elapsed = now - _ANTHROPIC_LAST_CALL_AT
+    if elapsed < ANTHROPIC_MIN_INTERVAL:
+        time.sleep(ANTHROPIC_MIN_INTERVAL - elapsed)
+    _ANTHROPIC_LAST_CALL_AT = time.monotonic()
+
+
+def call_anthropic(prompt: str, timeout: float = 30.0,
+                   temperature: float = 0.5, max_tokens: int = 700,
+                   retries: int = 2) -> str:
+    """Anthropic Messages API 호출. 실패 시 빈 문자열 반환.
+
+    Endpoint: https://api.anthropic.com/v1/messages
+    Headers: x-api-key, anthropic-version: 2023-06-01
+    """
+    if not ANTHROPIC_API_KEY:
+        return ""
+    url = "https://api.anthropic.com/v1/messages"
+    body = {
+        "model": ANTHROPIC_MODEL,
+        "max_tokens": max_tokens,
+        "temperature": temperature,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    data = json.dumps(body).encode("utf-8")
+
+    for attempt in range(retries + 1):
+        _anthropic_throttle()
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                res = json.loads(r.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError as e:
+            body_txt = ""
+            try:
+                body_txt = e.read().decode("utf-8", errors="ignore")
+            except Exception:
+                pass
+            # 429(rate limit) / 529(overload) 는 재시도
+            if e.code in (429, 529) and attempt < retries:
+                wait = 10 + 20 * attempt  # 10s, 30s
+                logger.warning("[market-brief] Anthropic %d — %ds 백오프 후 재시도 (%d/%d)",
+                               e.code, wait, attempt + 1, retries)
+                time.sleep(wait)
+                continue
+            logger.warning("[market-brief] Anthropic HTTP %s: %s", e.code, body_txt)
+            return ""
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+            logger.warning("[market-brief] Anthropic call failed: %s", e)
+            return ""
+    else:
+        return ""
+
+    # 응답 파싱 — content 블록 중 type=text 만 합침
+    try:
+        blocks = res.get("content") or []
+        text = "".join(b.get("text", "") for b in blocks if b.get("type") == "text").strip()
+        return text
+    except Exception as e:
+        logger.warning("[market-brief] Anthropic parse failed: %s", e)
+        return ""
+
+
 def call_gemini(prompt: str, timeout: float = 25.0,
                 temperature: float = 0.6, max_tokens: int = 600,
                 retries: int = 2) -> str:
@@ -710,17 +809,23 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
 
 
 def _llm_paragraph(stock: dict, kind: str) -> str:
-    """Gemini 호출. 실패 시 빈 문자열 → 호출자가 템플릿 폴백."""
-    if not GEMINI_API_KEY:
+    """선택된 provider 로 LLM 호출. 실패 시 빈 문자열 → 호출자가 템플릿 폴백."""
+    provider = _select_provider()
+    if not provider:
         return ""
-    prompt = _gemini_prompt(stock, kind)
-    text = call_gemini(prompt, max_tokens=500, temperature=0.6)
+    prompt = _gemini_prompt(stock, kind)  # 동일한 프롬프트 — provider 무관
+
+    if provider == "anthropic":
+        text = call_anthropic(prompt, max_tokens=700, temperature=0.5)
+    else:  # gemini
+        text = call_gemini(prompt, max_tokens=500, temperature=0.6)
+
     if not text:
         return ""
     # 후처리 — 불필요한 마크다운 헤더 제거
     text = re.sub(r"^\s*#+\s.*$", "", text, flags=re.MULTILINE).strip()
     # 너무 짧거나 너무 길면 폴백
-    if len(text) < 80 or len(text) > 800:
+    if len(text) < 80 or len(text) > 1000:
         logger.debug("[market-brief] LLM 응답 길이 비정상(%d): %s", len(text), text[:80])
         return ""
     return text

@@ -77,7 +77,10 @@ jobs:
         env:
           PYTHONUNBUFFERED: "1"
           TZ: Asia/Seoul
-          # Gemini API 키 — 설정되면 시장 분석 글 LLM 생성, 없으면 템플릿 폴백
+          # LLM provider — 설정 우선순위: LLM_PROVIDER > anthropic 키 > gemini 키 > 템플릿 폴백
+          LLM_PROVIDER: ${{ vars.LLM_PROVIDER || '' }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-haiku-4-5' }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.0-flash-lite' }}
           # 주말 강제 실행 토글 (workflow_dispatch 의 force_brief=true 일 때)
