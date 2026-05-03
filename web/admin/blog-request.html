@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 — 블로그 글 요청 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="관리자 전용 — 종목·주제 기반 블로그 글 자동 생성 요청." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js"></script>
+  <link rel="stylesheet" href="/assets/styles.css?v=20260503e" />
+  <style>
+    .admin-main { max-width: 880px; margin: 0 auto; padding: 24px 16px 60px; }
+    .admin-card {
+      background: var(--card, #fff);
+      border: 1px solid var(--border, #e5e7eb);
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+    }
+    .admin-card h2 { margin: 0 0 12px; font-size: 18px; }
+    .admin-card .lead { color: var(--text-secondary); font-size: 13px; margin: 0 0 14px; line-height: 1.6; }
+    .form-grid { display: grid; gap: 12px; }
+    .form-row { display: grid; gap: 4px; }
+    .form-row label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+    .form-row input[type="text"],
+    .form-row input[type="datetime-local"],
+    .form-row select,
+    .form-row textarea {
+      padding: 8px 10px;
+      border: 1px solid var(--border, #cbd5e1);
+      border-radius: 6px;
+      background: var(--bg, #fff);
+      color: var(--text-primary, #0f172a);
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .form-row textarea { min-height: 70px; resize: vertical; }
+    .form-row .hint { font-size: 11px; color: var(--text-secondary); }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn {
+      padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg-secondary, #f1f5f9); color: var(--text-primary);
+      font-size: 13px; cursor: pointer;
+    }
+    .btn--primary { background: #f59e0b; color: #fff; border-color: #f59e0b; font-weight: 600; }
+    .btn--primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn:hover { filter: brightness(0.96); }
+
+    .stock-search { position: relative; }
+    .stock-suggest {
+      position: absolute; top: calc(100% + 2px); left: 0; right: 0;
+      background: var(--card, #fff); border: 1px solid var(--border, #cbd5e1);
+      border-radius: 6px; max-height: 240px; overflow-y: auto; z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;
+    }
+    .stock-suggest .item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #eef2f6; font-size: 12px; }
+    .stock-suggest .item:hover { background: var(--bg-secondary, #f1f5f9); }
+    .stock-selected {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 10px; border-radius: 16px;
+      background: rgba(245,158,11,0.12); color: #b45309;
+      font-size: 12px; margin-top: 4px;
+    }
+    .stock-selected .x { cursor: pointer; opacity: 0.6; }
+    .stock-selected .x:hover { opacity: 1; }
+
+    table.req-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table.req-table th, table.req-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border, #eef2f6); }
+    table.req-table th { font-weight: 600; color: var(--text-secondary); background: var(--bg-secondary, #f8fafc); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+    .badge--pending { background: #fef3c7; color: #92400e; }
+    .badge--processing { background: #dbeafe; color: #1e40af; }
+    .badge--done { background: #d1fae5; color: #065f46; }
+    .badge--failed { background: #fee2e2; color: #991b1b; }
+
+    .uuid-box {
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      padding: 8px 10px;
+      background: var(--bg-secondary, #f1f5f9);
+      border-radius: 4px;
+      word-break: break-all;
+      margin-top: 8px;
+    }
+    .gate-message {
+      max-width: 480px; margin: 80px auto;
+      text-align: center; padding: 40px 20px;
+      background: var(--card, #fff);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .gate-message h2 { font-size: 18px; margin: 0 0 10px; }
+    .gate-message p { color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin: 0 0 12px; }
+    .status-line { padding: 6px 10px; border-radius: 4px; font-size: 12px; margin-top: 10px; display: none; }
+    .status-line.ok { display: block; background: #d1fae5; color: #065f46; }
+    .status-line.err { display: block; background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body class="page-about">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈">
+        <svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+        </svg>
+      </a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Admin</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="admin-main">
+
+  <!-- 게이트: 비로그인/비관리자 시 표시 -->
+  <div id="gateLoggedOut" class="gate-message" style="display:none">
+    <h2>🔒 로그인이 필요합니다</h2>
+    <p>관리자 전용 페이지입니다. 카카오 계정으로 로그인 후 다시 시도해 주세요.</p>
+    <button class="btn btn--primary" onclick="window.signInKakao && window.signInKakao()">카카오로 시작하기</button>
+  </div>
+
+  <div id="gateNotAdmin" class="gate-message" style="display:none">
+    <h2>⛔ 접근 권한이 없습니다</h2>
+    <p>이 페이지는 등록된 관리자만 사용할 수 있습니다.</p>
+    <p>본인의 UUID 를 등록 받으려면 다음 값을 복사해 운영자에게 전달하세요.</p>
+    <div class="uuid-box" id="gateMyUuid">로딩 중…</div>
+    <button class="btn" onclick="copyUuid()" style="margin-top:10px">UUID 복사</button>
+  </div>
+
+  <!-- 관리자 영역 -->
+  <div id="adminArea" style="display:none">
+
+    <div class="admin-card">
+      <h2>📝 새 블로그 글 요청</h2>
+      <p class="lead">
+        종목과 주제를 입력하면 매 30분 cron 이 실행되어 Claude Haiku 가 관련 뉴스를 분석하고 글을 자동 작성합니다.
+        예약 시각을 미래로 설정하면 그 시각 이후 다음 fire 에서 처리됩니다.
+      </p>
+
+      <form id="reqForm" class="form-grid" onsubmit="return false">
+        <div class="form-row stock-search">
+          <label for="stockInput">종목 <span style="color:#dc2626">*</span></label>
+          <input id="stockInput" type="text" placeholder="종목명 또는 코드 (예: 삼성전자, 005930)" autocomplete="off" />
+          <div id="stockSuggest" class="stock-suggest"></div>
+          <div id="stockSelected" class="stock-selected" style="display:none"></div>
+        </div>
+
+        <div class="form-row">
+          <label for="topicInput">주제 <span style="color:#dc2626">*</span></label>
+          <input id="topicInput" type="text" maxlength="200" placeholder="예: AI 데이터센터 전력 인프라 수출 호조" />
+          <span class="hint">기사 검색 가중치 + 글 분석 방향 지정에 사용 (200자 이내)</span>
+        </div>
+
+        <div class="form-row">
+          <label for="notesInput">추가 메모 (선택)</label>
+          <textarea id="notesInput" maxlength="500" placeholder="관리자가 강조하고 싶은 사실·맥락이 있다면 적어주세요"></textarea>
+          <span class="hint">LLM 프롬프트에 포함되어 분석에 반영됩니다 (500자 이내)</span>
+        </div>
+
+        <div class="form-row">
+          <label for="toneSelect">글 톤</label>
+          <select id="toneSelect">
+            <option value="analysis" selected>분석형 — 인과/맥락/전망 5~7문장</option>
+            <option value="brief">속보형 — 핵심 사실 위주 3~4문장</option>
+            <option value="explainer">해설형 — 초보자 대상 풀이 7~9문장</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="dueAtInput">발행 시각</label>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <label style="font-size:12px"><input type="radio" name="due" value="now" checked /> 즉시</label>
+            <label style="font-size:12px"><input type="radio" name="due" value="schedule" /> 예약</label>
+            <input id="dueAtInput" type="datetime-local" disabled />
+          </div>
+          <span class="hint">예약은 30분 단위 cron 정확도</span>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn--primary" id="submitBtn" onclick="submitRequest()">요청 등록</button>
+        </div>
+        <div id="submitStatus" class="status-line"></div>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2>📋 내 요청 목록 (최근 30개)</h2>
+      <div id="reqList">로딩 중…</div>
+    </div>
+
+    <div class="admin-card">
+      <h2>🔑 내 UUID</h2>
+      <p class="lead">DB 작업이나 권한 관리 시 참조용.</p>
+      <div class="uuid-box" id="myUuid">로딩 중…</div>
+      <button class="btn" onclick="copyUuid('myUuid')" style="margin-top:8px">복사</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a>
+</footer>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+
+  let currentUser = null;
+  let isAdmin = false;
+  let stocksCache = null;       // {code, name, market}[]
+  let selectedStock = null;     // {code, name, market}
+  let suggestIdx = -1;
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function showGate(which) {
+    ['gateLoggedOut', 'gateNotAdmin', 'adminArea'].forEach(id => {
+      const el = $(id);
+      if (el) el.style.display = (id === which) ? 'block' : 'none';
+    });
+  }
+
+  // ─── 인증 + 관리자 체크 ──────────────────────────
+  async function init() {
+    // supabase-js 로드 대기
+    for (let i = 0; i < 50 && !window.sb; i++) await new Promise(r => setTimeout(r, 60));
+    if (!window.sb) {
+      $('gateLoggedOut').innerHTML = '<h2>⚠️ 인증 모듈 로드 실패</h2><p>새로고침 후 다시 시도해 주세요.</p>';
+      showGate('gateLoggedOut');
+      return;
+    }
+
+    const { data: { user } } = await window.sb.auth.getUser();
+    if (!user) {
+      showGate('gateLoggedOut');
+      return;
+    }
+    currentUser = user;
+
+    // admins 테이블 조회 — RLS 로 본인 행만 보임
+    const { data, error } = await window.sb
+      .from('admins')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error('[admin] admins lookup failed:', error);
+      $('gateMyUuid').textContent = user.id;
+      showGate('gateNotAdmin');
+      return;
+    }
+    isAdmin = !!data;
+    if (!isAdmin) {
+      $('gateMyUuid').textContent = user.id;
+      showGate('gateNotAdmin');
+      return;
+    }
+
+    // 관리자 ✅
+    $('myUuid').textContent = user.id;
+    showGate('adminArea');
+    setupForm();
+    await loadRequests();
+  }
+
+  // ─── 종목 자동완성 ──────────────────────────────
+  async function loadStocks() {
+    if (stocksCache) return stocksCache;
+    try {
+      const r = await fetch('/data/stocks.json', { cache: 'force-cache' });
+      const d = await r.json();
+      stocksCache = (d.stocks || d.items || []).map(s => ({
+        code: s.code, name: s.name, market: s.market || ''
+      }));
+    } catch (e) {
+      console.warn('[admin] stocks.json load fail', e);
+      stocksCache = [];
+    }
+    return stocksCache;
+  }
+
+  function renderSuggest(items) {
+    const box = $('stockSuggest');
+    if (!items.length) { box.style.display = 'none'; return; }
+    box.innerHTML = items.map((s, i) =>
+      `<div class="item" data-i="${i}"><strong>${escapeHtml(s.name)}</strong> <code>${s.code}</code> · ${s.market}</div>`
+    ).join('');
+    box.style.display = 'block';
+    suggestIdx = -1;
+    [...box.querySelectorAll('.item')].forEach((el, i) => {
+      el.addEventListener('click', () => pickStock(items[i]));
+    });
+  }
+
+  function pickStock(s) {
+    selectedStock = s;
+    $('stockInput').value = '';
+    $('stockSuggest').style.display = 'none';
+    const sel = $('stockSelected');
+    sel.style.display = 'inline-flex';
+    sel.innerHTML = `<span><strong>${escapeHtml(s.name)}</strong> (${s.code}) · ${s.market}</span><span class="x" id="clearStock">×</span>`;
+    document.getElementById('clearStock').onclick = () => { selectedStock = null; sel.style.display = 'none'; };
+  }
+
+  async function setupForm() {
+    await loadStocks();
+
+    const input = $('stockInput');
+    input.addEventListener('input', () => {
+      const q = input.value.trim();
+      if (!q || q.length < 1) { $('stockSuggest').style.display = 'none'; return; }
+      const ql = q.toLowerCase();
+      const matched = stocksCache.filter(s =>
+        s.code.includes(q) || (s.name && s.name.toLowerCase().includes(ql))
+      ).slice(0, 12);
+      renderSuggest(matched);
+    });
+    input.addEventListener('keydown', (e) => {
+      const items = [...$('stockSuggest').querySelectorAll('.item')];
+      if (e.key === 'ArrowDown' && items.length) {
+        e.preventDefault();
+        suggestIdx = (suggestIdx + 1) % items.length;
+        items.forEach((el, i) => el.style.background = i === suggestIdx ? 'rgba(245,158,11,0.15)' : '');
+      } else if (e.key === 'ArrowUp' && items.length) {
+        e.preventDefault();
+        suggestIdx = (suggestIdx - 1 + items.length) % items.length;
+        items.forEach((el, i) => el.style.background = i === suggestIdx ? 'rgba(245,158,11,0.15)' : '');
+      } else if (e.key === 'Enter' && suggestIdx >= 0) {
+        e.preventDefault();
+        items[suggestIdx].click();
+      } else if (e.key === 'Escape') {
+        $('stockSuggest').style.display = 'none';
+      }
+    });
+
+    // 발행 시각 라디오
+    document.querySelectorAll('input[name="due"]').forEach(r => {
+      r.addEventListener('change', () => {
+        $('dueAtInput').disabled = r.value !== 'schedule' || !r.checked;
+        if (r.value === 'schedule' && r.checked && !$('dueAtInput').value) {
+          // 기본값: 30분 뒤
+          const t = new Date(Date.now() + 30 * 60 * 1000);
+          t.setSeconds(0, 0);
+          const pad = (n) => String(n).padStart(2, '0');
+          $('dueAtInput').value = `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}T${pad(t.getHours())}:${pad(t.getMinutes())}`;
+        }
+      });
+    });
+  }
+
+  // ─── 요청 등록 ──────────────────────────────────
+  window.submitRequest = async function () {
+    const status = $('submitStatus');
+    status.className = 'status-line'; status.textContent = '';
+
+    if (!selectedStock) {
+      status.className = 'status-line err'; status.textContent = '종목을 선택하세요.';
+      return;
+    }
+    const topic = $('topicInput').value.trim();
+    if (topic.length < 4) {
+      status.className = 'status-line err'; status.textContent = '주제를 4자 이상 입력하세요.';
+      return;
+    }
+    const notes = $('notesInput').value.trim();
+    const tone = $('toneSelect').value;
+    const dueRadio = document.querySelector('input[name="due"]:checked').value;
+    let due_at = new Date();
+    if (dueRadio === 'schedule') {
+      const v = $('dueAtInput').value;
+      if (!v) { status.className = 'status-line err'; status.textContent = '예약 시각을 입력하세요.'; return; }
+      due_at = new Date(v);
+    }
+
+    const userLabel = currentUser.user_metadata?.name
+      || currentUser.user_metadata?.full_name
+      || currentUser.user_metadata?.preferred_username
+      || currentUser.email
+      || '';
+
+    $('submitBtn').disabled = true;
+    const { data, error } = await window.sb.from('blog_requests').insert({
+      user_id: currentUser.id,
+      user_label: userLabel,
+      stock_code: selectedStock.code,
+      stock_name: selectedStock.name,
+      topic,
+      notes: notes || null,
+      tone,
+      due_at: due_at.toISOString(),
+    }).select().single();
+    $('submitBtn').disabled = false;
+
+    if (error) {
+      status.className = 'status-line err';
+      status.textContent = '등록 실패: ' + error.message;
+      return;
+    }
+    status.className = 'status-line ok';
+    status.textContent = `✅ 요청 등록됨 — ${due_at.toLocaleString('ko-KR')} 이후 30분 안에 처리됩니다.`;
+    $('topicInput').value = '';
+    $('notesInput').value = '';
+    selectedStock = null;
+    $('stockSelected').style.display = 'none';
+    await loadRequests();
+  };
+
+  // ─── 요청 목록 ──────────────────────────────────
+  async function loadRequests() {
+    const { data, error } = await window.sb
+      .from('blog_requests')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(30);
+    const list = $('reqList');
+    if (error) { list.textContent = '로드 실패: ' + error.message; return; }
+    if (!data || !data.length) { list.innerHTML = '<p class="lead">아직 등록된 요청이 없습니다.</p>'; return; }
+    const fmt = (s) => s ? new Date(s).toLocaleString('ko-KR') : '-';
+    list.innerHTML = `
+      <table class="req-table">
+        <thead><tr>
+          <th>등록</th><th>예약</th><th>종목</th><th>주제</th><th>톤</th><th>상태</th><th>결과</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${data.map(r => `
+            <tr data-id="${r.id}">
+              <td>${fmt(r.created_at)}</td>
+              <td>${fmt(r.due_at)}</td>
+              <td><strong>${escapeHtml(r.stock_name)}</strong> <code>${r.stock_code}</code></td>
+              <td>${escapeHtml(r.topic)}</td>
+              <td>${r.tone}</td>
+              <td><span class="badge badge--${r.status}">${r.status}</span></td>
+              <td>${r.result_slug ? `<a href="/blog/${r.result_slug}" target="_blank">보기</a>` : (r.error ? `<span style="color:#dc2626" title="${escapeHtml(r.error)}">실패</span>` : '-')}</td>
+              <td>${r.status === 'pending' ? `<button class="btn" data-cancel="${r.id}" style="font-size:11px;padding:4px 8px">취소</button>` : ''}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+    list.querySelectorAll('[data-cancel]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('이 요청을 삭제할까요?')) return;
+        const id = btn.dataset.cancel;
+        const { error } = await window.sb.from('blog_requests').delete().eq('id', id);
+        if (error) { alert('삭제 실패: ' + error.message); return; }
+        await loadRequests();
+      });
+    });
+  }
+
+  // ─── UUID 복사 ─────────────────────────────────
+  window.copyUuid = function (id) {
+    const el = document.getElementById(id || 'gateMyUuid');
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+      const orig = el.textContent;
+      el.textContent = '✅ 복사됨';
+      setTimeout(() => { el.textContent = orig; }, 1200);
+    });
+  };
+
+  // 인증 상태 변경 시 재초기화
+  function watchAuth() {
+    if (!window.sb) return setTimeout(watchAuth, 200);
+    window.sb.auth.onAuthStateChange(() => init());
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { init(); watchAuth(); });
+})();
+</script>
+</body>
+</html>
