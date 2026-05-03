@@ -72,6 +72,9 @@ jobs:
         env:
           PYTHONUNBUFFERED: "1"
           TZ: Asia/Seoul
+          # Gemini API 키 — 설정되면 시장 분석 글 LLM 생성, 없으면 템플릿 폴백
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.0-flash' }}
         run: |
           ARGS=""
           if [ -n "${{ github.event.inputs.limit }}" ]; then

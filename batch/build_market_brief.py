@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import sqlite3
 import sys
@@ -35,6 +36,12 @@ ROOT = Path(__file__).resolve().parent.parent
 POSTS_DIR = ROOT / "web" / "posts"
 DATA_DIR = ROOT / "web" / "data"
 KST = timezone(timedelta(hours=9))
+
+# ── LLM 설정 (Gemini) ──────────────────────────────────
+# GEMINI_API_KEY 환경변수가 있으면 자체 서술을 LLM 으로 생성, 없으면 템플릿 폴백.
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash").strip()
+# 무료 티어: 일 1,500콜 / 분 15콜 — 글당 약 14콜이면 충분.
 
 DB_CANDIDATES = [
     Path.home() / "Project_AI/stock_db/data/stock_db.sqlite",
@@ -314,6 +321,71 @@ def enrich(stock: dict, meta: dict, news_cache: dict, article_cache: dict, fetch
     }
 
 
+# ── Gemini LLM 호출 ──────────────────────────────────────
+def call_gemini(prompt: str, timeout: float = 25.0,
+                temperature: float = 0.6, max_tokens: int = 600) -> str:
+    """Gemini API 호출. 실패 시 빈 문자열 반환 (호출자가 폴백 처리).
+
+    Endpoint: generativelanguage.googleapis.com (AI Studio 무료 티어)
+    """
+    if not GEMINI_API_KEY:
+        return ""
+    url = (
+        f"https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
+    )
+    body = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": temperature,
+            "maxOutputTokens": max_tokens,
+            "responseMimeType": "text/plain",
+        },
+        # 안전 필터를 약간 완화 (금융 분석에 BLOCK_LOW 가 가끔 걸림)
+        "safetySettings": [
+            {"category": c, "threshold": "BLOCK_ONLY_HIGH"} for c in (
+                "HARM_CATEGORY_HARASSMENT",
+                "HARM_CATEGORY_HATE_SPEECH",
+                "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "HARM_CATEGORY_DANGEROUS_CONTENT",
+            )
+        ],
+    }
+    data = json.dumps(body).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            res = json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body_txt = ""
+        try:
+            body_txt = e.read().decode("utf-8", errors="ignore")[:300]
+        except Exception:
+            pass
+        logger.warning("[market-brief] Gemini HTTP %s: %s", e.code, body_txt)
+        return ""
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+        logger.warning("[market-brief] Gemini call failed: %s", e)
+        return ""
+    # 응답 파싱
+    try:
+        cands = res.get("candidates") or []
+        if not cands:
+            logger.debug("[market-brief] Gemini empty candidates: %s", res)
+            return ""
+        parts = cands[0].get("content", {}).get("parts") or []
+        text = "".join(p.get("text", "") for p in parts).strip()
+        return text
+    except Exception as e:
+        logger.warning("[market-brief] Gemini parse failed: %s", e)
+        return ""
+
+
 def has_jongseong(ch: str) -> bool:
     """한글 마지막 글자에 받침이 있는지."""
     if not ch:
@@ -330,10 +402,100 @@ def topic(name: str) -> str:
     return name + ("은" if has_jongseong(last) else "는")
 
 
+def _gemini_prompt(stock: dict, kind: str) -> str:
+    """Gemini 에 넘길 단일 프롬프트 — 사실 기반·환각 방지·세콤달.콤 보이스."""
+    name = stock["name"]
+    code = stock.get("code") or ""
+    rate = parse_num(stock.get("changeRate"))
+    rate_str = f"+{rate:.2f}%" if rate > 0 else f"{rate:.2f}%"
+    vol = fmt_num(stock.get("volume"))
+    mcap = fmt_mcap(stock.get("marketCap"))
+    industry = stock.get("industry") or stock.get("sector") or "(미상)"
+    group = stock.get("group") or "(없음)"
+    products = (stock.get("products") or "").strip()[:120] or "(미상)"
+    themes = stock.get("themes") or []
+    theme_str = " · ".join(themes[:3]) if themes else "(없음)"
+
+    # 뉴스 facts 통합
+    all_facts: list[str] = []
+    for n in stock.get("news") or []:
+        for f in (n.get("facts") or []):
+            if f not in all_facts:
+                all_facts.append(f)
+    facts_str = "\n".join(f"- {f}" for f in all_facts[:6]) if all_facts else "- (추출된 facts 없음)"
+
+    # 헤드라인 (참고용 — 직접 인용하지 말 것)
+    headlines = [n.get("title") or "" for n in (stock.get("news") or [])[:3]]
+    headlines_str = "\n".join(f"- {h}" for h in headlines if h) or "- (없음)"
+
+    # kind 별 분석 각도
+    kind_hint = {
+        "gainer": "급등 배경에 초점을 맞춰 분석.",
+        "volume": "거래량 급증의 의미와 자금 유입 흐름에 초점.",
+        "leader": "시장 주도주로서 지수 영향과 대형주 흐름에 초점.",
+    }.get(kind, "")
+
+    return f"""당신은 한국 주식시장 데이터를 객관적으로 분석하는 금융 데이터 작가입니다.
+세콤달.콤 주식맛집의 자동 발행 블로그를 위해 한 종목의 분석 문단을 작성하세요.
+
+# 절대 규칙
+1. 아래 [데이터] 와 [뉴스 키워드] 만 사용. 추가 정보 절대 추측·창작 금지.
+2. 매수/매도 권유 금지. 구체적 목표가·손절가 제시 금지.
+3. 환각 방지: 데이터에 없는 인물·기업명·계약·실적 수치 절대 만들지 마세요.
+4. 한국어. 평이체 ('~합니다' 톤). 분량: 4~5문장, 약 200~280자.
+5. 마크다운 헤더 없음. 종목명은 **굵게** 한 번만.
+6. 제공된 [뉴스 키워드] 는 부분 발췌이므로 의미가 모호하면 무리하게 해석 말고 일반화.
+7. {kind_hint}
+
+# 데이터
+- 종목명: {name}
+- 종목코드: {code}
+- 업종: {industry}
+- 그룹: {group}
+- 사업: {products}
+- 등락률: {rate_str}
+- 거래량: {vol}주
+- 시가총액: {mcap}
+
+# 뉴스 키워드 (네이버 종목 뉴스에서 자동 추출, 부분 발췌)
+{facts_str}
+
+# 참고 헤드라인 (직접 인용·복제 금지, 분위기 파악용)
+{headlines_str}
+
+# 추정 테마: {theme_str}
+
+# 출력 (분석 문단만, 메타 코멘트나 설명 없이):"""
+
+
+def _llm_paragraph(stock: dict, kind: str) -> str:
+    """Gemini 호출. 실패 시 빈 문자열 → 호출자가 템플릿 폴백."""
+    if not GEMINI_API_KEY:
+        return ""
+    prompt = _gemini_prompt(stock, kind)
+    text = call_gemini(prompt, max_tokens=500, temperature=0.6)
+    if not text:
+        return ""
+    # 후처리 — 불필요한 마크다운 헤더 제거
+    text = re.sub(r"^\s*#+\s.*$", "", text, flags=re.MULTILINE).strip()
+    # 너무 짧거나 너무 길면 폴백
+    if len(text) < 80 or len(text) > 800:
+        logger.debug("[market-brief] LLM 응답 길이 비정상(%d): %s", len(text), text[:80])
+        return ""
+    return text
+
+
 def synth_paragraph(stock: dict, kind: str) -> str:
-    """수집한 데이터·뉴스 facts·테마를 바탕으로 세콤달.콤의 분석 문단 작성.
+    """LLM(Gemini) 우선, 실패 시 템플릿 폴백.
+
+    수집한 데이터·뉴스 facts·테마를 바탕으로 세콤달.콤의 분석 문단 작성.
     원문을 인용하지 않고, 데이터 + 키워드 + 테마를 자체 문장으로 조합.
     """
+    # 1) Gemini 시도
+    llm_text = _llm_paragraph(stock, kind)
+    if llm_text:
+        return llm_text
+    # 2) 템플릿 폴백 — 아래 기존 로직 그대로
     name = stock["name"]
     rate = parse_num(stock.get("changeRate"))
     rate_str = f"+{rate:.2f}%" if rate > 0 else f"{rate:.2f}%"
