@@ -63,14 +63,19 @@ jobs:
           fi
           DATE=$(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M')
           git commit -m "chore(blog-req): 관리자 요청 처리 ${DATE}"
-          for i in 1 2 3; do
+          # 자동 생성 파일(recent-posts.json, sitemap.xml 등) 충돌은 우리 변경을 우선
+          for i in 1 2 3 4 5; do
             git fetch origin "${GITHUB_REF_NAME}"
-            if git rebase "origin/${GITHUB_REF_NAME}"; then
-              git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            if git rebase -X theirs "origin/${GITHUB_REF_NAME}"; then
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+                echo "push 성공 (시도 $i)"
+                exit 0
+              fi
             else
               git rebase --abort || true
-              sleep 5
             fi
+            echo "재시도 $i/5 — 5초 대기"
+            sleep 5
           done
-          echo "push 실패 — 다음 cron 에서 재시도"
-          exit 0
+          echo "push 5회 실패 — 다음 cron 에서 재시도"
+          exit 1  # 실패로 보고하여 워크플로 자체 fail 표시

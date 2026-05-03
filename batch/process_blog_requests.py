@@ -270,7 +270,8 @@ def build_prompt(req: dict, news_list: list[dict], price_summary: str, meta: dic
 
 # ── 요청 1건 처리 ────────────────────────────────
 def slugify(text: str, max_len: int = 40) -> str:
-    s = re.sub(r"[^\w가-힣\-]+", "-", text or "").strip("-").lower()
+    """슬러그 — 안정적인 URL 을 위해 ASCII 만 허용. 한글은 제거됨."""
+    s = re.sub(r"[^\w\-]+", "-", text or "", flags=re.ASCII).strip("-").lower()
     s = re.sub(r"-+", "-", s)
     return s[:max_len] or "post"
 
@@ -311,9 +312,15 @@ def process_one(req: dict) -> Optional[Path]:
             raise RuntimeError(f"LLM 응답 부족 (길이 {len(body)})")
         body = re.sub(r"^\s*```.*?\n|```\s*$", "", body, flags=re.MULTILINE).strip()
 
-        # 5) 마크다운 파일 작성
+        # 5) 마크다운 파일 작성 — slug 는 ASCII (code + timestamp). 한글 주제는 제목에만.
         date = datetime.now(KST).strftime("%Y-%m-%d")
-        slug = f"custom-{code}-{slugify(topic, 30)}-{datetime.now(KST).strftime('%y%m%d%H%M')}"
+        ts = datetime.now(KST).strftime('%y%m%d%H%M')
+        topic_ascii = slugify(topic, 20)  # 영문이 있으면 사용, 없으면 빈 문자열
+        slug_parts = ["custom", code]
+        if topic_ascii:
+            slug_parts.append(topic_ascii)
+        slug_parts.append(ts)
+        slug = "-".join(slug_parts)
         title = f"{name} — {topic[:60]}"
         summary = (
             f"{name}({code}) 분석 — {topic[:140]}"
