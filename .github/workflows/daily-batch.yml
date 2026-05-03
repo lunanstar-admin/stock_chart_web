@@ -18,6 +18,11 @@ on:
         description: "병렬 워커 수"
         required: false
         default: "8"
+      force_brief:
+        description: "주말이어도 시장 분석 글 강제 생성 (LLM 테스트용)"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -75,6 +80,8 @@ jobs:
           # Gemini API 키 — 설정되면 시장 분석 글 LLM 생성, 없으면 템플릿 폴백
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.0-flash' }}
+          # 주말 강제 실행 토글 (workflow_dispatch 의 force_brief=true 일 때)
+          FORCE_BRIEF: ${{ github.event.inputs.force_brief || 'false' }}
         run: |
           ARGS=""
           if [ -n "${{ github.event.inputs.limit }}" ]; then

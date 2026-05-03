@@ -786,7 +786,9 @@ def render_market_brief(stocks: list[dict], date: datetime) -> Optional[str]:
 # ── 엔트리 ──────────────────────────────────────────
 def generate(date: Optional[datetime] = None, force: bool = False) -> Optional[Path]:
     now = date or datetime.now(KST)
-    if now.weekday() >= 5 and not force:
+    # FORCE_BRIEF=true 환경변수로도 강제 실행 가능 (workflow_dispatch 토글용)
+    env_force = os.environ.get("FORCE_BRIEF", "").lower() in ("1", "true", "yes")
+    if now.weekday() >= 5 and not force and not env_force:
         logger.info("[market-brief] weekend skip")
         return None
 
