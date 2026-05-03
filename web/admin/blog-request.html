@@ -75,6 +75,11 @@
     .badge--processing { background: #dbeafe; color: #1e40af; }
     .badge--done { background: #d1fae5; color: #065f46; }
     .badge--failed { background: #fee2e2; color: #991b1b; }
+    .badge--custom { background: #fef3c7; color: #b45309; }
+    .badge--market { background: #dbeafe; color: #1e40af; }
+    .badge--daily { background: #f1f5f9; color: #475569; }
+    .badge--batch { background: #f1f5f9; color: #475569; }
+    .badge--other { background: #f1f5f9; color: #475569; }
 
     .uuid-box {
       font-family: ui-monospace, monospace;
@@ -211,6 +216,19 @@
     <div class="admin-card">
       <h2>📋 내 요청 목록 (최근 30개)</h2>
       <div id="reqList">로딩 중…</div>
+    </div>
+
+    <div class="admin-card">
+      <h2>🗂️ 발행 글 관리</h2>
+      <p class="lead">
+        모든 발행 글의 숨김/표시/삭제. 숨김은 블로그 목록·sitemap 에서 제외하고 .html 은 유지(noindex). 삭제는 영구 제거.
+        클릭 후 30분 내 cron 또는 즉시 트리거 시 반영됩니다.
+      </p>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <label style="font-size:12px"><input type="checkbox" id="filterAuto" checked /> 자동 글(daily/batch/market) 포함</label>
+        <input id="filterText" type="text" placeholder="제목/슬러그 검색" style="flex:1;min-width:200px;padding:6px 8px;font-size:12px" />
+      </div>
+      <div id="postList">로딩 중…</div>
     </div>
 
     <div class="admin-card">
@@ -372,6 +390,7 @@
       showGate('adminArea');
       setupForm();
       await loadRequests();
+      await loadPosts();
       $('debugPanel').style.display = 'none';
     } catch (e) {
       console.error('[admin] init() unexpected error:', e);
@@ -561,6 +580,88 @@
         await loadRequests();
       });
     });
+  }
+
+  // ─── 발행 글 목록 + 액션 ─────────────────────────
+  let _allPosts = [];
+  async function loadPosts() {
+    try {
+      const r = await fetch('/data/all-posts.json', { cache: 'no-cache' });
+      if (!r.ok) throw new Error('all-posts.json 없음 — build_blog 한 번 실행 필요');
+      const d = await r.json();
+      _allPosts = d.posts || [];
+    } catch (e) {
+      $('postList').innerHTML = '<p class="lead" style="color:#dc2626">로드 실패: ' + escapeHtml(String(e.message || e)) + '</p>';
+      return;
+    }
+    renderPostList();
+    // 검색·필터 이벤트 (한 번만 바인딩)
+    if (!loadPosts._wired) {
+      loadPosts._wired = true;
+      $('filterAuto').addEventListener('change', renderPostList);
+      $('filterText').addEventListener('input', renderPostList);
+    }
+  }
+
+  function renderPostList() {
+    const incAuto = $('filterAuto').checked;
+    const q = $('filterText').value.trim().toLowerCase();
+    const filtered = _allPosts.filter(p => {
+      if (!incAuto && (p.kind === 'daily' || p.kind === 'batch' || p.kind === 'market')) return false;
+      if (q && !p.title.toLowerCase().includes(q) && !p.slug.toLowerCase().includes(q)) return false;
+      return true;
+    });
+    if (!filtered.length) {
+      $('postList').innerHTML = '<p class="lead">조건에 맞는 글이 없습니다.</p>';
+      return;
+    }
+    const kindLabel = { custom: '맞춤', market: '시장', daily: '데이터', batch: '배치', other: '기타' };
+    const rows = filtered.slice(0, 100).map(p => `
+      <tr data-slug="${p.slug}">
+        <td>${p.date}</td>
+        <td><strong>${escapeHtml(p.title)}</strong>${p.hidden ? ' <span style="font-size:10px;background:#fee2e2;color:#991b1b;padding:1px 5px;border-radius:3px">숨김</span>' : ''}</td>
+        <td><code>${p.slug}</code></td>
+        <td><span class="badge badge--${p.kind}">${kindLabel[p.kind] || p.kind}</span></td>
+        <td><a href="/blog/${encodeURIComponent(p.slug)}" target="_blank">보기</a></td>
+        <td style="white-space:nowrap">
+          ${p.hidden
+            ? `<button class="btn" data-action="unhide" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px">표시</button>`
+            : `<button class="btn" data-action="hide" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px">숨김</button>`}
+          <button class="btn" data-action="delete" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px;background:#fee2e2;color:#991b1b">삭제</button>
+        </td>
+      </tr>`).join('');
+    $('postList').innerHTML = `
+      <table class="req-table">
+        <thead><tr>
+          <th>날짜</th><th>제목</th><th>슬러그</th><th>종류</th><th>링크</th><th>관리</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${filtered.length > 100 ? `<p class="lead">100개만 표시됨 (전체 ${filtered.length}개) — 검색으로 좁혀주세요.</p>` : ''}`;
+
+    $('postList').querySelectorAll('button[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => onAction(btn.dataset.action, btn.dataset.slug));
+    });
+  }
+
+  async function onAction(action, slug) {
+    const labels = { hide: '숨김', unhide: '표시', delete: '삭제' };
+    const label = labels[action] || action;
+    if (action === 'delete') {
+      if (!confirm(`"${slug}" 글을 영구 삭제할까요? 되돌릴 수 없습니다.`)) return;
+    } else {
+      if (!confirm(`"${slug}" 를 ${label} 처리할까요?`)) return;
+    }
+    const { error } = await window.sb.from('blog_admin_actions').insert({
+      user_id: currentUser.id,
+      action,
+      target_slug: slug,
+    });
+    if (error) {
+      alert(`등록 실패: ${error.message}`);
+      return;
+    }
+    alert(`✅ ${label} 요청 등록됨 — 30분 내 cron 또는 GitHub Actions 수동 실행 시 반영됩니다.`);
   }
 
   // ─── UUID 복사 ─────────────────────────────────

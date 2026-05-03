@@ -384,6 +384,119 @@ def process_one(req: dict) -> Optional[Path]:
         return None
 
 
+# ── 관리자 액션 처리 (hide / unhide / delete) ─────────
+def fetch_pending_actions() -> list[dict]:
+    status, data = _sb_request("GET", "blog_admin_actions", params={
+        "select": "*",
+        "status": "eq.pending",
+        "order": "created_at.asc",
+        "limit": "20",
+    })
+    if status != 200 or not isinstance(data, list):
+        return []
+    return data
+
+
+def update_action(action_id: str, **fields) -> bool:
+    fields["updated_at"] = datetime.now(timezone.utc).isoformat()
+    status, _ = _sb_request(
+        "PATCH",
+        "blog_admin_actions",
+        params={"id": f"eq.{action_id}"},
+        body=fields,
+        prefer="return=minimal",
+    )
+    return 200 <= status < 300
+
+
+def find_post_by_slug(slug: str) -> Optional[Path]:
+    """web/posts/*.md 중 frontmatter 의 slug 가 일치하는 파일 또는 파일명에 포함된 것."""
+    for p in POSTS_DIR.glob("*.md"):
+        try:
+            head = p.read_text(encoding="utf-8")[:2048]
+        except Exception:
+            continue
+        m = re.search(r"^---\s*\n(.*?)\n---", head, re.DOTALL | re.MULTILINE)
+        if m:
+            fm = m.group(1)
+            ms = re.search(r'^slug:\s*"?([^"\n]+)"?\s*$', fm, re.MULTILINE)
+            if ms and ms.group(1).strip() == slug:
+                return p
+        # fallback: filename suffix
+        if p.stem.endswith("-" + slug) or slug in p.stem:
+            return p
+    return None
+
+
+def set_hidden(md_path: Path, hidden: bool) -> bool:
+    """frontmatter 의 hidden 값을 갱신. 멱등."""
+    try:
+        text = md_path.read_text(encoding="utf-8")
+    except Exception as e:
+        logger.warning("[admin-act] read fail %s: %s", md_path.name, e)
+        return False
+    m = re.match(r"^(---\s*\n)(.*?)(\n---\s*\n)(.*)$", text, re.DOTALL)
+    if not m:
+        logger.warning("[admin-act] frontmatter 없음: %s", md_path.name)
+        return False
+    head, fm, sep, body = m.group(1), m.group(2), m.group(3), m.group(4)
+    # 기존 hidden 라인 제거
+    fm_new = re.sub(r"^hidden:\s*[^\n]*\n?", "", fm, flags=re.MULTILINE).rstrip()
+    if hidden:
+        fm_new += "\nhidden: true"
+    md_path.write_text(head + fm_new + sep + body, encoding="utf-8")
+    return True
+
+
+def remove_post_files(slug: str, md_path: Optional[Path]) -> int:
+    """해당 slug 의 .md + .html 영구 삭제. 삭제 개수 반환."""
+    removed = 0
+    if md_path and md_path.exists():
+        md_path.unlink()
+        removed += 1
+        logger.info("[admin-act] removed %s", md_path.relative_to(ROOT))
+    html_path = ROOT / "web" / "blog" / f"{slug}.html"
+    if html_path.exists():
+        html_path.unlink()
+        removed += 1
+        logger.info("[admin-act] removed %s", html_path.relative_to(ROOT))
+    return removed
+
+
+def process_action(act: dict) -> bool:
+    aid = act["id"]
+    action = act["action"]
+    slug = act["target_slug"]
+    logger.info("[admin-act] processing %s — %s on slug=%s", aid[:8], action, slug)
+    if not update_action(aid, status="processing"):
+        logger.warning("[admin-act] %s 락 실패", aid[:8])
+        return False
+    try:
+        md_path = find_post_by_slug(slug)
+        if action == "delete":
+            n = remove_post_files(slug, md_path)
+            if n == 0:
+                raise RuntimeError(f"파일을 찾지 못함: {slug}")
+        elif action == "hide":
+            if not md_path:
+                raise RuntimeError(f"md 파일을 찾지 못함: {slug}")
+            if not set_hidden(md_path, True):
+                raise RuntimeError("frontmatter 갱신 실패")
+        elif action == "unhide":
+            if not md_path:
+                raise RuntimeError(f"md 파일을 찾지 못함: {slug}")
+            if not set_hidden(md_path, False):
+                raise RuntimeError("frontmatter 갱신 실패")
+        else:
+            raise RuntimeError(f"알 수 없는 action: {action}")
+        update_action(aid, status="done", error=None)
+        return True
+    except Exception as e:
+        logger.exception("[admin-act] %s 실패", aid[:8])
+        update_action(aid, status="failed", error=str(e)[:500])
+        return False
+
+
 def main():
     import argparse
     ap = argparse.ArgumentParser()
@@ -398,19 +511,31 @@ def main():
         logger.warning("[blog-req] SUPABASE 환경변수 없음 — 스킵")
         return 0
 
+    # 1) 새 글 요청 (blog_requests)
     pending = fetch_pending_requests()
-    if not pending:
-        logger.info("[blog-req] pending 요청 없음")
-        return 0
-
-    logger.info("[blog-req] %d 건 처리 시작", len(pending))
     written = []
-    for req in pending:
-        p = process_one(req)
-        if p:
-            written.append(p)
+    if pending:
+        logger.info("[blog-req] %d 건 처리 시작", len(pending))
+        for req in pending:
+            p = process_one(req)
+            if p:
+                written.append(p)
+        logger.info("[blog-req] 처리 완료: %d 건 글 생성", len(written))
+    else:
+        logger.info("[blog-req] pending 요청 없음")
 
-    logger.info("[blog-req] 처리 완료: %d 건 글 생성", len(written))
+    # 2) 관리자 액션 (blog_admin_actions) — 숨김/표시/삭제
+    actions = fetch_pending_actions()
+    if actions:
+        logger.info("[admin-act] %d 건 처리 시작", len(actions))
+        ok = 0
+        for a in actions:
+            if process_action(a):
+                ok += 1
+        logger.info("[admin-act] 처리 완료: %d/%d 건", ok, len(actions))
+    else:
+        logger.info("[admin-act] pending 액션 없음")
+
     return 0
 
 

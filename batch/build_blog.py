@@ -69,6 +69,7 @@ class Post:
     cover: Optional[str] = None
     body_html: str = ""
     source_path: Path | None = None
+    hidden: bool = False      # frontmatter 의 hidden: true 로 설정 — 목록·sitemap·recent 에서 제외
 
 
 # ── 파싱 ────────────────────────────────────────────────
@@ -118,6 +119,7 @@ def parse_post(path: Path) -> Post:
         cover=fm.get("cover"),
         body_html=body_html,
         source_path=path,
+        hidden=bool(fm.get("hidden", False)),
     )
 
 
@@ -347,16 +349,17 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
             "tags": post.tags,
         },
         json_ld=ld_script,
-        noindex=is_auto,
+        noindex=is_auto or post.hidden,
     )
 
 
 def render_index(posts: list[Post]) -> str:
-    if not posts:
+    visible = [p for p in posts if not p.hidden]
+    if not visible:
         cards = '<div class="empty">아직 작성된 글이 없습니다.</div>'
     else:
         items = []
-        for p in posts:
+        for p in visible:
             tag_chips = "".join(
                 f'<span class="blog-tag">#{html.escape(t)}</span>' for t in p.tags
             )
@@ -440,8 +443,8 @@ def render_sitemap(posts: list[Post]) -> str:
     <priority>{priority}</priority>
   </url>""")
     for p in posts:
-        # 자동 생성 포스트는 색인 제외 — sitemap 에서도 누락
-        if p.slug.startswith("daily-") or p.slug.startswith("batch-"):
+        # 자동 생성 또는 hidden 포스트는 색인 제외 — sitemap 에서도 누락
+        if p.hidden or p.slug.startswith("daily-") or p.slug.startswith("batch-"):
             continue
         urls.append(f"""  <url>
     <loc>{SITE_URL}/blog/{p.slug}</loc>
@@ -519,9 +522,9 @@ def build() -> int:
     SITEMAP_PATH.write_text(render_sitemap(posts), encoding="utf-8")
     print(f"[blog] web/sitemap.xml")
 
-    # 메인 페이지 '최신 글 미리보기' 용 JSON — 최신순 6개, 자동 포스트도 포함
-    # 각 글이 자동(daily-/batch-) 인지 표시해 카드에서 시각적 구분 가능.
-    recent = posts[:6]
+    # 메인 페이지 '최신 글 미리보기' 용 JSON — hidden 제외 + 최신순 6개
+    visible_posts = [p for p in posts if not p.hidden]
+    recent = visible_posts[:6]
     recent_json = {
         "updated": datetime.now(KST).isoformat(timespec="seconds"),
         "posts": [
@@ -544,7 +547,34 @@ def build() -> int:
     )
     print(f"[blog] web/data/recent-posts.json ({len(recent)} posts)")
 
-    print(f"[blog] 완료: {len(posts)} 글 생성")
+    # 관리자 페이지용 — 전체 글 (hidden 포함) 메타. 비공개 페이지에서만 사용.
+    all_path = ROOT / "web" / "data" / "all-posts.json"
+    def _kind(slug: str) -> str:
+        if slug.startswith("daily-"): return "daily"
+        if slug.startswith("batch-"): return "batch"
+        if slug.startswith("market-brief-"): return "market"
+        if slug.startswith("custom-"): return "custom"
+        return "other"
+    all_json = {
+        "updated": datetime.now(KST).isoformat(timespec="seconds"),
+        "posts": [
+            {
+                "slug": p.slug,
+                "title": p.title,
+                "date": p.date,
+                "kind": _kind(p.slug),
+                "hidden": bool(p.hidden),
+            }
+            for p in posts
+        ],
+    }
+    all_path.write_text(
+        json.dumps(all_json, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    print(f"[blog] web/data/all-posts.json ({len(posts)} posts)")
+
+    print(f"[blog] 완료: {len(posts)} 글 생성 (hidden {sum(1 for p in posts if p.hidden)})")
     return 0
 
 
