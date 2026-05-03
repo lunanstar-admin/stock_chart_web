@@ -328,28 +328,33 @@
       currentUser = user;
       dbg('3/4 관리자 권한 확인 중… (uid=' + user.id.slice(0, 8) + '…)');
 
-      // admins 테이블 조회 — RLS 로 본인 행만 보임 (5초 타임아웃)
+      // admins 테이블 조회 — RLS 로 본인 행만 보임 (최대 3회 재시도)
+      // JWT 가 supabase-js 에 attach 되기 전에 첫 쿼리가 실행되면 빈 결과가 올 수 있어 재시도 필요.
       let isAdminRow = null;
-      try {
-        const result = await Promise.race([
-          window.sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle(),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('admins query timeout 5s')), 5000)),
-        ]);
-        const { data, error } = result;
-        if (error) {
-          console.error('[admin] admins lookup failed:', error);
-          $('gateMyUuid').textContent = user.id;
-          $('debugPanel').style.display = 'none';
-          showGate('gateNotAdmin');
-          return;
+      let lastError = null;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const result = await Promise.race([
+            window.sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle(),
+            new Promise((_, rej) => setTimeout(() => rej(new Error('admins query timeout 5s')), 5000)),
+          ]);
+          const { data, error } = result;
+          if (error) { lastError = error; break; }
+          if (data) { isAdminRow = data; break; }
+          // null 결과 — JWT 미세팅 가능성, 0.7초 대기 후 재시도 (총 3회)
+          if (attempt < 3) {
+            dbg(`3/4 관리자 권한 확인 중… (시도 ${attempt+1}/3)`);
+            await new Promise(r => setTimeout(r, 700));
+          }
+        } catch (e) {
+          lastError = e;
+          if (attempt < 3) {
+            await new Promise(r => setTimeout(r, 700));
+          }
         }
-        isAdminRow = data;
-      } catch (e) {
-        console.error('[admin] admins lookup exception:', e);
-        $('gateMyUuid').textContent = user.id;
-        $('debugPanel').style.display = 'none';
-        showGate('gateNotAdmin');
-        return;
+      }
+      if (lastError && !isAdminRow) {
+        console.error('[admin] admins lookup error:', lastError);
       }
 
       isAdmin = !!isAdminRow;
@@ -569,26 +574,16 @@
     });
   };
 
-  // 인증 상태 변경 시 재초기화 — debounce 로 짧은 시간 내 중복 init 차단
-  let _initTimer = null;
-  let _lastInitAt = 0;
+  // 인증 상태 변경 시 재초기화 — TOKEN_REFRESHED 만 스킵 (그 외엔 재시도 허용)
   function watchAuth() {
     if (!window.sb) return setTimeout(watchAuth, 200);
     window.sb.auth.onAuthStateChange((event) => {
-      // 무관한 이벤트는 스킵 — TOKEN_REFRESHED, USER_UPDATED 시 굳이 재렌더 안 함
       if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') return;
-      // 직전 init 후 2초 이내면 스킵
-      if (Date.now() - _lastInitAt < 2000) return;
-      clearTimeout(_initTimer);
-      _initTimer = setTimeout(() => {
-        _lastInitAt = Date.now();
-        init();
-      }, 200);
+      init();
     });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    _lastInitAt = Date.now();
     init();
     watchAuth();
   });
