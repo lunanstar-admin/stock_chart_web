@@ -247,46 +247,74 @@
 
   // ─── 인증 + 관리자 체크 ──────────────────────────
   async function init() {
-    // supabase-js 로드 대기
-    for (let i = 0; i < 50 && !window.sb; i++) await new Promise(r => setTimeout(r, 60));
-    if (!window.sb) {
-      $('gateLoggedOut').innerHTML = '<h2>⚠️ 인증 모듈 로드 실패</h2><p>새로고침 후 다시 시도해 주세요.</p>';
+    try {
+      // supabase-js 로드 대기 (최대 6초)
+      for (let i = 0; i < 100 && !window.sb; i++) await new Promise(r => setTimeout(r, 60));
+      if (!window.sb) {
+        $('gateLoggedOut').innerHTML = '<h2>⚠️ 인증 모듈 로드 실패</h2><p>새로고침 후 다시 시도해 주세요.</p>';
+        showGate('gateLoggedOut');
+        return;
+      }
+
+      // 세션 우선 시도 (로컬 즉시), 실패 시 getUser 폴백 (네트워크 검증)
+      let user = null;
+      try {
+        const { data: { session } } = await window.sb.auth.getSession();
+        user = session?.user || null;
+      } catch (e) { console.warn('[admin] getSession failed', e); }
+
+      if (!user) {
+        try {
+          const { data } = await window.sb.auth.getUser();
+          user = data?.user || null;
+        } catch (e) { console.warn('[admin] getUser failed', e); }
+      }
+
+      if (!user) {
+        showGate('gateLoggedOut');
+        return;
+      }
+      currentUser = user;
+
+      // admins 테이블 조회 — RLS 로 본인 행만 보임
+      let isAdminRow = null;
+      try {
+        const { data, error } = await window.sb
+          .from('admins')
+          .select('user_id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (error) {
+          console.error('[admin] admins lookup failed:', error);
+          $('gateMyUuid').textContent = user.id;
+          showGate('gateNotAdmin');
+          return;
+        }
+        isAdminRow = data;
+      } catch (e) {
+        console.error('[admin] admins lookup exception:', e);
+        $('gateMyUuid').textContent = user.id;
+        showGate('gateNotAdmin');
+        return;
+      }
+
+      isAdmin = !!isAdminRow;
+      if (!isAdmin) {
+        $('gateMyUuid').textContent = user.id;
+        showGate('gateNotAdmin');
+        return;
+      }
+
+      // 관리자 ✅
+      $('myUuid').textContent = user.id;
+      showGate('adminArea');
+      setupForm();
+      await loadRequests();
+    } catch (e) {
+      console.error('[admin] init() unexpected error:', e);
+      $('gateLoggedOut').innerHTML = '<h2>⚠️ 페이지 초기화 실패</h2><p>콘솔 에러를 확인 후 새로고침해 주세요.</p><pre style="text-align:left;font-size:11px;background:#f1f5f9;padding:10px;margin-top:10px;border-radius:6px;overflow:auto">' + escapeHtml(String(e && e.message || e)) + '</pre>';
       showGate('gateLoggedOut');
-      return;
     }
-
-    const { data: { user } } = await window.sb.auth.getUser();
-    if (!user) {
-      showGate('gateLoggedOut');
-      return;
-    }
-    currentUser = user;
-
-    // admins 테이블 조회 — RLS 로 본인 행만 보임
-    const { data, error } = await window.sb
-      .from('admins')
-      .select('user_id')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (error) {
-      console.error('[admin] admins lookup failed:', error);
-      $('gateMyUuid').textContent = user.id;
-      showGate('gateNotAdmin');
-      return;
-    }
-    isAdmin = !!data;
-    if (!isAdmin) {
-      $('gateMyUuid').textContent = user.id;
-      showGate('gateNotAdmin');
-      return;
-    }
-
-    // 관리자 ✅
-    $('myUuid').textContent = user.id;
-    showGate('adminArea');
-    setupForm();
-    await loadRequests();
   }
 
   // ─── 종목 자동완성 ──────────────────────────────
