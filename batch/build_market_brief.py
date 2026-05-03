@@ -610,13 +610,53 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
                 all_facts.append(f)
     facts_str = "\n".join(f"- {f}" for f in all_facts[:6]) if all_facts else "- (추출된 facts 없음)"
 
-    # 인과·배경 문장 — Gemini 가 직접 paraphrase 해서 분석문에 녹이도록 입력
-    rel_sents: list[str] = []
-    for n in stock.get("news") or []:
-        for s in (n.get("relevantSents") or []):
-            if s not in rel_sents:
-                rel_sents.append(s)
-    rel_sents_str = "\n".join(f"- {s}" for s in rel_sents[:6]) if rel_sents else "- (관련 문장 없음)"
+    # 본문 전체 — Gemini 가 인과 흐름까지 파악하도록 기사 본문을 통째로 제공.
+    # 종목명 등장 위치를 [[종목명]] 으로 강조하여 LLM 이 핵심부에 집중하게 함.
+    # gemini-2.0-flash-lite 컨텍스트는 1M 토큰 — 본문 3개 (~6K 토큰) 는 무리 없음.
+    article_blocks: list[str] = []
+    seen_links = set()
+    PER_ARTICLE_MAX = 2200  # 한 기사당 최대 글자수 (한국어 ~1100단어)
+    TOTAL_MAX = 6000        # 모든 기사 합계 한도
+    total_used = 0
+
+    def _highlight(body: str) -> str:
+        if not body or not name:
+            return body
+        bare = name.replace(" ", "")
+        # 종목명 (공백 포함/미포함 형태 모두) 을 강조
+        for needle in {name, bare} - {""}:
+            body = body.replace(needle, f"[[{needle}]]")
+        return body
+
+    for n in (stock.get("news") or [])[:3]:
+        body = (n.get("fullBody") or "").strip()
+        if not body:
+            continue
+        link = n.get("link") or ""
+        if link and link in seen_links:
+            continue
+        seen_links.add(link)
+
+        # 너무 긴 본문은 종목명 근처 ±1000자만 발췌
+        bare = name.replace(" ", "")
+        idx = max(body.find(name), body.find(bare))
+        if idx >= 0 and len(body) > PER_ARTICLE_MAX:
+            start = max(0, idx - PER_ARTICLE_MAX // 2)
+            end = min(len(body), idx + PER_ARTICLE_MAX // 2)
+            body = ("…" if start > 0 else "") + body[start:end] + ("…" if end < len(body) else "")
+        elif len(body) > PER_ARTICLE_MAX:
+            body = body[:PER_ARTICLE_MAX] + "…"
+
+        body = _highlight(body)
+        title = n.get("title") or ""
+        office = n.get("office") or ""
+        block = f"[기사 #{len(article_blocks)+1}] {title} ({office})\n{body}"
+        if total_used + len(block) > TOTAL_MAX:
+            break
+        article_blocks.append(block)
+        total_used += len(block)
+
+    article_str = "\n\n---\n\n".join(article_blocks) if article_blocks else "(본문을 가져오지 못했습니다)"
 
     # 헤드라인 (참고용 — 직접 인용하지 말 것)
     headlines = [n.get("title") or "" for n in (stock.get("news") or [])[:3]]
@@ -630,18 +670,23 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
     }.get(kind, "")
 
     return f"""당신은 한국 주식시장 데이터를 객관적으로 분석하는 금융 데이터 작가입니다.
-세콤달.콤 주식맛집의 자동 발행 블로그를 위해 한 종목의 분석 문단을 작성하세요.
+세콤달.콤 주식맛집의 자동 발행 블로그를 위해 **한 종목의 분석 문단**을 작성하세요.
+
+# 작업 흐름 (이 순서로 사고)
+1) [기사 본문] 을 모두 읽고, 분석 대상 종목 [[{name}]] 에 직접 관련된 사실·인과를 마음속으로 정리.
+2) 다른 종목 이야기·일반 시황 코멘트는 추출에서 제외.
+3) [데이터] 의 등락률·거래량·시총·테마와 결합해, **왜 올랐는지** 의 인과를 한 단락으로 작성.
 
 # 절대 규칙
-1. 아래 [데이터] 와 [관련 문장] 만 사용. 추가 정보 절대 추측·창작 금지.
-2. **[관련 문장]은 원문 그대로 복제하지 말고, 본인 표현으로 paraphrase**. 직접 인용은 안에 짧게(≤15자) 한 번만 허용.
-3. 매수/매도 권유 금지. 구체적 목표가·손절가 제시 금지.
-4. 환각 방지: 자료에 없는 인물·기업명·계약·실적 수치 절대 만들지 마세요.
-5. 한국어. 평이체 ('~합니다' 톤). 분량: 4~6문장, 약 240~340자.
-6. 마크다운 헤더 없음. 종목명은 **굵게** 한 번만.
-7. 다른 종목 이름이 자료에 보이면 무시 (시황 기사 부산물). 분석 대상은 오직 위 [데이터] 의 종목명.
-8. **인과 흐름 강조** — 왜 올랐는지 / 어떤 매크로 흐름과 연결되는지 / 종목 고유 이벤트가 무엇인지 를 자연스러운 한 단락으로.
-9. 자료가 모호하면 "구체적 호재가 보도에서 명확히 드러나지 않아…" 식으로 일반화 처리.
+1. 아래 [기사 본문] 과 [데이터] 만 사용. 그 밖의 추측·창작 금지.
+2. **원문 그대로 복제·문장 단위 카피 금지**. 본인 표현으로 paraphrase. 짧은 직접 인용(≤15자, 따옴표) 은 한 번만 허용.
+3. 매수/매도 권유 금지, 구체적 목표가·손절가 제시 금지.
+4. 환각 방지: 본문·데이터에 없는 인물·기업명·계약·실적 수치 절대 만들지 마세요.
+5. 한국어 평이체 ('~합니다' 톤). 분량 5~7문장, 약 280~420자. 한 단락으로.
+6. 마크다운 헤더 없음. 종목명은 **굵게** 한 번만 (자료의 [[…]] 표시는 출력에서 제거).
+7. 다른 종목 이름이 본문에 등장해도 분석 대상은 오직 [[{name}]]. 다른 종목은 "동일 테마 종목들도 동반…" 정도로만 일반화.
+8. **인과 흐름 강조** — 매크로 배경(예: AI 데이터센터·금리·환율) → 산업 영향(예: 전력 인프라 수요·수출 기대) → 종목 고유 이벤트(예: 거래재개·실적 공시·계약) → 시장 반응(거래량·등락률).
+9. 본문에 분석 단서가 부족하면 "구체적 호재가 보도에서 명확히 드러나지 않아…" 식으로 일반화 처리.
 10. {kind_hint}
 
 # 데이터
@@ -653,17 +698,13 @@ def _gemini_prompt(stock: dict, kind: str) -> str:
 - 등락률: {rate_str}
 - 거래량: {vol}주
 - 시가총액: {mcap}
+- 추정 테마: {theme_str}
 
-# 관련 문장 (네이버 종목 뉴스 본문에서 자동 발췌 — 종목명 근처의 인과·배경 문장)
-{rel_sents_str}
-
-# 보조 키워드 (위 문장에서 자동 추출, 의미 모호 시 무시 가능)
-{facts_str}
+# 기사 본문 (네이버 종목 뉴스 — 종목명은 [[{name}]] 으로 강조 표시)
+{article_str}
 
 # 참고 헤드라인 (직접 인용·복제 금지, 분위기 파악용)
 {headlines_str}
-
-# 추정 테마: {theme_str}
 
 # 출력 (분석 문단만, 메타 코멘트나 설명 없이):"""
 
