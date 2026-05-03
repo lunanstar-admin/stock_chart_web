@@ -234,6 +234,12 @@ def layout(title: str, subtitle: str, body: str, description: str = "", canonica
 <nav class="nav-drawer" id="navDrawer">
   <a href="/">Home</a>
   <a href="/chart">Stock Chart</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">수급 가이드</a>
+  <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/glossary">용어집</a>
+  <a href="/relations">📊 그룹사 관계도</a>
+  <a href="/ownership">계열사 관계도</a>
   <a href="/blog">Blog</a>
   <a href="/about">About</a>
   <a href="/contact">Contact Us</a>
