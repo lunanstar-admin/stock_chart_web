@@ -56,7 +56,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add web/posts web/blog web/data/recent-posts.json web/sitemap.xml web/rss.xml 2>/dev/null || true
+          git add web/posts web/blog web/data/recent-posts.json web/data/all-posts.json web/sitemap.xml web/rss.xml 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "변경 없음."
             exit 0
