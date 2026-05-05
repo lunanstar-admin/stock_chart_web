@@ -232,6 +232,14 @@
     </div>
 
     <div class="admin-card">
+      <h2>👥 회원 가입 추세</h2>
+      <p class="lead">개인정보(이메일·닉네임 등)는 노출하지 않습니다. 가입 시각만 집계합니다.</p>
+      <div id="memberStatsSummary" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;font-size:13px"></div>
+      <div id="memberChart" style="margin-bottom:18px"></div>
+      <div id="memberRecent" style="font-size:12px;color:var(--text-secondary);line-height:1.7"></div>
+    </div>
+
+    <div class="admin-card">
       <h2>🔑 내 UUID</h2>
       <p class="lead">DB 작업이나 권한 관리 시 참조용.</p>
       <div class="uuid-box" id="myUuid">로딩 중…</div>
@@ -391,6 +399,7 @@
       setupForm();
       await loadRequests();
       await loadPosts();
+      await loadMemberStats();
       $('debugPanel').style.display = 'none';
     } catch (e) {
       console.error('[admin] init() unexpected error:', e);
@@ -584,6 +593,29 @@
 
   // ─── 발행 글 목록 + 액션 ─────────────────────────
   let _allPosts = [];
+  let _pendingActionsBySlug = {};   // { slug: 'hide' | 'unhide' | 'delete' }
+
+  async function loadPendingActions() {
+    _pendingActionsBySlug = {};
+    try {
+      const { data, error } = await window.sb
+        .from('blog_admin_actions')
+        .select('action, target_slug, status')
+        .in('status', ['pending', 'processing']);
+      if (error) { console.warn('[admin] pending actions load fail', error); return; }
+      // 같은 slug 에 여러 액션이 있으면 마지막(가장 최근) 우선 — delete 가 가장 강함
+      const priority = { delete: 3, hide: 2, unhide: 1 };
+      (data || []).forEach(a => {
+        const cur = _pendingActionsBySlug[a.target_slug];
+        if (!cur || (priority[a.action] || 0) > (priority[cur] || 0)) {
+          _pendingActionsBySlug[a.target_slug] = a.action;
+        }
+      });
+    } catch (e) {
+      console.warn('[admin] pending actions exception', e);
+    }
+  }
+
   async function loadPosts() {
     try {
       const r = await fetch('/data/all-posts.json', { cache: 'no-cache' });
@@ -594,6 +626,7 @@
       $('postList').innerHTML = '<p class="lead" style="color:#dc2626">로드 실패: ' + escapeHtml(String(e.message || e)) + '</p>';
       return;
     }
+    await loadPendingActions();
     renderPostList();
     // 검색·필터 이벤트 (한 번만 바인딩)
     if (!loadPosts._wired) {
@@ -616,20 +649,40 @@
       return;
     }
     const kindLabel = { custom: '맞춤', market: '시장', daily: '데이터', batch: '배치', other: '기타' };
-    const rows = filtered.slice(0, 100).map(p => `
+    const actionLabel = { delete: '🗑️ 삭제 예약', hide: '🙈 숨김 예약', unhide: '👁️ 표시 예약' };
+    const actionStyle = {
+      delete: 'background:#fee2e2;color:#991b1b',
+      hide:   'background:#fef3c7;color:#92400e',
+      unhide: 'background:#dbeafe;color:#1e40af',
+    };
+    const rows = filtered.slice(0, 100).map(p => {
+      const pendAct = _pendingActionsBySlug[p.slug];
+      const pendBadge = pendAct
+        ? ` <span style="font-size:10px;${actionStyle[pendAct]};padding:1px 5px;border-radius:3px;font-weight:600">${actionLabel[pendAct]}</span>`
+        : '';
+      // 예약된 액션이 있으면 모든 버튼 비활성 (취소 버튼만 활성)
+      const dis = pendAct ? 'disabled' : '';
+      const btnOpacity = pendAct ? 'opacity:0.4;cursor:not-allowed' : '';
+      const cancelBtn = pendAct
+        ? `<button class="btn" data-action="cancel" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px;background:#f1f5f9">예약 취소</button>`
+        : '';
+      return `
       <tr data-slug="${p.slug}">
         <td>${p.date}</td>
-        <td><strong>${escapeHtml(p.title)}</strong>${p.hidden ? ' <span style="font-size:10px;background:#fee2e2;color:#991b1b;padding:1px 5px;border-radius:3px">숨김</span>' : ''}</td>
+        <td><strong>${escapeHtml(p.title)}</strong>${p.hidden ? ' <span style="font-size:10px;background:#fee2e2;color:#991b1b;padding:1px 5px;border-radius:3px">숨김</span>' : ''}${pendBadge}</td>
         <td><code>${p.slug}</code></td>
         <td><span class="badge badge--${p.kind}">${kindLabel[p.kind] || p.kind}</span></td>
         <td><a href="/blog/${encodeURIComponent(p.slug)}" target="_blank">보기</a></td>
         <td style="white-space:nowrap">
-          ${p.hidden
-            ? `<button class="btn" data-action="unhide" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px">표시</button>`
-            : `<button class="btn" data-action="hide" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px">숨김</button>`}
-          <button class="btn" data-action="delete" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px;background:#fee2e2;color:#991b1b">삭제</button>
+          ${pendAct
+            ? cancelBtn
+            : (p.hidden
+              ? `<button class="btn" data-action="unhide" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px">표시</button>`
+              : `<button class="btn" data-action="hide" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px">숨김</button>`) +
+              ` <button class="btn" data-action="delete" data-slug="${p.slug}" style="font-size:11px;padding:4px 8px;background:#fee2e2;color:#991b1b">삭제</button>`}
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
     $('postList').innerHTML = `
       <table class="req-table">
         <thead><tr>
@@ -646,6 +699,19 @@
 
   async function onAction(action, slug) {
     const labels = { hide: '숨김', unhide: '표시', delete: '삭제' };
+
+    if (action === 'cancel') {
+      if (!confirm(`"${slug}" 의 예약된 액션을 취소할까요?`)) return;
+      const { error } = await window.sb.from('blog_admin_actions')
+        .delete()
+        .eq('target_slug', slug)
+        .in('status', ['pending', 'processing']);
+      if (error) { alert('취소 실패: ' + error.message); return; }
+      await loadPendingActions();
+      renderPostList();
+      return;
+    }
+
     const label = labels[action] || action;
     if (action === 'delete') {
       if (!confirm(`"${slug}" 글을 영구 삭제할까요? 되돌릴 수 없습니다.`)) return;
@@ -661,7 +727,121 @@
       alert(`등록 실패: ${error.message}`);
       return;
     }
-    alert(`✅ ${label} 요청 등록됨 — 30분 내 cron 또는 GitHub Actions 수동 실행 시 반영됩니다.`);
+    // 즉시 UI 갱신 — pending 배지 표시
+    _pendingActionsBySlug[slug] = action;
+    renderPostList();
+  }
+
+  // ─── 회원 가입 추세 ────────────────────────────
+  async function loadMemberStats() {
+    try {
+      const [signupsR, countR] = await Promise.all([
+        window.sb.rpc('admin_member_signups'),
+        window.sb.rpc('admin_member_count'),
+      ]);
+      if (signupsR.error || countR.error) {
+        console.warn('[admin] member stats RPC error', signupsR.error, countR.error);
+        $('memberStatsSummary').innerHTML = '<span style="color:#dc2626">통계 함수가 아직 적용되지 않았습니다 — supabase/migrations/20260505_admin_member_stats.sql 실행 필요</span>';
+        return;
+      }
+      const signups = signupsR.data || [];
+      const total = countR.data || 0;
+      renderMemberStats(signups, total);
+    } catch (e) {
+      console.warn('[admin] member stats failed', e);
+    }
+  }
+
+  function renderMemberStats(signups, total) {
+    if (!signups.length) {
+      $('memberStatsSummary').innerHTML = '<span>회원이 아직 없습니다.</span>';
+      return;
+    }
+    const now = new Date();
+    const dayMs = 86400000;
+    const last7 = signups.filter(s => now - new Date(s.created_at) < 7 * dayMs).length;
+    const last30 = signups.filter(s => now - new Date(s.created_at) < 30 * dayMs).length;
+    const today = signups.filter(s => new Date(s.created_at).toDateString() === now.toDateString()).length;
+
+    $('memberStatsSummary').innerHTML = [
+      ['총 회원', total, '#0ea5e9'],
+      ['최근 30일', last30, '#10b981'],
+      ['최근 7일', last7, '#f59e0b'],
+      ['오늘', today, '#dc2626'],
+    ].map(([label, value, color]) =>
+      `<div style="background:var(--bg-secondary,#f8fafc);padding:8px 14px;border-radius:6px;border-left:3px solid ${color}">
+         <div style="font-size:11px;color:var(--text-secondary)">${label}</div>
+         <div style="font-size:18px;font-weight:600;color:${color}">${value.toLocaleString()}</div>
+       </div>`
+    ).join('');
+
+    // 최근 30일 일별 막대 차트 (SVG)
+    const days = 30;
+    const buckets = new Array(days).fill(0);
+    const labels = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - i);
+      labels.push(d);
+    }
+    signups.forEach(s => {
+      const t = new Date(s.created_at);
+      for (let i = 0; i < days; i++) {
+        const start = labels[i];
+        const end = new Date(start);
+        end.setDate(end.getDate() + 1);
+        if (t >= start && t < end) { buckets[i]++; break; }
+      }
+    });
+    const max = Math.max(1, ...buckets);
+    // viewBox 를 화면 비율과 비슷하게 (가로 1200, 높이 220) → 라벨이 너무 작아지지 않음
+    const W = 1200, H = 220, padL = 38, padR = 14, padT = 14, padB = 38;
+    const innerW = W - padL - padR;
+    const innerH = H - padT - padB;
+    const barW = innerW / days;
+    const fmtMD = (d) => `${d.getMonth()+1}/${d.getDate()}`;
+
+    const bars = buckets.map((v, i) => {
+      const x = padL + i * barW + 1.5;
+      const w = barW - 3;
+      const h = v ? Math.max(2, (v / max) * innerH) : 0;
+      const y = padT + innerH - h;
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#10b981" rx="2">
+        <title>${labels[i].toLocaleDateString('ko-KR')}: ${v}명</title>
+      </rect>`;
+    }).join('');
+
+    // Y축 — 0, 중간, max
+    const yTickValues = max >= 4 ? [0, Math.ceil(max / 2), max] : Array.from({length: max + 1}, (_, i) => i);
+    const yTicks = yTickValues.map(v => {
+      const y = padT + innerH - (v / max) * innerH;
+      return `
+        <line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/>
+        <text x="${padL - 6}" y="${y + 5}" font-size="13" fill="#64748b" text-anchor="end">${v}</text>`;
+    }).join('');
+
+    // X축 — 약 5일 간격으로 라벨
+    const labelStep = 5;
+    const xTicks = labels.map((d, i) => {
+      if (i % labelStep !== 0 && i !== days - 1) return '';
+      const x = padL + i * barW + barW / 2;
+      return `<text x="${x.toFixed(1)}" y="${H - 12}" font-size="13" fill="#64748b" text-anchor="middle">${fmtMD(d)}</text>`;
+    }).join('');
+
+    $('memberChart').innerHTML =
+      `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;max-height:240px">
+         ${yTicks}${bars}${xTicks}
+       </svg>
+       <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;text-align:center">최근 ${days}일 일별 신규 가입</div>`;
+
+    // 최근 5개 가입 (시각만, 줄바꿈)
+    const recent = signups.slice(0, 5);
+    $('memberRecent').innerHTML =
+      '<div style="font-weight:600;margin-bottom:4px">📅 최근 가입 시각</div>' +
+      '<ul style="margin:0;padding-left:18px;list-style:disc">' +
+      recent.map(s => `<li>${new Date(s.created_at).toLocaleString('ko-KR')}</li>`).join('') +
+      '</ul>';
   }
 
   // ─── UUID 복사 ─────────────────────────────────
