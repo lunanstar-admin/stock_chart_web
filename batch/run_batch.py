@@ -175,6 +175,13 @@ def run(output_dir: Path, limit: int | None, workers: int) -> None:
     logger.info("=== batch done in %.1fs (ok=%d, fail=%d) ===",
                 time.time() - t0, ok_count, fail_count)
 
+    # 3.5 공매도 잔고 비중 수집 (KRX → web/data/shorting.json)
+    try:
+        from batch import short_balance
+        short_balance.collect()
+    except Exception as e:
+        logger.warning("short_balance.collect 실패(무시): %s", e)
+
     # 4. 일간 포스트 생성 + 블로그 정적 빌드 (실패해도 배치 자체는 성공으로 본다)
     try:
         from batch import daily_post

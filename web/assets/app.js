@@ -163,6 +163,50 @@ async function loadStocks() {
   }));
   // 그룹 매핑 비동기 보강 (실패해도 무시)
   loadGroupMap().catch(() => {});
+  // 공매도 잔고 비중 (실패해도 무시)
+  loadShortMap().catch(() => {});
+}
+
+let _shortMap = null;       // code -> {ratio, class, label, pct}
+let _shortMeta = null;      // {trade_date, count, ...}
+async function loadShortMap() {
+  try {
+    const r = await fetch('/data/shorting.json');
+    if (!r.ok) return;
+    const d = await r.json();
+    _shortMap = d.items || {};
+    _shortMeta = { trade_date: d.trade_date, count: d.count };
+    if (typeof refreshShortBadges === 'function') refreshShortBadges();
+  } catch (e) {}
+}
+
+// 1 → '상위 99%' 같은 문구. UI 통일.
+function shortPctLabel(pct) {
+  if (pct == null) return '';
+  return '상위 ' + (100 - pct) + '%';
+}
+
+function makeShortBadge(s) {
+  if (!s) return '';
+  const tip = `공매도 잔고 비중 ${s.ratio.toFixed(2)}% — ${s.label} (${shortPctLabel(s.pct)})`;
+  return `<span class="cl-short cl-short--${s.class}" title="${tip}">🩳 ${s.label} (${shortPctLabel(s.pct)})</span>`;
+}
+
+function refreshShortBadges() {
+  if (!_shortMap) return;
+  document.querySelectorAll('.cl-row').forEach(row => {
+    const code = row.dataset.code;
+    if (!code || row.querySelector('.cl-short')) return;
+    const info = _shortMap[code];
+    if (!info) return;
+    const codeEl = row.querySelector('.cl-code');
+    if (!codeEl) return;
+    const wrap = document.createElement('span');
+    wrap.outerHTML;  // noop — we'll insert via innerHTML below
+    const tmp = document.createElement('div');
+    tmp.innerHTML = makeShortBadge(info);
+    codeEl.parentNode.insertBefore(tmp.firstChild, codeEl.nextSibling.nextSibling || codeEl.nextSibling);
+  });
 }
 
 let _groupMap = null;
@@ -588,6 +632,8 @@ function makeRow(s) {
   const groupBadge = group
     ? `<span class="cl-group" title="${group}">${group.replace('그룹','')}</span>`
     : '';
+  const shortInfo = _shortMap ? _shortMap[s.code] : null;
+  const shortBadge = makeShortBadge(shortInfo);
   row.innerHTML = `
     <div class="cl-info">
       <button type="button" class="${starCls}" data-role="star" data-code="${s.code}"
@@ -595,6 +641,7 @@ function makeRow(s) {
       <span class="cl-name" title="${s.name}">${s.name}</span>
       <span class="cl-code">${s.code} · ${s.market}</span>
       ${groupBadge}
+      ${shortBadge}
       <span style="font-size:11px;font-weight:600;margin-top:2px">${formatNum(s.price)}</span>
       <span style="font-size:10px" class="${rateClass}">${rateTxt}</span>
     </div>
@@ -1047,6 +1094,26 @@ function buildDetailHTML(stock, payload, quote, chaebolInfo) {
     ${companySection}
 
     ${chaebolSection}
+
+    ${(function () {
+      const si = _shortMap ? _shortMap[stock.code] : null;
+      if (!si) return '';
+      const tradeDate = (_shortMeta && _shortMeta.trade_date) || '';
+      const dateLine = tradeDate ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:4px">기준일 ${tradeDate.slice(0,4)}-${tradeDate.slice(4,6)}-${tradeDate.slice(6,8)} · 시장 ${shortPctLabel(si.pct)}</div>` : '';
+      return `
+      <div class="section">
+        <h3>🩳 공매도 잔고 비중</h3>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:10px 0">
+          <div style="font-size:24px;font-weight:700">${si.ratio.toFixed(2)}<span style="font-size:14px;font-weight:500;margin-left:2px">%</span></div>
+          <span class="short-badge short-badge--${si.class}" style="font-size:13px;padding:4px 10px">${si.label}</span>
+        </div>
+        ${dateLine}
+        <p style="font-size:11px;color:var(--text-secondary);margin:8px 0 0;line-height:1.6">
+          공매도 잔고 비중 = 빌려서 갚지 않은 주식 ÷ 총 발행주식수. 이 종목은 시장 ${shortPctLabel(si.pct)} 수준으로 분류됩니다.
+          참고용 데이터이며 매수/매도 권유가 아닙니다.
+        </p>
+      </div>`;
+    })()}
 
     <div class="section">
       <div class="section-head">

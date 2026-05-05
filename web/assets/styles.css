@@ -649,6 +649,27 @@ main { padding: 12px 24px 24px; }
   color: #b45309;
   border-color: rgba(217, 119, 6, 0.3);
 }
+
+/* 공매도 잔고 비중 배지 — 6단계 */
+.cl-row .cl-info .cl-short,
+.short-badge {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: fit-content;
+  border: 1px solid transparent;
+}
+.cl-short--good_strong, .short-badge--good_strong { background: rgba(16,185,129,0.15); color: #047857; border-color: rgba(16,185,129,0.35); }
+.cl-short--good,        .short-badge--good        { background: rgba(132,204,22,0.16); color: #4d7c0f; border-color: rgba(132,204,22,0.35); }
+.cl-short--neutral,     .short-badge--neutral     { background: rgba(234,179,8,0.16);  color: #92400e; border-color: rgba(234,179,8,0.35);  }
+.cl-short--warn,        .short-badge--warn        { background: rgba(249,115,22,0.16); color: #c2410c; border-color: rgba(249,115,22,0.4);  }
+.cl-short--high,        .short-badge--high        { background: rgba(239,68,68,0.16);  color: #b91c1c; border-color: rgba(239,68,68,0.4);   }
+.cl-short--alert,       .short-badge--alert       { background: rgba(127,29,29,0.18);  color: #fff;    border-color: #7f1d1d; }
+
 .cl-row .cl-chart { min-width: 0; }
 .cl-row .cl-chart canvas { border-radius: 4px; display: block; width: 100%; height: 180px; }
 .cl-row .cl-supply { font-size: 9px; line-height: 1.4; overflow: hidden; display: flex; flex-direction: column; gap: 2px; }
