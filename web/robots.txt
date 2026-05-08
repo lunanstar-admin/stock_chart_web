@@ -12,4 +12,14 @@ User-agent: Googlebot
 Allow: /
 Disallow: /data/
 
+# 구글 AdSense 크롤러 — ads.txt + 광고 표시 페이지 명시 허용
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
+User-agent: Mediapartners-Google
+Allow: /
+
 Sitemap: https://secomdal.com/sitemap.xml
