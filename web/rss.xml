@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 08 May 2026 17:13:17 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 08 May 2026 19:48:45 +0900</lastBuildDate>
+    <item>
+      <title>2026년 05월 08일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260508</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260508</guid>
+      <pubDate>Fri, 08 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 08일 한국 주식시장 시황 분석 — 급등 주도주: 한울반도체 · 현대오토에버 · 가온전선. 오늘의 부각 테마: 금융 · 반도체 · AI · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 05월 08일 마켓 랩업 — KOSPI·KOSDAQ 상승/하락 Top 5</title>
+      <link>https://secomdal.com/blog/daily-wrap-20260508</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-wrap-20260508</guid>
+      <pubDate>Fri, 08 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 08일 장마감 마켓 랩업. KOSPI 상승 1228·하락 1028, KOSDAQ 상승 729·하락 856.</description>
+    </item>
     <item>
       <title>2026년 05월 07일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260507</link>
@@ -131,13 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/rsi-basics</guid>
       <pubDate>Sat, 18 Apr 2026 00:00:00 +0900</pubDate>
       <description>RSI(상대강도지수)의 정의부터 실전 함정까지. 단순히 70/30 기준만으로 매매를 결정하면 안 되는 이유.</description>
-    </item>
-    <item>
-      <title>투자자별 수급 데이터 읽는 법 — 외국인·기관·개인</title>
-      <link>https://secomdal.com/blog/supply-demand-guide</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/supply-demand-guide</guid>
-      <pubDate>Wed, 15 Apr 2026 00:00:00 +0900</pubDate>
-      <description>외국인·기관·개인의 순매수 데이터가 무엇을 의미하는지, 그리고 누적 차트를 볼 때 흔히 놓치는 포인트.</description>
     </item>
   </channel>
 </rss>
