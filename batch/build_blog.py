@@ -133,7 +133,15 @@ HEAD_COMMON = """<script async src="https://pagead2.googlesyndication.com/pagead
 <script src="/assets/nav.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="/assets/auth.js"></script>
-<link rel="stylesheet" href="/assets/styles.css" />"""
+<link rel="stylesheet" href="/assets/styles.css" />
+<!-- Google Analytics (gtag.js) — G-QG41JS7EJ1 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QG41JS7EJ1');
+</script>"""
 
 HOME_SVG = """<svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
   <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
