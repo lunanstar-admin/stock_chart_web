@@ -237,6 +237,11 @@ def layout(title: str, subtitle: str, body: str, description: str = "", canonica
   <a href="/guide/technical-indicators">기술적 지표</a>
   <a href="/guide/supply-demand">수급 가이드</a>
   <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+  <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+  <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+  <a href="/guide/market-metrics">시총·거래량</a>
+  <a href="/guide/holidays">휴장일</a>
   <a href="/glossary">용어집</a>
   <a href="/relations">📊 그룹사 관계도</a>
   <a href="/ownership">계열사 관계도</a>
@@ -460,12 +465,30 @@ def render_sitemap(posts: list[Post]) -> str:
     <priority>0.7</priority>
   </url>""")
     # 가이드 페이지
-    for slug in ("guide/technical-indicators", "guide/supply-demand", "guide/candle-patterns", "glossary"):
+    for slug in (
+        "guide/technical-indicators",
+        "guide/supply-demand",
+        "guide/candle-patterns",
+        "guide/holidays",
+        "guide/per-pbr-trap",
+        "guide/foreign-vs-institution",
+        "guide/preferred-vs-common",
+        "guide/market-metrics",
+        "glossary",
+    ):
         urls.append(f"""  <url>
     <loc>{SITE_URL}/{slug}</loc>
     <lastmod>{today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
+  </url>""")
+    # FAQ / Terms (정책 페이지)
+    for slug, prio in (("faq", "0.6"), ("terms", "0.5")):
+        urls.append(f"""  <url>
+    <loc>{SITE_URL}/{slug}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>{prio}</priority>
   </url>""")
     # 관계도
     urls.append(f"""  <url>

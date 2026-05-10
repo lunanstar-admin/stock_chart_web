@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>한국 주식 시장 휴장일 완벽 가이드 — 세콤달.콤 주식맛집</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="KOSPI · KOSDAQ 정규 거래시간, 동시호가, 정기 휴장일과 단축 거래일, 휴장 전후 결제·배당락 주의점, 미국 시장과의 시차 영향까지 정리한 완벽 가이드." />
+<meta name="keywords" content="주식 휴장일, KOSPI 거래시간, 동시호가, 단축 거래, 결제일, 배당락일, 권리락일, 한국거래소 캘린더" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://secomdal.com/guide/holidays" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="세콤달.콤 주식맛집" />
+<meta property="og:title" content="한국 주식 시장 휴장일 완벽 가이드" />
+<meta property="og:description" content="KOSPI · KOSDAQ 정규 거래시간, 동시호가, 정기 휴장일과 단축 거래일, 휴장 전후 결제·배당락 주의점, 미국 시장과의 시차 영향까지 정리한 완벽 가이드." />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:image" content="https://secomdal.com/og-image.png" />
+<meta property="og:url" content="https://secomdal.com/guide/holidays" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+<style>
+.guide-content h2 { font-size: 26px; margin: 0 0 8px; }
+.guide-content .lead { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; line-height: 1.7; }
+.guide-content section { margin: 24px 0; padding: 16px 18px; background: var(--card,#fff); border: 1px solid var(--border,#e5e7eb); border-radius: 8px; }
+.guide-content section h3 { font-size: 18px; margin: 0 0 10px; color: var(--text-primary); }
+.guide-content section h4 { font-size: 15px; margin: 14px 0 6px; }
+.guide-content p, .guide-content li { line-height: 1.75; font-size: 14px; }
+.guide-content ul, .guide-content ol { padding-left: 22px; }
+.guide-content code.formula { display: inline-block; background: var(--bg-secondary,#f1f5f9); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace,monospace; font-size: 13px; }
+.guide-content .callout { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.guide-content .callout strong { color: #b45309; }
+.guide-toc { background: var(--bg-secondary,#f8fafc); padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; }
+.guide-toc strong { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
+.guide-toc a { display: inline-block; margin-right: 12px; font-size: 13px; }
+.guide-related { margin-top: 30px; padding: 16px; background: var(--bg-secondary,#f8fafc); border-radius: 8px; }
+.guide-related a { display: inline-block; margin-right: 14px; font-size: 13px; }
+</style>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Guide · 휴장일</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/relations">그룹사 관계도</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">투자자 수급</a>
+  <a href="/guide/candle-patterns">캔들 차트</a>
+  <a href="/glossary">용어집</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content guide-content">
+    
+<h2>📅 한국 주식 시장 휴장일 완벽 가이드</h2>
+<p class="lead">
+  한국 주식 시장(KOSPI · KOSDAQ)은 한국거래소(KRX)의 거래일 캘린더에 따라 운영됩니다.
+  주말과 공휴일은 휴장이 기본이지만, "임시 휴장", "조기 폐장", "동시호가 없는 거래일" 등
+  알아두지 않으면 놓치기 쉬운 변수도 있습니다. 이 가이드는 거래일·휴장일 결정 원칙부터
+  연중 주요 휴장 패턴, 단축 거래일 운영 방식, 그리고 휴장 전후 매매 전략의 주의점까지
+  실전 관점에서 정리합니다.
+</p>
+
+<section>
+  <h3>1. 정규 거래 시간과 동시호가</h3>
+  <p>
+    한국거래소의 정규 거래는 <strong>09:00~15:30</strong> (KST). 시작 전 동시호가는 08:00~09:00,
+    종료 동시호가는 15:20~15:30 입니다. 시간외 단일가는 16:00~18:00 으로 별도 운영됩니다.
+    동시호가 시간엔 호가는 받지만 체결은 한 번에 단일가로 결정되어, 시가/종가가 결정됩니다.
+  </p>
+</section>
+
+<section>
+  <h3>2. 한국거래소가 정한 정기 휴장일</h3>
+  <ul>
+    <li><strong>토요일·일요일</strong> 매주 휴장</li>
+    <li><strong>법정 공휴일</strong>: 신정·설날·삼일절·어린이날·석가탄신일·현충일·광복절·추석·개천절·한글날·성탄절</li>
+    <li><strong>대체공휴일</strong>: 일요일과 겹친 명절·어린이날 등이 월요일로 대체될 때 그 월요일도 휴장</li>
+    <li><strong>근로자의 날(5월 1일)</strong>: 한국거래소 직원이 근로자에 해당해 주식시장도 휴장</li>
+    <li><strong>연말 마지막 거래일 다음 영업일</strong>: 12월 31일은 연말 폐장 처리, 다음 해 1월 첫 영업일이 새 거래일</li>
+  </ul>
+  <div class="callout"><strong>참고:</strong> 한국거래소는 매년 12월 초 다음 해 거래일 캘린더를 공식 발표합니다. 임시 휴장(특별 행사 등)은 예외적으로 추가 발표.</div>
+</section>
+
+<section>
+  <h3>3. 단축 거래·조기 폐장 케이스</h3>
+  <h4>새해 첫 거래일</h4>
+  <p>매년 1월 첫 영업일은 <strong>10:00 시작</strong>으로 단축 운영됩니다. 종가 결정은 평소처럼 15:30. 시간외도 정상.</p>
+  <h4>설·추석 직전 거래일</h4>
+  <p>대체로 정상 운영이지만, 종종 결제일 조정으로 거래량이 줄어드는 경향. 시간외 거래는 명절 연휴 동안 정지.</p>
+</section>
+
+<section>
+  <h3>4. 휴장이 가격·수급에 미치는 영향</h3>
+  <ul>
+    <li><strong>주말/명절 직전</strong>: 매수보다 매도가 우세한 경향 — 연휴 동안의 해외 시장 변동 리스크를 회피하려는 심리</li>
+    <li><strong>휴장 직후 첫 거래일</strong>: 해외 시장에서 누적된 변동이 반영돼 갭 발생 빈도 ↑</li>
+    <li><strong>외국인 매매 패턴</strong>: 한국 휴장 중에도 미국·아시아 시장은 열리므로, 글로벌 매크로 변화가 한국에 한꺼번에 반영</li>
+    <li><strong>결제일 (T+2)</strong>: 매매 체결 후 2영업일 뒤 결제. 휴장 사이에 결제일이 끼면 자금 묶임 기간이 길어짐</li>
+  </ul>
+</section>
+
+<section>
+  <h3>5. 휴장 전후 매매 시 주의점</h3>
+  <ol>
+    <li><strong>결제일 계산</strong>: 매수일 +2영업일 = 결제일. 명절 전 매수는 결제 지연을 감안</li>
+    <li><strong>배당락일</strong>: 결산 배당받으려면 <em>배당기준일 2영업일 전</em>까지 매수해야 함</li>
+    <li><strong>권리락일</strong>: 무상증자·액면분할 등 권리 발생을 반영한 가격 조정. 휴장과 겹치면 더 헷갈림</li>
+    <li><strong>임시 변동성 완화장치(VI)</strong>: 휴장 직후 시가 갭 변동 클 때 자주 발동</li>
+  </ol>
+</section>
+
+<section>
+  <h3>6. 미국 시장과의 시차</h3>
+  <p>
+    미국 동부 시간(EDT/EST) 기준 정규장 09:30~16:00 = 한국 시간 22:30/23:30 ~ 다음날 05:00/06:00.
+    한국 휴장 중에도 미국 장이 열리는 경우, 다음 거래일 한국 시장의 시가는 미국 변동을 그대로 반영합니다.
+    그래서 일·월요일 갭이 자주 나타나고, 명절 연휴 직후엔 변동폭이 더 큽니다.
+  </p>
+</section>
+
+<section>
+  <h3>마치며</h3>
+  <p>
+    휴장일은 단순히 "쉬는 날"이 아니라 매매·결제·세금 계산 모두에 영향을 주는 중요한 변수입니다.
+    매년 12월 한국거래소가 발표하는 다음 해 캘린더를 확인해두고, 명절·연말 직전에는 결제·배당락 일정을
+    한 번 더 체크하시기 바랍니다. 세콤달.콤 주식맛집의 차트는 영업일만 표시되어, 휴장 다음 거래일은
+    바로 직전 거래일과 캔들이 인접해 그려집니다.
+  </p>
+</section>
+
+
+    <div class="guide-related">
+      <strong>📚 함께 읽기</strong><br>
+      <a href="/guide/technical-indicators">기술적 지표 가이드</a>
+      <a href="/guide/supply-demand">수급 읽는 법</a>
+      <a href="/guide/candle-patterns">캔들 차트 기초</a>
+      <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+      <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+      <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+      <a href="/guide/market-metrics">시총·거래량</a>
+      <a href="/guide/holidays">휴장일 가이드</a>
+      <a href="/glossary">주식 용어집</a>
+      <a href="/chart">전종목 차트 →</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+</footer>
+</body>
+</html>

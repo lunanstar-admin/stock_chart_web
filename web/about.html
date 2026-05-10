@@ -7,15 +7,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About — 세콤달.콤 주식맛집</title>
-  <meta name="description" content="세콤달.콤 주식맛집 소개 — 한국 주식 KOSPI · KOSDAQ 전종목의 차트·기술적 지표·투자자 수급을 매일 장 마감 후 무료로 제공하는 서비스의 개발 배경과 데이터 출처." />
-  <meta name="keywords" content="세콤달, secomdal, 주식맛집, 주식차트 서비스, 주식 개발, 데이터 출처" />
+  <meta name="description" content="세콤달.콤 주식맛집은 KOSPI · KOSDAQ 4,256개 전종목의 차트·기술적 지표·투자자 수급을 매일 무료로 제공하는 개인 투자자용 데이터 시각화 도구입니다. 운영 동기, 데이터 수집·처리 과정, 면책 조항을 안내합니다." />
+  <meta name="keywords" content="세콤달, secomdal, 주식맛집, 주식차트 서비스, 데이터 출처, 주식 데이터 시각화, KOSPI 차트, KOSDAQ 차트" />
   <meta name="author" content="세콤달.콤" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://secomdal.com/about" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="세콤달.콤 주식맛집" />
   <meta property="og:title" content="About — 세콤달.콤 주식맛집" />
-  <meta property="og:description" content="한국 주식 전종목 무료 차트 서비스의 개발 배경과 데이터 출처 안내." />
+  <meta property="og:description" content="한국 주식 전종목 무료 차트 서비스의 개발 배경, 데이터 출처, 운영 철학." />
   <meta property="og:url" content="https://secomdal.com/about" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:image" content="https://secomdal.com/og-image.png" />
@@ -27,7 +27,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css?v=20260503a" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260510a" />
 </head>
 <body class="page-about">
 
@@ -59,11 +59,18 @@
   <a href="/guide/technical-indicators">기술적 지표</a>
   <a href="/guide/supply-demand">수급 가이드</a>
   <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+  <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+  <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+  <a href="/guide/market-metrics">시총·거래량</a>
+  <a href="/guide/holidays">휴장일</a>
   <a href="/glossary">용어집</a>
-    <a href="/relations">📊 그룹사 관계도</a>
-    <a href="/ownership">계열사 관계도</a>
+  <a href="/relations">📊 그룹사 관계도</a>
+  <a href="/ownership">계열사 관계도</a>
   <a href="/blog">Blog</a>
   <a href="/about">About</a>
+  <a href="/faq">FAQ</a>
+  <a href="/terms">이용약관</a>
   <a href="/contact">Contact Us</a>
   <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
 </nav>
@@ -71,88 +78,150 @@
 
 <main class="static-main">
   <article class="about-content">
-    <h2>secomdal.com (세콤달.콤)</h2>
+    <h2>secomdal.com (세콤달.콤) 소개</h2>
     <p class="lead">
-      secomdal.com (세콤달.콤)은 개인 투자자와 데이터 애호가를 위한 금융 데이터 분석 도구를 만드는 프로젝트입니다.
+      세콤달.콤 주식맛집은 한국 주식시장 KOSPI · KOSDAQ 에 상장된 4,200여 개 종목의
+      차트·기술적 지표·투자자 수급을 한 화면에서 비교할 수 있는 개인 투자자용
+      데이터 시각화 도구입니다. 매일 장 마감 후 자동으로 데이터를 갱신하며,
+      광고 없이 깔끔한 UI 와 빠른 비교 흐름에 집중합니다.
     </p>
 
     <section>
-      <h3>세콤달.콤 주식맛집란?</h3>
+      <h3>왜 만들었나요</h3>
       <p>
-        세콤달.콤 주식맛집는 secomdal.com (세콤달.콤)의 공개 프로젝트로, 한국 주식 시장(KOSPI · KOSDAQ)
-        전종목의 120일 캔들 차트, 기술적 지표, 투자자 수급 누적을 <strong>무료로</strong>
-        제공합니다. 공개 데이터를 기반으로 운영되며, 운영비 충당을 위해 일부 화면에
-        광고(Google AdSense)가 노출될 수 있습니다.
+        한국 주식 시장 데이터를 한꺼번에 비교할 수 있는 화면은 의외로 많지 않습니다.
+        대부분의 HTS 는 종목별로 한 번에 한 차트만 보여주고, 포털 사이트의 종목 페이지는
+        광고와 가십 기사가 가득해 차트 자체에 집중하기 어렵습니다. 데이터 분석가나
+        개인 투자자가 "오늘 거래량이 평균 대비 얼마나 늘었는지" 또는 "이 업종 전반이
+        어떤 흐름인지" 같은 단순한 질문에 답하기 위해서는 여러 도구를 옮겨다녀야 했죠.
+      </p>
+      <p>
+        세콤달.콤 주식맛집은 그 한계를 풀고자 시작된 사이드 프로젝트입니다.
+        <strong>전종목을 같은 형식으로, 빠르게 스크롤하며 비교하기</strong> — 이 한 가지에
+        집중했고, 그 위에 기술적 지표·외국인/기관 누적 수급·기업 메타 정보를 더해
+        한 화면에서 종목 분석의 1차 가설을 세울 수 있게 했습니다.
       </p>
     </section>
 
     <section>
-      <h3>회원 가입 안내</h3>
-      <p>
-        회원 가입은 <strong>카카오톡 간편 가입</strong>으로 누구나 바로 이용하실 수 있습니다.
-        상단 우측의 <em>「카카오로 시작하기」</em> 버튼을 누르면 별도의 이메일/비밀번호 입력 없이
-        몇 초 만에 가입이 완료됩니다. 가입 후에는 <strong>관심종목 저장</strong> 등
-        회원 전용 기능을 사용할 수 있습니다.
-      </p>
-      <p>
-        추가 문의는
-        <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a>
-        으로 이메일 주시면 됩니다.
-      </p>
-    </section>
-
-    <section>
-      <h3>유료 서비스 계획</h3>
-      <p>
-        향후 회원 전용 <strong>프리미엄 서비스</strong>(예: 실시간 시세·지표,
-        맞춤 알림, 고급 스캐너, API 접근 등)가 유료로 제공될 예정입니다.
-        현재 제공 중인 전종목 차트 · 수급 · 기술적 지표 <strong>무료 서비스는
-        그대로 유지</strong>되며, 유료 기능은 원하시는 분들께만 별도의 구독 형태로
-        안내 드릴 계획입니다. 구체적인 출시 일정과 가격은 준비되는 대로
-        블로그와 이메일을 통해 공지하겠습니다.
-      </p>
-    </section>
-
-    <section>
-      <h3>데이터 출처</h3>
+      <h3>제공하는 것</h3>
       <ul>
-        <li><strong>OHLCV</strong> — FinanceDataReader (한국거래소 공시)</li>
-        <li><strong>투자자 수급</strong> — Naver Finance (외국인 · 기관 · 개인 순매매)</li>
-        <li><strong>재무지표 · 섹터</strong> — Naver Finance 종목 메타</li>
+        <li><strong>전종목 차트 (4,256개)</strong> — 120일 캔들 + 5/20/60/120일 이평선 + 외국인·기관 60일 누적 수급. 시가총액·거래량·등락률 정렬, 이름·코드 검색.</li>
+        <li><strong>기업 정보 모달</strong> — 종목 클릭 시 세부 차트 + PER·시총·업종·그룹·자회사·대주주 등 메타 데이터.</li>
+        <li><strong>그룹사 관계도</strong> — 삼성·SK·LG·현대차 등 한국 주요 그룹의 출자 구조를 노드/트리/테이블 뷰로 시각화.</li>
+        <li><strong>일일 자동 분석 블로그</strong> — Claude Haiku LLM 이 매일 시장 주도주·급등주를 분석한 글 자동 발행.</li>
+        <li><strong>9종 가이드 + 용어집</strong> — 기술적 지표, 수급, 캔들 패턴, PER · PBR 함정, 우선주 vs 보통주 등 입문자~중급자용 학습 콘텐츠.</li>
+        <li><strong>관심종목 동기화</strong> — 카카오 간편 로그인 후 ☆ 한 번으로 저장. 기기 간 자동 동기화.</li>
       </ul>
-      <p>모든 데이터는 매일 장마감 후 1회 배치로 업데이트되며, 실시간이 아닙니다.</p>
+    </section>
+
+    <section>
+      <h3>데이터 출처와 처리 과정</h3>
+      <p>
+        본 사이트가 사용하는 모든 데이터는 <strong>한국거래소·금융감독원의 공식 공시</strong>
+        와 <strong>Naver Finance</strong> 의 공개 데이터를 기반으로 합니다. 별도 유료 데이터
+        벤더나 비공개 소스를 사용하지 않으며, 모든 수집·가공 코드는 GitHub 에 공개되어 있습니다.
+      </p>
+      <h4>주요 출처</h4>
+      <table class="vendor-table">
+        <thead><tr><th>데이터</th><th>출처</th><th>갱신 주기</th></tr></thead>
+        <tbody>
+          <tr><td>OHLCV (시가/고가/저가/종가/거래량)</td><td>FinanceDataReader (한국거래소 공시)</td><td>매 거래일 종가 +10분 후</td></tr>
+          <tr><td>외국인·기관·개인 순매수</td><td>Naver Finance · pykrx</td><td>매 거래일 종가 +30분 후</td></tr>
+          <tr><td>업종·PER·시가총액·재무지표</td><td>Naver Finance 종목 메타</td><td>매일 1회</td></tr>
+          <tr><td>지주회사·자회사·관계사 출자 정보</td><td>금융감독원 DART (타법인 출자현황)</td><td>매월 1회</td></tr>
+          <tr><td>대주주 정보</td><td>금융감독원 DART (사업보고서 주식 등의 보유 현황)</td><td>매월 1회</td></tr>
+          <tr><td>일일 시장 분석 (블로그)</td><td>Naver 종목 뉴스 + Claude Haiku LLM 분석</td><td>매 거래일 마감 후</td></tr>
+        </tbody>
+      </table>
+      <h4>처리 과정</h4>
+      <ol>
+        <li><strong>수집</strong>: GitHub Actions 스케줄러가 정해진 시간에 자동으로 위 출처를 호출하여 원본 데이터를 가져옵니다.</li>
+        <li><strong>검증</strong>: 결측치·이상치 검사를 거쳐 비정상 데이터는 직전 영업일 값으로 대체하거나 표시 제외합니다.</li>
+        <li><strong>가공</strong>: 차트용 JSON, 검색 인덱스, 그룹 매핑 등 정적 파일로 변환합니다.</li>
+        <li><strong>배포</strong>: Vercel 글로벌 CDN 을 통해 전 세계 어디서든 빠르게 접근 가능하도록 캐싱·전송합니다.</li>
+        <li><strong>모니터링</strong>: 배치 실패 시 자동 알림을 받아 즉시 재시도하며, 1일 이상 갱신 누락 시 사이트 헤더에 공지합니다.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h3>운영 철학</h3>
+      <h4>1. 데이터 우선, 광고는 운영비 충당 수준</h4>
+      <p>
+        본 사이트는 차트와 데이터를 가리는 광고를 최소화합니다. 페이지 본문에 직접 광고가
+        들어가지 않으며, AdSense 가 승인되면 헤더 직하단의 작은 영역 1곳에만 표시될 예정입니다.
+        운영비를 충당하는 수준 이상의 광고는 사이트의 본질을 해친다고 판단합니다.
+      </p>
+      <h4>2. 코드와 데이터의 투명성</h4>
+      <p>
+        수집·가공·시각화 전 과정의 코드가 GitHub 저장소에 공개되어 있습니다. 사용자는 자신이
+        보는 숫자가 어떻게 계산됐는지 모든 단계를 추적할 수 있습니다. 이는 정보의 신뢰도를
+        스스로 검증하고자 하는 개인 투자자에게 중요한 가치라고 생각합니다.
+      </p>
+      <h4>3. 학습 자료의 깊이</h4>
+      <p>
+        단순 데이터 도구가 아니라 사용자가 데이터를 올바르게 해석할 수 있도록 9종의 가이드와
+        30개 용어집을 함께 제공합니다. "RSI 70 이상은 무조건 매도" 같은 단순화의 함정을
+        피하고, 시장과 종목의 맥락을 입체적으로 보는 시야를 지향합니다.
+      </p>
+      <h4>4. 실시간 시세는 의도적으로 제공하지 않습니다</h4>
+      <p>
+        본 사이트는 매일 1회 종가 기준으로만 데이터를 갱신합니다. 분·초 단위 단타 매매가
+        아니라 일·주·월 단위의 거시적 흐름을 비교·학습하는 데 특화돼 있습니다. 실시간 시세는
+        공식 HTS·MTS 또는 인증된 유료 서비스를 사용해 주세요.
+      </p>
+    </section>
+
+    <section>
+      <h3>회원 가입과 프리미엄 계획</h3>
+      <p>
+        모든 핵심 기능은 비로그인 사용자에게도 무료로 제공됩니다. <strong>카카오톡 간편 가입</strong>
+        시 별도 이메일·비밀번호 입력 없이 몇 초 만에 가입이 완료되며, 가입 후에는
+        <strong>관심종목 저장</strong> 등 회원 전용 편의 기능을 추가로 사용할 수 있습니다.
+      </p>
+      <p>
+        향후 일부 고급 기능(맞춤 알림, 고급 스캐너, API 접근 등)은 유료 구독 형태로 제공될
+        예정입니다. 현재 무료 기능은 <strong>그대로 유지</strong>되며, 유료 전환은 원하시는
+        분에게만 별도 안내됩니다. 출시 일정·가격은 준비되는 대로 블로그를 통해 공지하겠습니다.
+      </p>
     </section>
 
     <section>
       <h3>면책 조항</h3>
       <p class="disclaimer">
-        본 서비스가 제공하는 모든 정보는 참고용이며, 투자 권유가 아닙니다.
-        투자 판단과 그 책임은 전적으로 이용자 본인에게 있습니다.
+        본 서비스가 제공하는 모든 정보 — 차트, 지표, 수급 데이터, 기업 정보, 자동 생성 분석 글 — 은
+        <strong>참고용</strong>이며, 매수·매도 권유나 투자 자문이 아닙니다. 모든 데이터는 1일 단위
+        배치로 갱신되어 실시간이 아니며, 자동 가공 과정에서 오류가 있을 수 있습니다. 중요한
+        투자 의사결정은 반드시 한국거래소·DART·증권사 HTS 등 공식 출처에서 재확인하시기 바랍니다.
+        투자 판단과 그 결과에 대한 모든 책임은 이용자 본인에게 있으며, 운영자는 정보의 정확성·
+        완전성에 대해 어떠한 명시적·묵시적 보증도 하지 않습니다.
       </p>
     </section>
 
     <section>
       <h3>연락처</h3>
       <ul>
-        <li>Website: <a href="https://secomdal.com" target="_blank" rel="noopener">secomdal.com</a></li>
-        <li>Email: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a></li>
+        <li>웹사이트: <a href="https://secomdal.com" target="_blank" rel="noopener">secomdal.com</a></li>
+        <li>이메일: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a></li>
+        <li>의견 보내기: <a href="/contact">/contact</a> 페이지의 폼 이용 (익명 가능)</li>
       </ul>
     </section>
 
     <section>
-      <h3>개인정보 처리 방침</h3>
-      <p>
-        회원 가입, 카카오 계정 연동, 쿠키·로컬스토리지 사용, 제3자 서비스(국외 이전 포함)에 대한
-        자세한 내용은 <a href="/privacy">개인정보처리방침</a> 페이지에서 확인하실 수 있습니다.
-      </p>
+      <h3>관련 페이지</h3>
+      <ul>
+        <li><a href="/faq">자주 묻는 질문 (FAQ)</a></li>
+        <li><a href="/terms">이용약관</a></li>
+        <li><a href="/privacy">개인정보처리방침</a></li>
+        <li><a href="/blog">블로그 — 매일 자동 발행되는 시장 분석 글</a></li>
+      </ul>
     </section>
   </article>
-
 </main>
 
 <footer>
-  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
-  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance · DART &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/faq">FAQ</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/contact">Contact</a>
 </footer>
 
 </body>

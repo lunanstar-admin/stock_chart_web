@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>시가총액 · 거래대금 · 거래량 — 셋의 차이와 활용법 — 세콤달.콤 주식맛집</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="시가총액·거래량·거래대금의 정확한 정의와 차이, 회전율 계산, 어느 상황에 어느 지표를 봐야 할지, 흔한 해석 오류까지 실전 정리." />
+<meta name="keywords" content="시가총액, 거래량, 거래대금, 회전율, 대형주, 중소형주, KOSPI200, 슬리피지, 유동성" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://secomdal.com/guide/market-metrics" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="세콤달.콤 주식맛집" />
+<meta property="og:title" content="시가총액 · 거래대금 · 거래량 — 셋의 차이와 활용법" />
+<meta property="og:description" content="시가총액·거래량·거래대금의 정확한 정의와 차이, 회전율 계산, 어느 상황에 어느 지표를 봐야 할지, 흔한 해석 오류까지 실전 정리." />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:image" content="https://secomdal.com/og-image.png" />
+<meta property="og:url" content="https://secomdal.com/guide/market-metrics" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+<style>
+.guide-content h2 { font-size: 26px; margin: 0 0 8px; }
+.guide-content .lead { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; line-height: 1.7; }
+.guide-content section { margin: 24px 0; padding: 16px 18px; background: var(--card,#fff); border: 1px solid var(--border,#e5e7eb); border-radius: 8px; }
+.guide-content section h3 { font-size: 18px; margin: 0 0 10px; color: var(--text-primary); }
+.guide-content section h4 { font-size: 15px; margin: 14px 0 6px; }
+.guide-content p, .guide-content li { line-height: 1.75; font-size: 14px; }
+.guide-content ul, .guide-content ol { padding-left: 22px; }
+.guide-content code.formula { display: inline-block; background: var(--bg-secondary,#f1f5f9); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace,monospace; font-size: 13px; }
+.guide-content .callout { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.guide-content .callout strong { color: #b45309; }
+.guide-toc { background: var(--bg-secondary,#f8fafc); padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; }
+.guide-toc strong { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
+.guide-toc a { display: inline-block; margin-right: 12px; font-size: 13px; }
+.guide-related { margin-top: 30px; padding: 16px; background: var(--bg-secondary,#f8fafc); border-radius: 8px; }
+.guide-related a { display: inline-block; margin-right: 14px; font-size: 13px; }
+</style>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Guide · 시장 지표</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/relations">그룹사 관계도</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">투자자 수급</a>
+  <a href="/guide/candle-patterns">캔들 차트</a>
+  <a href="/glossary">용어집</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content guide-content">
+    
+<h2>📊 시가총액 · 거래대금 · 거래량 — 셋의 차이와 활용법</h2>
+<p class="lead">
+  주식 차트나 뉴스를 보면 거래량 100만주, 거래대금 5,000억원, 시가총액 70조원 같은 숫자가 자주 등장합니다.
+  세 지표는 비슷해 보이지만 의미·활용이 다릅니다. 이 가이드는 정확한 정의, 어느 상황에 어느 지표를 봐야 할지,
+  그리고 흔히 빠지는 해석 오류를 정리합니다.
+</p>
+
+<section>
+  <h3>1. 정의</h3>
+  <ul>
+    <li><strong>시가총액</strong> = 발행주식수 × 현재 주가. 회사의 시장가치 단순화.</li>
+    <li><strong>거래량</strong> = 해당 기간 동안 매매된 주식 수 (단위: 주).</li>
+    <li><strong>거래대금</strong> = 거래량 × 평균 거래가격 (단위: 원). 자금이 얼마나 오갔는지.</li>
+  </ul>
+  <div class="callout">"거래량 100만주" 와 "거래대금 100억원" 은 종목 가격 수준에 따라 차이가 큽니다. 5만원짜리 100만주 = 500억원, 5,000원짜리 100만주 = 50억원. 직접 비교 시 거래대금이 더 의미 있습니다.</div>
+</section>
+
+<section>
+  <h3>2. 시가총액 — 회사 규모 비교</h3>
+  <p>회사 크기·시장 영향력 가늠. KOSPI 시총 1위 삼성전자, 2위 SK하이닉스 같은 식으로 줄 세우는 데 사용.</p>
+  <h4>유용한 활용</h4>
+  <ul>
+    <li><strong>대형주·중소형주 분류</strong>: 일반적으로 5조원 이상 = 대형, 5천억~5조 = 중형, 5천억 이하 = 소형</li>
+    <li><strong>지수 편입 가늠</strong>: KOSPI200 은 대체로 시총 상위 200개 종목 중심</li>
+    <li><strong>유사 기업 비교</strong>: 같은 업종 내 비교 — "이 회사가 업계에서 어느 정도 위치인가"</li>
+  </ul>
+  <h4>주의점</h4>
+  <ul>
+    <li>시가총액은 매일 변함. 어제 1위가 오늘 2위가 되기도</li>
+    <li>지주회사·자회사가 따로 상장된 경우 합산 효과 존재</li>
+  </ul>
+</section>
+
+<section>
+  <h3>3. 거래량 — 관심도와 변동성</h3>
+  <p>그날 거래된 주식 수. 종목 자체의 관심도·변동성을 가늠.</p>
+  <h4>의미 있는 패턴</h4>
+  <ul>
+    <li><strong>거래량 평소 대비 3배 ↑</strong>: 호재·악재 또는 주목할 이벤트 발생 가능성. 가격이 함께 움직이면 해석 명확</li>
+    <li><strong>거래량 ↑ + 가격 ↑</strong>: 추세 강화 신호 (매수 압력 우위)</li>
+    <li><strong>거래량 ↑ + 가격 ↓</strong>: 매도 압력 — 약세 신호일 수 있음</li>
+    <li><strong>거래량 ↓ + 가격 횡보</strong>: 관심 낮음 — 큰 움직임 잠시 없을 가능성</li>
+  </ul>
+  <h4>한계</h4>
+  <p>같은 100만주 거래라도 종목별 시총·발행주식수가 다르면 임팩트가 다름. 100만주가 발행주식의 0.1% 인 종목과 10% 인 종목은 의미가 천지차이.</p>
+</section>
+
+<section>
+  <h3>4. 거래대금 — 자금 흐름과 변동성 비교</h3>
+  <p>실제 돈이 얼마나 오갔는지. 종목 간 비교에 가장 적합.</p>
+  <h4>유용한 활용</h4>
+  <ul>
+    <li><strong>일별 거래대금 상위</strong>: 그날 자금이 가장 활발히 움직인 종목 — 단기 트레이더의 관심 대상</li>
+    <li><strong>유동성 평가</strong>: 대량 매매 가능 여부 — 거래대금 적은 종목은 슬리피지 큼</li>
+    <li><strong>외국인·기관 매매 비중</strong>: 거래대금 대비 비중으로 봐야 의미 정확</li>
+  </ul>
+</section>
+
+<section>
+  <h3>5. 세 지표의 관계와 회전율</h3>
+  <p><strong>회전율 = 거래량 / 발행주식수</strong>. 그날 발행 주식 중 몇 %가 손바뀜했는지.</p>
+  <ul>
+    <li><strong>회전율 1% 미만</strong>: 안정적·관심 낮음</li>
+    <li><strong>회전율 5% 이상</strong>: 활발한 매매 — 변동성 큼</li>
+    <li><strong>회전율 20% 이상</strong>: 단타 자금 집중 — 작전 의심 또는 큰 이벤트</li>
+  </ul>
+  <p><strong>거래대금 / 시가총액</strong> 비율도 비슷하게 활용 가능 — 회사 규모 대비 그날 자금 활성도.</p>
+</section>
+
+<section>
+  <h3>6. 흔한 해석 오류</h3>
+  <ul>
+    <li><strong>"거래량 늘었으니 좋은 신호"</strong> — 가격 방향과 함께 봐야 함. 거래량 + 가격 하락은 매도 신호</li>
+    <li><strong>시총만 보고 큰 회사라 안전</strong> — 시총은 가격 변동에 따라 빠르게 변함. 펀더멘털과 별개</li>
+    <li><strong>거래량과 거래대금 혼용</strong> — 비교 시 종목별 가격 차이를 놓치기 쉬움. 거래대금이 더 보편적</li>
+    <li><strong>회전율 높은 게 무조건 좋다</strong> — 안정적 가치투자에는 오히려 회전율 낮은 게 유리할 수 있음</li>
+  </ul>
+</section>
+
+<section>
+  <h3>마치며</h3>
+  <p>
+    세 지표는 각자 다른 질문에 답합니다. "회사가 얼마나 큰가?" → 시가총액. "오늘 활발했나?" → 거래량/거래대금.
+    "자금이 회전했나?" → 회전율. 함께 보면 종목의 실제 상태를 입체적으로 파악할 수 있습니다.
+    세콤달.콤 주식맛집의 차트는 시가총액·거래량·거래대금을 모두 표시하며, 정렬·필터를 통해 종목 간 빠른 비교가 가능합니다.
+  </p>
+</section>
+
+
+    <div class="guide-related">
+      <strong>📚 함께 읽기</strong><br>
+      <a href="/guide/technical-indicators">기술적 지표 가이드</a>
+      <a href="/guide/supply-demand">수급 읽는 법</a>
+      <a href="/guide/candle-patterns">캔들 차트 기초</a>
+      <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+      <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+      <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+      <a href="/guide/market-metrics">시총·거래량</a>
+      <a href="/guide/holidays">휴장일 가이드</a>
+      <a href="/glossary">주식 용어집</a>
+      <a href="/chart">전종목 차트 →</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>PER · PBR 의 함정 — 저평가 신호 vs 가치 함정 — 세콤달.콤 주식맛집</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="PER · PBR 의 정확한 의미와 산업별 적정 범위, 저평가처럼 보이지만 사실은 가치 함정인 케이스 분류, PEG · ROE 와 조합한 보완 활용법까지." />
+<meta name="keywords" content="PER, PBR, 가치투자, ROE, PEG, 저평가, 가치함정, value trap, 산업별 PER, 주식 평가" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://secomdal.com/guide/per-pbr-trap" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="세콤달.콤 주식맛집" />
+<meta property="og:title" content="PER · PBR 의 함정 — 저평가 신호 vs 가치 함정" />
+<meta property="og:description" content="PER · PBR 의 정확한 의미와 산업별 적정 범위, 저평가처럼 보이지만 사실은 가치 함정인 케이스 분류, PEG · ROE 와 조합한 보완 활용법까지." />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:image" content="https://secomdal.com/og-image.png" />
+<meta property="og:url" content="https://secomdal.com/guide/per-pbr-trap" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+<style>
+.guide-content h2 { font-size: 26px; margin: 0 0 8px; }
+.guide-content .lead { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; line-height: 1.7; }
+.guide-content section { margin: 24px 0; padding: 16px 18px; background: var(--card,#fff); border: 1px solid var(--border,#e5e7eb); border-radius: 8px; }
+.guide-content section h3 { font-size: 18px; margin: 0 0 10px; color: var(--text-primary); }
+.guide-content section h4 { font-size: 15px; margin: 14px 0 6px; }
+.guide-content p, .guide-content li { line-height: 1.75; font-size: 14px; }
+.guide-content ul, .guide-content ol { padding-left: 22px; }
+.guide-content code.formula { display: inline-block; background: var(--bg-secondary,#f1f5f9); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace,monospace; font-size: 13px; }
+.guide-content .callout { background: rgba(245,158,11,0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.guide-content .callout strong { color: #b45309; }
+.guide-toc { background: var(--bg-secondary,#f8fafc); padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; }
+.guide-toc strong { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
+.guide-toc a { display: inline-block; margin-right: 12px; font-size: 13px; }
+.guide-related { margin-top: 30px; padding: 16px; background: var(--bg-secondary,#f8fafc); border-radius: 8px; }
+.guide-related a { display: inline-block; margin-right: 14px; font-size: 13px; }
+</style>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Guide · 가치평가</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/relations">그룹사 관계도</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">투자자 수급</a>
+  <a href="/guide/candle-patterns">캔들 차트</a>
+  <a href="/glossary">용어집</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <article class="about-content guide-content">
+    
+<h2>💸 PER · PBR 의 함정 — 저평가 신호 vs 가치 함정</h2>
+<p class="lead">
+  PER(주가수익비율) 과 PBR(주가순자산비율) 은 가치 평가의 출발점이지만, 단독으로 쓰면 오해하기 쉬운 지표입니다.
+  PER 5배가 무조건 저평가는 아니고, PBR 0.7배가 무조건 매력적인 것도 아닙니다. 이 가이드는 두 지표의 정확한
+  의미, 산업별 적정 범위, 그리고 저평가처럼 보이지만 사실은 "가치 함정(value trap)" 인 케이스를 분류해 정리합니다.
+</p>
+
+<section>
+  <h3>1. PER 다시 읽기</h3>
+  <p>PER = 주가 / 주당순이익(EPS). "현재 이익이 1년 동안 그대로 유지된다고 가정할 때, 투자금을 회수하는 데 걸리는 햇수"로 해석할 수 있습니다.</p>
+  <ul>
+    <li><strong>PER 10</strong>: 현 이익 10년이면 본전</li>
+    <li><strong>PER 30</strong>: 현 이익 30년 — 보통 성장 기대가 가격에 반영됐다는 뜻</li>
+    <li><strong>PER 5 이하</strong>: 의심 신호 — 시장이 미래 이익이 줄거나 사라질 거라 보고 있을 수 있음</li>
+  </ul>
+</section>
+
+<section>
+  <h3>2. 산업별 적정 PER 차이</h3>
+  <ul>
+    <li><strong>금융·유틸리티</strong>: 10~12배 이내가 일반적. 성장 제한적·배당 안정.</li>
+    <li><strong>제조·에너지·소재</strong>: 8~15배 — 경기 사이클 영향 큼.</li>
+    <li><strong>IT·바이오·플랫폼</strong>: 30~80배 흔함 — 미래 성장 프리미엄.</li>
+    <li><strong>리츠·투자회사</strong>: 별도 평가지표(NAV, 배당수익률) 우선.</li>
+  </ul>
+  <div class="callout"><strong>비교 원칙:</strong> "삼성전자 PER 10" 과 "네이버 PER 30" 을 직접 비교하지 마세요. 같은 업종 내 평균과 비교해야 의미가 있습니다.</div>
+</section>
+
+<section>
+  <h3>3. PER 함정 — "낮은데 왜 이래?" 케이스</h3>
+  <ol>
+    <li><strong>일회성 이익 효과</strong>: 자산매각·세금환급 등 일회성 이익으로 EPS 가 일시 상승 → PER 이 낮아 보이지만 다음 분기에 정상화되며 PER 급등.</li>
+    <li><strong>구조조정 직전 산업</strong>: 사양산업의 마지막 호황 — 이익은 좋지만 시장은 미래 감소를 미리 반영.</li>
+    <li><strong>회계 이슈</strong>: 부채·우발채무·소송 비용이 미반영. 표면 이익이 부풀려진 상태.</li>
+    <li><strong>지주회사 PER</strong>: 자회사 이익을 지분법으로 합산하면 연결 PER 이 낮아 보이지만, 실제 지주회사 자체 현금흐름은 다를 수 있음.</li>
+  </ol>
+</section>
+
+<section>
+  <h3>4. PBR 다시 읽기</h3>
+  <p>PBR = 주가 / 주당순자산(BPS). "장부가치 대비 시장가치 배수". PBR 1배는 "장부가와 시장가가 같다", 0.7배는 "장부가치보다 30% 싸게 거래된다"는 뜻입니다.</p>
+  <ul>
+    <li><strong>PBR &lt; 1</strong>: 청산가치보다 시장가가 낮음 — 표면적 저평가, 그러나 이유가 있을 가능성</li>
+    <li><strong>PBR 1~2</strong>: 일반적 범위</li>
+    <li><strong>PBR &gt; 5</strong>: 무형자산·브랜드 가치가 큰 IT/바이오 — 장부가만으론 평가 어려움</li>
+  </ul>
+</section>
+
+<section>
+  <h3>5. PBR 함정 — 가치 함정 (Value Trap)</h3>
+  <ol>
+    <li><strong>장부가의 질</strong>: 부동산이 장부가에 시가가 아닌 매입가로 잡혀 있을 수도, 거꾸로 회수 어려운 매출채권이 자산으로 부풀려져 있을 수도.</li>
+    <li><strong>ROE 수준</strong>: PBR 0.5라도 ROE 가 1% 이하면 자본을 효율적으로 쓰지 못한다는 뜻 → 시장이 정당하게 할인 중.</li>
+    <li><strong>구조적 사양산업</strong>: 자산은 많지만 미래 현금흐름이 줄어드는 업종 (예: 일부 전통 미디어).</li>
+    <li><strong>주주환원 부재</strong>: 자본이 쌓여 있어도 배당·자사주 매입 없으면 시장은 그 자본을 평가하지 않음.</li>
+  </ol>
+</section>
+
+<section>
+  <h3>6. 두 지표를 함께 — PEG·ROE 보완</h3>
+  <p>PER 과 PBR 의 한계를 보완하려면 다음 두 지표를 함께 보는 것이 좋습니다.</p>
+  <ul>
+    <li><strong>PEG (PER / 이익성장률)</strong>: PER 30 이지만 이익이 매년 50% 성장 중이면 PEG 0.6 — 오히려 저평가</li>
+    <li><strong>ROE</strong>: PBR 의 정당성 평가 — ROE 가 높으면 PBR 이 1 이상이라도 합리적</li>
+    <li>워런 버핏 류 가치투자자들은 <strong>"높은 ROE × 합리적 PBR"</strong> 조합을 선호</li>
+  </ul>
+</section>
+
+<section>
+  <h3>마치며</h3>
+  <p>
+    PER · PBR 은 출발점이지 결승선이 아닙니다. 같은 PER 10 이라도 산업·이익 구조·자본 효율성에 따라
+    매력적일 수도, 함정일 수도 있습니다. 세콤달.콤 주식맛집의 종목 모달에 표시되는 PER · PBR 은
+    Naver Finance 의 최신 분기 기준이며, 단독 판단보다 같은 업종 비교 + ROE 함께 보시기를 권합니다.
+  </p>
+</section>
+
+
+    <div class="guide-related">
+      <strong>📚 함께 읽기</strong><br>
+      <a href="/guide/technical-indicators">기술적 지표 가이드</a>
+      <a href="/guide/supply-demand">수급 읽는 법</a>
+      <a href="/guide/candle-patterns">캔들 차트 기초</a>
+      <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+      <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+      <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+      <a href="/guide/market-metrics">시총·거래량</a>
+      <a href="/guide/holidays">휴장일 가이드</a>
+      <a href="/glossary">주식 용어집</a>
+      <a href="/chart">전종목 차트 →</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a>
+</footer>
+</body>
+</html>
