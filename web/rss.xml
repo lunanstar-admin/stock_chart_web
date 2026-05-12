@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 12 May 2026 17:12:09 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 19:24:38 +0900</lastBuildDate>
+    <item>
+      <title>2026년 05월 12일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260512</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260512</guid>
+      <pubDate>Tue, 12 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 12일 한국 주식시장 시황 분석 — 급등 주도주: 에이프로젠 · 성문전자 · 에이프로젠바이오로직스. 오늘의 부각 테마: 금융 · 실적 · 어닝 · AI · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 05월 12일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20260512</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260512</guid>
+      <pubDate>Tue, 12 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 12일 종가 기준 상승률 상위 10 종목. 상위 3종목은 에이프로젠(+30.0%) · 성문전자(+30.0%) · 에이프로젠바이오로직스(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 05월 11일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260511</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260503</guid>
       <pubDate>Sun, 03 May 2026 00:00:00 +0900</pubDate>
       <description>2026년 05월 03일 한국 주식시장 시황 분석 — 급등 주도주: 쏘카 · 선도전기 · 인화정공. 오늘의 부각 테마: 금융 · 실적 · 어닝 · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 05월 01일 마켓 랩업 — KOSPI·KOSDAQ 상승/하락 Top 5</title>
-      <link>https://secomdal.com/blog/daily-wrap-20260501</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-wrap-20260501</guid>
-      <pubDate>Fri, 01 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 01일 장마감 마켓 랩업. KOSPI 상승 636·하락 1641, KOSDAQ 상승 412·하락 1185.</description>
-    </item>
-    <item>
-      <title>2026년 04월 30일 외국인 누적 순매수 Top 10 — 주도 매수주</title>
-      <link>https://secomdal.com/blog/daily-foreign-20260430</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-foreign-20260430</guid>
-      <pubDate>Thu, 30 Apr 2026 00:00:00 +0900</pubDate>
-      <description>2026년 04월 30일 기준 최근 60거래일 외국인 누적 순매수 상위 10 종목 (대형주 200 대상). 두산에너빌리티 · TIGER MSCI Korea TR · 대한전선 중심 유입.</description>
     </item>
   </channel>
 </rss>
