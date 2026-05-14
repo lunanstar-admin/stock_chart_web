@@ -158,11 +158,43 @@ tags: [주제태그1, 주제태그2, 주제태그3]   # 4개 이내 권장
 
 ## 6. 사진·미디어
 
-- **사진 0~2장** — 정보 전달에 *반드시 필요한* 경우에만 사용.
-- 무료 라이선스만 사용 (Unsplash, Pexels, 공공기관 자료 등).
-- 사진 캡션에 출처·라이선스 명기.
-- 차트·그래프 같은 데이터 시각화는 정적 PNG 보다 *사이트 내부 차트 페이지로 링크*하는 것이 더 좋습니다.
-- 첫 이미지에는 `loading="eager"`, 나머지는 `loading="lazy"`.
+### 자동 cover 이미지 (Unsplash)
+
+신규 글이 발행되면 GitHub Actions 의 `batch/enrich_images.py` 가 자동으로
+**Unsplash** 무료 사진을 검색해 `web/blog/img/{slug}.jpg` 로 저장하고
+frontmatter 에 다음 4개 필드를 추가합니다.
+
+```yaml
+cover: /blog/img/theme-ai-cycle-flow.jpg
+cover_alt: "AI 데이터센터 서버랙"
+cover_credit: "Photographer Name"
+cover_credit_url: "https://unsplash.com/@photographer?utm_source=secomdal..."
+```
+
+`build_blog.py` 는 cover 가 있으면 글 상단(제목 아래)에 이미지 + photographer 크레딧을
+자동 렌더링합니다. Unsplash 라이선스 의무 (사진작가 표시, "on Unsplash" 링크,
+download analytics 트리거) 모두 자동 처리됩니다.
+
+### 검색 키워드 매핑
+
+`enrich_images.py` 의 `KEYWORD_MAP` 딕셔너리가 한국어 태그·제목 키워드를 영문
+검색어로 변환합니다 (예: `반도체` → `semiconductor`, `자율주행` → `self driving car`).
+새 주제를 자주 쓰게 되면 이 매핑을 추가하세요.
+
+### 수동 첨부도 가능
+
+특정 글에 *직접 고른 이미지*를 쓰고 싶다면 frontmatter 에 위 필드를 *수동*으로
+넣어도 됩니다. cover 필드가 이미 있으면 `enrich_images.py` 는 그 글을 건너뜁니다.
+무료 라이선스 (Unsplash, Pexels, 공공기관 자료) 만 사용하고 적절한 attribution
+필수.
+
+### 본문 내 추가 이미지
+
+본문에 추가 이미지를 넣을 일은 거의 없습니다. 정말 필요하면:
+- 1~2장 이내
+- markdown `![alt](url)` 문법
+- 출처·라이선스 명기
+- 차트·그래프는 정적 이미지보다 *사이트 내부 차트 페이지로 링크*가 좋음
 
 ---
 

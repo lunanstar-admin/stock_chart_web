@@ -1833,11 +1833,30 @@ html.is-admin .admin-only { display: revert !important; }
   font-size: 12px;
   color: var(--text-secondary);
 }
+.blog-cover-wrap {
+  margin: 16px 0 8px;
+  padding: 0;
+}
 .blog-cover {
   width: 100%;
-  margin-top: 16px;
+  max-height: 380px;
+  object-fit: cover;
   border-radius: 10px;
   display: block;
+}
+.blog-cover-credit {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: right;
+  margin-top: 4px;
+  padding: 0 4px;
+}
+.blog-cover-credit a {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}
+.blog-cover-credit a:hover {
+  color: var(--text-primary);
 }
 
 .blog-body {

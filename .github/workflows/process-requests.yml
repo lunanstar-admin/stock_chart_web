@@ -48,6 +48,13 @@ jobs:
         run: |
           python -m batch.process_blog_requests
 
+      - name: Enrich images (Unsplash) — cover 없는 신규 글 보강
+        env:
+          PYTHONUNBUFFERED: "1"
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+        run: |
+          python -m batch.enrich_images --limit 10 || true
+
       - name: Build blog (incremental — picks up new .md)
         run: |
           python -m batch.build_blog || true

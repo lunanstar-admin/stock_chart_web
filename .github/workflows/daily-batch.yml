@@ -95,6 +95,16 @@ jobs:
           fi
           python -m batch.run_batch --output web/data $ARGS
 
+      - name: Enrich images (Unsplash) — cover 없는 신규 글 보강
+        if: steps.freshness.outputs.skip != 'true'
+        env:
+          PYTHONUNBUFFERED: "1"
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+        run: |
+          python -m batch.enrich_images --limit 5 || true
+          # 이미지 추가됐다면 build_blog 재실행해 HTML 갱신
+          python -m batch.build_blog || true
+
       - name: Commit & push data + blog
         if: steps.freshness.outputs.skip != 'true'
         run: |

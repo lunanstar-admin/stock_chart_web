@@ -67,6 +67,9 @@ class Post:
     summary: str = ""
     tags: list[str] = field(default_factory=list)
     cover: Optional[str] = None
+    cover_alt: Optional[str] = None
+    cover_credit: Optional[str] = None        # 사진작가 이름 (Unsplash)
+    cover_credit_url: Optional[str] = None    # 사진작가 프로필 URL
     body_html: str = ""
     source_path: Path | None = None
     hidden: bool = False      # frontmatter 의 hidden: true 로 설정 — 목록·sitemap·recent 에서 제외
@@ -117,6 +120,9 @@ def parse_post(path: Path) -> Post:
         summary=str(fm.get("summary") or ""),
         tags=list(fm.get("tags") or []),
         cover=fm.get("cover"),
+        cover_alt=fm.get("cover_alt"),
+        cover_credit=fm.get("cover_credit"),
+        cover_credit_url=fm.get("cover_credit_url"),
         body_html=body_html,
         source_path=path,
         hidden=bool(fm.get("hidden", False)),
@@ -286,7 +292,23 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
 
     cover_html = ""
     if post.cover:
-        cover_html = f'<img class="blog-cover" src="{html.escape(post.cover)}" alt="" loading="lazy" />'
+        alt = html.escape(post.cover_alt or post.title)
+        credit_html = ""
+        if post.cover_credit:
+            name = html.escape(post.cover_credit)
+            url = html.escape(post.cover_credit_url or "https://unsplash.com")
+            credit_html = (
+                f'<div class="blog-cover-credit">Photo by '
+                f'<a href="{url}" target="_blank" rel="noopener nofollow">{name}</a> '
+                f'on <a href="https://unsplash.com/?utm_source=secomdal&amp;utm_medium=referral" '
+                f'target="_blank" rel="noopener nofollow">Unsplash</a></div>'
+            )
+        cover_html = (
+            f'<figure class="blog-cover-wrap">'
+            f'<img class="blog-cover" src="{html.escape(post.cover)}" alt="{alt}" loading="eager" />'
+            f'{credit_html}'
+            f'</figure>'
+        )
 
     nav_html = '<nav class="blog-nav">'
     if next_p:
