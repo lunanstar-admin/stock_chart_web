@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>관리자 — 블로그 글 요청 — 세콤달.콤 주식맛집</title>
-  <meta name="description" content="관리자 전용 — 종목·주제 기반 블로그 글 자동 생성 요청." />
+  <meta name="description" content="관리자 전용 — 종목·주제 기반 블로그 글 정기 발행 요청." />
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
   <script src="/assets/nav.js"></script>
@@ -171,7 +171,7 @@
     <div class="admin-card">
       <h2>📝 새 블로그 글 요청</h2>
       <p class="lead">
-        종목과 주제를 입력하면 매 30분 cron 이 실행되어 Claude Haiku 가 관련 뉴스를 분석하고 글을 자동 작성합니다.
+        종목과 주제를 입력하면 매 30분 cron 이 실행되어 운영자가 관련 뉴스를 분석하고 글을 자동 작성합니다.
         예약 시각을 미래로 설정하면 그 시각 이후 다음 fire 에서 처리됩니다.
       </p>
 
@@ -192,7 +192,7 @@
         <div class="form-row">
           <label for="notesInput">추가 메모 (선택)</label>
           <textarea id="notesInput" maxlength="500" placeholder="관리자가 강조하고 싶은 사실·맥락이 있다면 적어주세요"></textarea>
-          <span class="hint">LLM 프롬프트에 포함되어 분석에 반영됩니다 (500자 이내)</span>
+          <span class="hint">데이터 프롬프트에 포함되어 분석에 반영됩니다 (500자 이내)</span>
         </div>
 
         <div class="form-row">
