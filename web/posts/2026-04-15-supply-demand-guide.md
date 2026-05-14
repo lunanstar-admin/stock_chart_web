@@ -4,8 +4,11 @@ date: 2026-04-15
 slug: supply-demand-guide
 summary: 외국인·기관·개인의 순매수 데이터가 무엇을 의미하는지, 그리고 누적 차트를 볼 때 흔히 놓치는 포인트.
 tags: [수급, 투자자, 기초]
+cover: "/blog/img/supply-demand-guide.jpg"
+cover_alt: "red and blue light streaks"
+cover_credit: "Maxim Hopman"
+cover_credit_url: "https://unsplash.com/@nampoh?utm_source=secomdal&utm_medium=referral"
 ---
-
 한국 주식 시장의 독특한 관습 중 하나가 "오늘 외국인 얼마 순매수했다"는 식의
 **투자자별 매매 동향** 공개입니다. 이 데이터는 실제로 유용할까요? 그렇다면 어떻게 활용해야 할까요?
 

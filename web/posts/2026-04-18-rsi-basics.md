@@ -4,8 +4,11 @@ date: 2026-04-18
 slug: rsi-basics
 summary: RSI(상대강도지수)의 정의부터 실전 함정까지. 단순히 70/30 기준만으로 매매를 결정하면 안 되는 이유.
 tags: [지표, RSI, 기술적분석]
+cover: "/blog/img/rsi-basics.jpg"
+cover_alt: "brown wooden blocks with number 6"
+cover_credit: "Brett Jordan"
+cover_credit_url: "https://unsplash.com/@brett_jordan?utm_source=secomdal&utm_medium=referral"
 ---
-
 기술적 분석을 처음 접하는 분들이 가장 빠르게 배우는 지표 중 하나가 **RSI(Relative Strength Index, 상대강도지수)**
 입니다. "70 넘으면 과매수, 30 밑이면 과매도"라는 말은 너무 유명해서 오히려 경계해야 할 정도입니다.
 
