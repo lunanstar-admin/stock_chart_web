@@ -351,9 +351,14 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
     }
     ld_script = f'<script type="application/ld+json">{_json.dumps(ld_obj, ensure_ascii=False)}</script>'
 
-    # 자동 생성 일일 포스트(daily-*, batch-*) 는 검색엔진 색인에서 제외 —
-    # AdSense "가치 낮은 콘텐츠" 평가 회피용. 사용자는 /blog 목록에서 여전히 접근 가능.
-    is_auto = post.slug.startswith("daily-") or post.slug.startswith("batch-")
+    # 자동 발행 일일/시장 포스트(daily-*, batch-*, market-brief-*) 는 색인 제외.
+    # AdSense 가 검토하는 콘텐츠를 깨끗한 편집글로 한정. 사용자는 직접 URL 로 접근은 가능하지만
+    # 블로그 인덱스에서도 숨겨 평가 영향을 최소화.
+    is_auto = (
+        post.slug.startswith("daily-")
+        or post.slug.startswith("batch-")
+        or post.slug.startswith("market-brief-")
+    )
 
     return layout(
         title=post.title,
@@ -373,8 +378,17 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
     )
 
 
+def _is_auto_slug(slug: str) -> bool:
+    return (
+        slug.startswith("daily-")
+        or slug.startswith("batch-")
+        or slug.startswith("market-brief-")
+    )
+
+
 def render_index(posts: list[Post]) -> str:
-    visible = [p for p in posts if not p.hidden]
+    # 자동 데이터 글은 블로그 인덱스에서도 숨김 — 사용자가 직접 URL 로 접근은 가능
+    visible = [p for p in posts if not p.hidden and not _is_auto_slug(p.slug)]
     if not visible:
         cards = '<div class="empty">아직 작성된 글이 없습니다.</div>'
     else:
@@ -463,8 +477,8 @@ def render_sitemap(posts: list[Post]) -> str:
     <priority>{priority}</priority>
   </url>""")
     for p in posts:
-        # 자동 생성 또는 hidden 포스트는 색인 제외 — sitemap 에서도 누락
-        if p.hidden or p.slug.startswith("daily-") or p.slug.startswith("batch-"):
+        # 자동 또는 hidden 포스트는 색인 제외 — sitemap 에서도 누락
+        if p.hidden or _is_auto_slug(p.slug):
             continue
         urls.append(f"""  <url>
     <loc>{SITE_URL}/blog/{p.slug}</loc>
@@ -560,8 +574,8 @@ def build() -> int:
     SITEMAP_PATH.write_text(render_sitemap(posts), encoding="utf-8")
     print(f"[blog] web/sitemap.xml")
 
-    # 메인 페이지 '최신 글 미리보기' 용 JSON — hidden 제외 + 최신순 6개
-    visible_posts = [p for p in posts if not p.hidden]
+    # 메인 페이지 '최신 글 미리보기' 용 JSON — hidden + 자동 글 제외, 최신순 6개
+    visible_posts = [p for p in posts if not p.hidden and not _is_auto_slug(p.slug)]
     recent = visible_posts[:6]
     recent_json = {
         "updated": datetime.now(KST).isoformat(timespec="seconds"),
@@ -572,7 +586,7 @@ def build() -> int:
                 "date": p.date,
                 "summary": (p.summary or "")[:160],
                 "tags": p.tags[:4],
-                "auto": p.slug.startswith("daily-") or p.slug.startswith("batch-"),
+                "auto": _is_auto_slug(p.slug),
             }
             for p in recent
         ],
