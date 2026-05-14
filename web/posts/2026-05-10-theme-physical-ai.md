@@ -4,8 +4,11 @@ date: 2026-05-10
 slug: theme-physical-ai
 summary: "디지털 AI 가 물리 환경으로 확장되는 '피지컬 AI' — 자율주행·휴머노이드 로봇·산업용 협동 로봇의 산업 구조와 한국 부품·소재·플랫폼 종목들이 차지하는 위치를 분석합니다."
 tags: [피지컬AI, 자율주행, 휴머노이드, 로봇, 센서, 모터, 테마분석]
+cover: "/blog/img/theme-physical-ai.jpg"
+cover_alt: "A white robot is standing in front of a black background"
+cover_credit: "Gabriele Malaspina"
+cover_credit_url: "https://unsplash.com/@gabrielemalaspina?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 피지컬 AI — 자율주행과 휴머노이드가 만드는 새 사이클
 
 *2026년 5월 발행 — 산업 분석 칼럼*

@@ -4,8 +4,11 @@ date: 2026-05-10
 slug: theme-next-candidates
 summary: "AI 사이클 이후 시장이 다음으로 주목할 가능성이 있는 테마 5개 — 양자컴퓨팅, 우주산업, SMR/핵융합, 바이오 AI, 합성 데이터·합성 생물학 — 의 산업 구조와 한국 종목의 위치를 정리합니다."
 tags: [차세대테마, 양자컴퓨팅, 우주산업, SMR, 핵융합, 바이오AI, 합성생물학]
+cover: "/blog/img/theme-next-candidates.jpg"
+cover_alt: "an abstract image of a sphere with dots and lines"
+cover_credit: "Growtika"
+cover_credit_url: "https://unsplash.com/@growtika?utm_source=secomdal&utm_medium=referral"
 ---
-
 # AI 다음 대두될 테마 후보 — 양자·우주·핵융합·바이오 AI
 
 *2026년 5월 발행 — 산업 분석 칼럼*
