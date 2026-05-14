@@ -4,8 +4,11 @@ date: 2026-05-10
 slug: theme-middle-east
 summary: "중동 지정학적 긴장이 한국 주식 시장에 영향을 미치는 4가지 채널(유가·환율·방산·건설/플랜트) 의 구조를 정리하고, 시나리오별 종목군 영향을 분석합니다."
 tags: [지정학, 중동, 유가, 방산, 건설, 환율, 매크로]
+cover: "/blog/img/theme-middle-east.jpg"
+cover_alt: "An aerial view of a construction site in the desert"
+cover_credit: "Nojood Al Aqeel"
+cover_credit_url: "https://unsplash.com/@kspf?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 중동 지정학과 한국 주식 — 유가·방산·건설의 연결고리
 
 *2026년 5월 발행 — 매크로 분석 칼럼*

@@ -4,8 +4,11 @@ date: 2026-05-10
 slug: theme-ai-cycle-flow
 summary: "최근 한국 시장의 AI 관련 상승 흐름이 메모리반도체 → 피지컬 AI → 발전설비 → 전력 인프라 → 통신 순으로 진행되는 구조적 이유와, 다음 대두될 후속 테마 후보를 분석합니다."
 tags: [AI, 사이클, 섹터로테이션, 반도체, 전력, 테마분석]
+cover: "/blog/img/theme-ai-cycle-flow.jpg"
+cover_alt: "a computer chip with the letter a on top of it"
+cover_credit: "Igor Omilaev"
+cover_credit_url: "https://unsplash.com/@omilaev?utm_source=secomdal&utm_medium=referral"
 ---
-
 # AI 상승 사이클의 흐름 — 메모리 반도체에서 통신까지, 다음 단계는?
 
 *2026년 5월 발행 — 산업 흐름 분석 칼럼*

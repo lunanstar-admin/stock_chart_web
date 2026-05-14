@@ -4,8 +4,11 @@ date: 2026-05-10
 slug: theme-ai-edge-inference
 summary: "클라우드 학습에서 디바이스 추론으로 — AI 의 다음 단계인 '엣지 추론(edge inference)' 의 산업 구조, NPU·저전력 메모리·후공정의 위치, 그리고 한국 종목이 차지할 수 있는 자리를 분석합니다."
 tags: [AI, 엣지AI, NPU, 후공정, 저전력메모리, 온디바이스, 테마분석]
+cover: "/blog/img/theme-ai-edge-inference.jpg"
+cover_alt: "a computer chip with the letter a on top of it"
+cover_credit: "Igor Omilaev"
+cover_credit_url: "https://unsplash.com/@omilaev?utm_source=secomdal&utm_medium=referral"
 ---
-
 # AI 의 다음 격전지 — 엣지 추론과 온디바이스 AI
 
 *2026년 5월 발행 — 산업 분석 칼럼*

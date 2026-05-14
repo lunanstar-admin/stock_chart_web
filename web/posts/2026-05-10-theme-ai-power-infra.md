@@ -4,8 +4,11 @@ date: 2026-05-10
 slug: theme-ai-power-infra
 summary: "AI 데이터센터의 폭발적 전력 수요가 발전기·전선·변압기·중전기기 산업을 어떻게 재평가시키고 있는지, 그리고 한국 종목이 이 사이클에서 차지하는 위치를 분석합니다."
 tags: [AI, 전력인프라, 데이터센터, 전선, 발전설비, 중전기기, 테마분석]
+cover: "/blog/img/theme-ai-power-infra.jpg"
+cover_alt: "brown wooden hallway with gray metal doors"
+cover_credit: "İsmail Enes Ayhan"
+cover_credit_url: "https://unsplash.com/@ismailenesayhan?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 데이터센터 폭증 → 전력 인프라 — 왜 전선·발전기·중전기기인가
 
 *2026년 5월 발행 — 산업 분석 칼럼*

@@ -4,8 +4,11 @@ date: 2026-05-10
 slug: theme-ai-vs-dotcom
 summary: "현재의 AI 자본 사이클이 1995~2000년 닷컴 버블과 닮은 점과 다른 점, 그리고 사이클 후반에 들어섰다는 신호로 봐야 할 7가지 점검 포인트를 정리합니다."
 tags: [AI, 닷컴버블, 시장사이클, 거품, 매크로, 역사]
+cover: "/blog/img/theme-ai-vs-dotcom.jpg"
+cover_alt: "Person working at a desk with a laptop and books."
+cover_credit: "Microsoft Copilot"
+cover_credit_url: "https://unsplash.com/@microsoftcopilot?utm_source=secomdal&utm_medium=referral"
 ---
-
 # AI 사이클은 닷컴 버블의 데자뷰? — 차이와 점검 포인트 7가지
 
 *2026년 5월 발행 — 시장 사이클 분석 칼럼*
