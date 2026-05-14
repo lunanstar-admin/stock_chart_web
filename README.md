@@ -10,6 +10,11 @@ GitHub Actions (16:45 KST)          Vercel (Static CDN)
   python -m batch.run_batch ──commit──▶ web/data/*.json ──▶ 브라우저 fetch
 ```
 
+## 운영 문서
+
+- **[블로그 글 작성 가이드](docs/BLOG_WRITING_GUIDE.md)** — 모든 신규 글
+  작성 시 따라야 하는 표준 (구조·문체·분량·태그·발행 리듬). AdSense 친화.
+
 ## 디렉토리
 
 ```
