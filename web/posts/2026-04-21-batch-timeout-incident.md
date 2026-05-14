@@ -4,8 +4,11 @@ date: 2026-04-21
 slug: batch-timeout-20260421
 summary: 매일 2,600여 종목 데이터를 자동 수집하는 GitHub Actions 배치가 KRX API 장애로 90분 타임아웃 캔슬된 과정과, 원인 분석부터 수정까지의 기록입니다.
 tags: [운영, 인프라, GitHub Actions, 장애대응]
+cover: "/blog/img/batch-timeout-20260421.jpg"
+cover_alt: "a rack of servers in a server room"
+cover_credit: "Kevin Ache"
+cover_credit_url: "https://unsplash.com/@kevinache?utm_source=secomdal&utm_medium=referral"
 ---
-
 오늘(4월 21일) 주식맛집 블로그에 새 글이 올라오지 않았습니다.
 
 매일 장 마감 후 16시에 자동으로 데이터를 수집하고, 당일 시장 분석 글이 발행되는 구조인데 — 오늘은 아무것도 없었습니다. 이유를 추적한 과정을 기록해 둡니다.
