@@ -181,20 +181,151 @@ download analytics 트리거) 모두 자동 처리됩니다.
 검색어로 변환합니다 (예: `반도체` → `semiconductor`, `자율주행` → `self driving car`).
 새 주제를 자주 쓰게 되면 이 매핑을 추가하세요.
 
-### 수동 첨부도 가능
+### 수동으로 사진 넣기 — 단계별 가이드
 
-특정 글에 *직접 고른 이미지*를 쓰고 싶다면 frontmatter 에 위 필드를 *수동*으로
-넣어도 됩니다. cover 필드가 이미 있으면 `enrich_images.py` 는 그 글을 건너뜁니다.
-무료 라이선스 (Unsplash, Pexels, 공공기관 자료) 만 사용하고 적절한 attribution
-필수.
+자동 Unsplash 가 마음에 안 드는 결과를 줄 때, 또는 *내가 직접 고른 사진* 또는
+*ChatGPT 로 만든 이미지*를 쓰고 싶을 때의 절차입니다.
+
+#### 1단계: 이미지 파일 준비
+
+- **권장 크기**: 가로 1200~1920px, 세로 600~1080px (16:9 정도 가로 비율)
+- **권장 형식**: `.jpg` (사진), `.png` (일러스트·다이어그램), `.webp` (둘 다 가능)
+- **권장 용량**: 한 장당 **500KB 이하**. 너무 크면 페이지 속도가 나빠짐
+- **압축 도구**:
+  - 온라인 무료: [Squoosh](https://squoosh.app) (Google 제공, 드래그앤드롭)
+  - 또는 `web/blog/img/` 에 넣은 뒤 압축
+
+#### 2단계: 파일을 저장소에 추가
+
+파일명은 글의 슬러그와 같게 짓는 것이 관리하기 좋습니다.
+
+```
+web/blog/img/{슬러그}.jpg
+```
+
+예시:
+```
+web/posts/2026-05-20-my-article.md
+web/blog/img/my-article.jpg            ← 슬러그가 my-article 인 경우
+```
+
+여러 장 쓸 때는 접미사:
+```
+web/blog/img/my-article.jpg            (cover)
+web/blog/img/my-article-1.png          (본문용)
+web/blog/img/my-article-2.png          (본문용)
+```
+
+#### 3단계: frontmatter 에 cover 필드 추가
+
+글의 markdown 파일 최상단 `---` 사이에 다음 필드를 추가합니다.
+
+##### A) 본인이 직접 찍거나 ChatGPT 등으로 만든 이미지 (저작권 본인 소유)
+
+```yaml
+---
+title: "글 제목"
+date: 2026-05-20
+slug: my-article
+summary: "..."
+tags: [태그1, 태그2]
+cover: /blog/img/my-article.jpg
+cover_alt: "이미지에 대한 설명 (시각장애인용 + SEO)"
+---
+```
+
+`cover_credit` 과 `cover_credit_url` 은 *생략* 하면 됩니다. 그러면 사이트는
+이미지만 보여주고 photographer 크레딧 라인을 표시하지 않습니다.
+
+##### B) Unsplash 사이트에서 직접 골라온 이미지
+
+```yaml
+cover: /blog/img/my-article.jpg
+cover_alt: "이미지 설명"
+cover_credit: "Photographer Name"
+cover_credit_url: "https://unsplash.com/@photographer?utm_source=secomdal&utm_medium=referral"
+```
+
+photographer 이름과 프로필 URL 은 Unsplash 사진 페이지에서 복사. URL 끝에
+**`?utm_source=secomdal&utm_medium=referral`** 를 반드시 붙이세요 (라이선스 요건).
+
+##### C) Pexels / Pixabay 등 다른 무료 스톡 사이트
+
+```yaml
+cover: /blog/img/my-article.jpg
+cover_alt: "이미지 설명"
+cover_credit: "Photographer Name on Pexels"
+cover_credit_url: "https://www.pexels.com/photo/..."
+```
+
+##### D) 공공기관·언론·보도자료 이미지 (라이선스 명시)
+
+```yaml
+cover: /blog/img/my-article.jpg
+cover_alt: "이미지 설명"
+cover_credit: "출처: 공공누리"
+cover_credit_url: "https://www.kogl.or.kr/..."
+```
+
+#### 4단계: 자동 처리 막기
+
+frontmatter 에 `cover` 필드가 *있으면* `enrich_images.py` 는 그 글을 *자동으로*
+건너뜁니다 (멱등). 즉 수동 cover 설정을 한 글은 영구히 보존됩니다.
+
+#### 5단계: 커밋·푸시
+
+```bash
+git add web/blog/img/my-article.jpg web/posts/2026-05-20-my-article.md
+git commit -m "post(my-article): 수동 cover 이미지 추가"
+git push
+```
+
+`build_blog.py` 가 다음 배치 또는 수동 실행 시 새 frontmatter 를 읽고
+HTML 의 `<figure class="blog-cover-wrap">` 블록에 이미지 + 크레딧을 자동 렌더링.
 
 ### 본문 내 추가 이미지
 
-본문에 추가 이미지를 넣을 일은 거의 없습니다. 정말 필요하면:
-- 1~2장 이내
-- markdown `![alt](url)` 문법
-- 출처·라이선스 명기
-- 차트·그래프는 정적 이미지보다 *사이트 내부 차트 페이지로 링크*가 좋음
+본문 안에 이미지를 추가하고 싶을 때 (예: 비교 다이어그램, 스크린샷):
+
+```markdown
+![대체 텍스트](/blog/img/my-article-diagram.png)
+*캡션: 이 도표는 ... 을 보여줍니다. 출처: 한국거래소*
+```
+
+또는 HTML 직접 사용 (캡션 + 출처를 더 깔끔하게):
+
+```markdown
+<figure class="inline-figure">
+  <img src="/blog/img/my-article-diagram.png" alt="설명" loading="lazy" />
+  <figcaption>도표: ... <a href="출처URL">출처</a></figcaption>
+</figure>
+```
+
+원칙:
+- 본문 이미지는 1~2장 이내 (너무 많으면 글이 가벼워 보임)
+- 정보 전달에 *반드시 필요한* 경우에만
+- 차트·그래프는 정적 이미지보다 *사이트 내부 차트 페이지로 링크* 가 좋음
+- 모든 이미지에 `alt` 텍스트 필수 (SEO + 접근성)
+- 첫 이미지(cover) 외에는 `loading="lazy"`
+
+### ChatGPT 로 이미지 만들 때 팁
+
+ChatGPT.com (Plus 구독) 에서 이미지를 생성한 경우:
+
+1. **다운로드 → 압축**: 원본은 보통 1024×1024 PNG. Squoosh 로 600~800KB 이하로
+2. **저작권**: OpenAI 정책상 사용자가 권리 보유. `cover_credit` 생략 가능
+3. **alt 텍스트**: 이미지가 무엇을 *보여주는지* 한 문장으로
+4. **글 주제와의 매칭**: 너무 추상적이거나 일반적인 이미지는 피하고,
+   해당 글의 *핵심 비유*를 시각화한 것을 선택
+
+생성 프롬프트 예시 (theme-ai-power-infra 글이라면):
+```
+A photorealistic image of a modern data center server room with
+electrical infrastructure visible in the background, dramatic lighting,
+clean professional style, wide aspect ratio 16:9, no text or watermarks
+```
+
+생성 후 사이트 톤(차분한 다크/베이지)과 맞는지 확인 후 사용.
 
 ---
 

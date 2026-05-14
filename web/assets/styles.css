@@ -1858,6 +1858,26 @@ html.is-admin .admin-only { display: revert !important; }
 .blog-cover-credit a:hover {
   color: var(--text-primary);
 }
+/* 본문 안의 추가 이미지 (수동 첨부용) */
+figure.inline-figure {
+  margin: 18px 0;
+  padding: 0;
+}
+figure.inline-figure img {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+figure.inline-figure figcaption {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+figure.inline-figure figcaption a {
+  color: var(--text-secondary);
+  text-decoration: underline;
+}
 
 .blog-body {
   font-size: 15px;

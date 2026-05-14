@@ -296,13 +296,25 @@ def render_post(post: Post, all_posts: list[Post]) -> str:
         credit_html = ""
         if post.cover_credit:
             name = html.escape(post.cover_credit)
-            url = html.escape(post.cover_credit_url or "https://unsplash.com")
-            credit_html = (
-                f'<div class="blog-cover-credit">Photo by '
-                f'<a href="{url}" target="_blank" rel="noopener nofollow">{name}</a> '
-                f'on <a href="https://unsplash.com/?utm_source=secomdal&amp;utm_medium=referral" '
-                f'target="_blank" rel="noopener nofollow">Unsplash</a></div>'
-            )
+            url = post.cover_credit_url or ""
+            url_l = url.lower()
+            # Unsplash 출처면 라이선스 의무대로 "Photo by X on Unsplash" 형식
+            if "unsplash.com" in url_l:
+                credit_html = (
+                    f'<div class="blog-cover-credit">Photo by '
+                    f'<a href="{html.escape(url)}" target="_blank" rel="noopener nofollow">{name}</a> '
+                    f'on <a href="https://unsplash.com/?utm_source=secomdal&amp;utm_medium=referral" '
+                    f'target="_blank" rel="noopener nofollow">Unsplash</a></div>'
+                )
+            elif url:
+                # 기타 출처 (Pexels·Pixabay·공공누리 등) — Credit: NAME (링크)
+                credit_html = (
+                    f'<div class="blog-cover-credit">Credit: '
+                    f'<a href="{html.escape(url)}" target="_blank" rel="noopener nofollow">{name}</a></div>'
+                )
+            else:
+                # URL 없는 단순 텍스트 크레딧
+                credit_html = f'<div class="blog-cover-credit">Credit: {name}</div>'
         cover_html = (
             f'<figure class="blog-cover-wrap">'
             f'<img class="blog-cover" src="{html.escape(post.cover)}" alt="{alt}" loading="eager" />'
