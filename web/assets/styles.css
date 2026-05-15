@@ -497,16 +497,17 @@ header .subtitle-highlight {
   border-left: 1px solid var(--border);
   box-shadow: var(--shadow-drawer);
   z-index: 200;
-  padding: 72px 0 24px;
+  padding: 64px 0 24px;
   transition: right 0.25s ease;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
+  overflow-y: auto;
 }
 .nav-drawer.open { right: 0; }
 .nav-drawer a {
   display: block;
-  padding: 14px 24px;
+  padding: 11px 24px;
   color: var(--text-primary);
   text-decoration: none;
   font-size: 14px;
@@ -520,6 +521,50 @@ header .subtitle-highlight {
   border-left-color: var(--accent);
   background: var(--active-tint);
 }
+
+/* 그룹화 — 헤더 + 구분선 */
+.nav-drawer .nav-group {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.nav-drawer .nav-group:last-of-type { border-bottom: none; }
+.nav-drawer .nav-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted, #8a8a8a);
+  padding: 14px 24px 6px;
+  user-select: none;
+}
+/* details/summary 사용한 접기/펴기 — 학습 가이드처럼 길면 접어두기 */
+.nav-drawer details { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.nav-drawer details:last-of-type { border-bottom: none; }
+.nav-drawer details > summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted, #8a8a8a);
+  padding: 14px 24px 6px;
+  position: relative;
+  user-select: none;
+}
+.nav-drawer details > summary::-webkit-details-marker { display: none; }
+.nav-drawer details > summary::after {
+  content: "▾";
+  position: absolute;
+  right: 20px;
+  top: 14px;
+  font-size: 10px;
+  transition: transform 0.15s;
+}
+.nav-drawer details[open] > summary::after { transform: rotate(180deg); }
+.nav-drawer details a { padding-left: 32px; font-size: 13.5px; }
 
 .nav-backdrop {
   position: fixed;
@@ -1495,11 +1540,15 @@ html.is-admin .admin-only { display: revert !important; }
 .page-intro--compact h2 { font-size: 17px; margin-bottom: 8px; }
 .page-intro-note {
   margin-top: 14px !important;
-  padding-top: 12px;
-  border-top: 1px dashed var(--border);
-  color: var(--text-secondary);
-  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  background: var(--disclaimer-tint, rgba(245, 167, 66, 0.08));
+  color: var(--text-primary);
+  font-size: 12.5px;
+  line-height: 1.55;
 }
+.page-intro-note strong { color: var(--text-primary); }
 
 /* ─────────────────────────────────────────────
    AdSense 배너 영역

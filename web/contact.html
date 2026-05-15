@@ -27,7 +27,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css?v=20260503a" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516b" />
 <!-- Google Analytics (gtag.js) — G-QG41JS7EJ1 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
 <script>
@@ -62,22 +62,38 @@
 
 
 <nav class="nav-drawer" id="navDrawer">
-  <a href="/">Home</a>
-  <a href="/chart">Stock Chart</a>
-  <a href="/guide/technical-indicators">기술적 지표</a>
-  <a href="/guide/supply-demand">수급 가이드</a>
-  <a href="/guide/candle-patterns">캔들 가이드</a>
-  <a href="/guide/per-pbr-trap">PER · PBR 함정</a>  <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>  <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>  <a href="/guide/market-metrics">시총·거래량</a>  <a href="/guide/holidays">휴장일</a>
-  <a href="/glossary">용어집</a>
-    <a href="/relations">📊 그룹사 관계도</a>
-    <a href="/ownership">계열사 관계도</a>
-  <a href="/blog">Blog</a>
-  <a href="/about">About</a>
-  <a href="/faq">FAQ</a>
-  <a href="/terms">이용약관</a>
-  <a href="/contact">Contact Us</a>
-  <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
-</nav>
+    <div class="nav-group">
+      <a href="/">Home</a>
+      <a href="/chart">Stock Chart</a>
+      <a href="/dart">📑 DART 공시</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <details>
+      <summary>학습 가이드</summary>
+      <a href="/guide/technical-indicators">기술적 지표</a>
+      <a href="/guide/supply-demand">수급 가이드</a>
+      <a href="/guide/candle-patterns">캔들 가이드</a>
+      <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+      <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+      <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+      <a href="/guide/market-metrics">시총·거래량</a>
+      <a href="/guide/holidays">휴장일</a>
+    </details>
+    <div class="nav-group">
+      <div class="nav-group-label">참고자료</div>
+      <a href="/glossary">용어집</a>
+      <a href="/relations">📊 그룹사 관계도</a>
+      <a href="/ownership">계열사 관계도</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">정보</div>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/terms">이용약관</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
+    </div>
+  </nav>
 <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
 
 <main class="static-main">
