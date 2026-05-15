@@ -4,8 +4,11 @@ date: 2026-05-16
 slug: theme-short-interest
 summary: "공매도 잔고가 늘면 주가가 빠진다는 단순 해석은 자주 틀립니다. 잔고의 절대 수준·증감 속도·대차잔고와의 관계를 구분해서 읽는 방법과 자주 빠지는 함정을 정리합니다."
 tags: [공매도, 대차잔고, 수급, 외국인, 기관]
+cover: "/blog/img/theme-short-interest.jpg"
+cover_alt: "stock market candlestick chart on dark screen"
+cover_credit: "Maxim Hopman"
+cover_credit_url: "https://unsplash.com/@nampoh?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나
 
 *2026년 5월 발행 — 수급 분석 칼럼*

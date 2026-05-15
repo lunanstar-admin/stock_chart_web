@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나 — 세콤달.콤 주식맛집</title>
+<meta name="description" content="공매도 잔고가 늘면 주가가 빠진다는 단순 해석은 자주 틀립니다. 잔고의 절대 수준·증감 속도·대차잔고와의 관계를 구분해서 읽는 방법과 자주 빠지는 함정을 정리합니다." />
+<meta name="keywords" content="주식, 투자, 공매도, 대차잔고, 수급, 외국인, 기관" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<link rel="canonical" href="https://secomdal.com/blog/theme-short-interest" />
+<meta property="og:type" content="article" /><meta property="og:site_name" content="세콤달.콤 주식맛집" /><meta property="og:title" content="공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나" /><meta property="og:description" content="공매도 잔고가 늘면 주가가 빠진다는 단순 해석은 자주 틀립니다. 잔고의 절대 수준·증감 속도·대차잔고와의 관계를 구분해서 읽는 방법과 자주 빠지는 함정을 정리합니다." /><meta property="og:locale" content="ko_KR" /><meta property="og:image" content="https://secomdal.com/blog/img/theme-short-interest.jpg" /><meta property="og:url" content="https://secomdal.com/blog/theme-short-interest" />
+<meta property="article:published_time" content="2026-05-16" /><meta property="article:author" content="세콤달" /><meta property="article:tag" content="공매도" /><meta property="article:tag" content="대차잔고" /><meta property="article:tag" content="수급" /><meta property="article:tag" content="외국인" /><meta property="article:tag" content="기관" />
+<meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나" /><meta name="twitter:description" content="공매도 잔고가 늘면 주가가 빠진다는 단순 해석은 자주 틀립니다. 잔고의 절대 수준·증감 속도·대차잔고와의 관계를 구분해서 읽는 방법과 자주 빠지는 함정을 정리합니다." /><meta name="twitter:image" content="https://secomdal.com/blog/img/theme-short-interest.jpg" />
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나", "description": "공매도 잔고가 늘면 주가가 빠진다는 단순 해석은 자주 틀립니다. 잔고의 절대 수준·증감 속도·대차잔고와의 관계를 구분해서 읽는 방법과 자주 빠지는 함정을 정리합니다.", "datePublished": "2026-05-16", "dateModified": "2026-05-16", "author": {"@type": "Person", "name": "세콤달"}, "publisher": {"@type": "Organization", "name": "세콤달.콤 주식맛집", "logo": {"@type": "ImageObject", "url": "https://secomdal.com/og-image.png"}}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://secomdal.com/blog/theme-short-interest"}, "image": "https://secomdal.com/blog/img/theme-short-interest.jpg", "inLanguage": "ko-KR", "keywords": "공매도, 대차잔고, 수급, 외국인, 기관"}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-2454082917321119">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+<!-- Google Analytics (gtag.js) — G-QG41JS7EJ1 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QG41JS7EJ1');
+</script>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Blog</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">수급 가이드</a>
+  <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+  <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+  <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+  <a href="/guide/market-metrics">시총·거래량</a>
+  <a href="/guide/holidays">휴장일</a>
+  <a href="/glossary">용어집</a>
+  <a href="/relations">📊 그룹사 관계도</a>
+  <a href="/ownership">계열사 관계도</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+  <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+
+<main class="static-main">
+  <article class="blog-article">
+    <header class="blog-article-head">
+      <div class="blog-breadcrumb"><a href="/blog">← 블로그 목록</a></div>
+      <h2>공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나</h2>
+      <div class="blog-meta">
+        <time datetime="2026-05-16">2026-05-16</time>
+        <div class="blog-tags"><span class="blog-tag">#공매도</span><span class="blog-tag">#대차잔고</span><span class="blog-tag">#수급</span><span class="blog-tag">#외국인</span><span class="blog-tag">#기관</span></div>
+      </div>
+      <figure class="blog-cover-wrap"><img class="blog-cover" src="/blog/img/theme-short-interest.jpg" alt="stock market candlestick chart on dark screen" loading="eager" /><div class="blog-cover-credit">Photo by <a href="https://unsplash.com/@nampoh?utm_source=secomdal&amp;utm_medium=referral" target="_blank" rel="noopener nofollow">Maxim Hopman</a> on <a href="https://unsplash.com/?utm_source=secomdal&amp;utm_medium=referral" target="_blank" rel="noopener nofollow">Unsplash</a></div></figure>
+    </header>
+
+    <div class="blog-body">
+      <h1 id="_1">공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나</h1>
+<p><em>2026년 5월 발행 — 수급 분석 칼럼</em></p>
+<p>공매도 잔고는 <em>개인 투자자가 가장 자주 보지만 가장 잘못 해석하는</em> 데이터입니다. "공매도 잔고가 늘었으니 주가가 빠진다"는 단순 해석은 <em>맞을 때도 있고 틀릴 때도 있는데</em>, 그 차이를 가르는 것이 데이터의 <em>맥락 읽기</em> 입니다. 이 글은 그 맥락을 정리합니다.</p>
+<h2 id="_2">📌 핵심 요약</h2>
+<ul>
+<li>공매도 <em>잔고</em> 와 공매도 <em>거래대금</em> 은 다릅니다. 둘을 혼동하면 신호가 거꾸로 보입니다.</li>
+<li>잔고의 <em>절대 수준</em> 보다 <em>증감 추세와 속도</em> 가 더 중요합니다.</li>
+<li>대차잔고는 공매도의 <em>재료</em> 일 뿐, 모두가 매도로 전환되는 것은 아닙니다.</li>
+<li>잔고 <em>급감</em> 은 <em>숏커버링 랠리</em> 의 전조일 수 있습니다.</li>
+</ul>
+<h2 id="1-vs-vs">1. 용어 구분 — 잔고 vs 거래대금 vs 대차</h2>
+<p>세 가지 개념을 헷갈리면 데이터를 거꾸로 읽게 됩니다.</p>
+<table>
+<thead>
+<tr>
+<th>지표</th>
+<th>정의</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>공매도 거래대금</strong></td>
+<td>당일 새로 매도된 공매도 금액</td>
+<td><em>오늘의 매도 압력</em></td>
+</tr>
+<tr>
+<td><strong>공매도 잔고</strong></td>
+<td>아직 청산되지 않은 공매도 <em>누적</em> 포지션</td>
+<td><em>시장의 비관 누적량</em></td>
+</tr>
+<tr>
+<td><strong>대차잔고</strong></td>
+<td>빌려간 주식의 총량 (공매도 후보군)</td>
+<td><em>잠재적 매도 압력</em></td>
+</tr>
+</tbody>
+</table>
+<p>대차잔고가 늘었다고 해서 <em>반드시</em> 공매도로 이어지는 것은 아닙니다. 펀드의 헷지, ETF의 차익거래, 단순 보유 목적 차입 등 <em>공매도 아닌 용도</em> 도 많습니다. 보통 대차잔고의 50~70% 정도만 실제 공매도로 사용됩니다.</p>
+<h2 id="2">2. 절대 수준 — 시가총액 대비 비율로 봐야</h2>
+<p>종목 A의 공매도 잔고가 500억 원이라는 숫자는 <em>그 자체로는 의미가 없습니다</em>. 시가총액 5,000억 종목이라면 10%, 50조 종목이라면 0.01%로 의미가 완전히 다릅니다.</p>
+<p>실무 기준선:</p>
+<ul>
+<li>시총 대비 공매도 잔고 <strong>1% 이하</strong>: 일반적 수준, 노이즈</li>
+<li><strong>1~3%</strong>: 주의 — 시장 의구심 누적 중</li>
+<li><strong>3~5%</strong>: 상당한 비관, 변동성 확대 구간</li>
+<li><strong>5% 초과</strong>: 극단적 비관 — 역설적으로 <em>숏스퀴즈</em> 가능성 시작</li>
+<li><strong>10% 초과</strong>: 게임 코너 — 단 한 번의 호재로 폭등 가능</li>
+</ul>
+<p>미국 시장의 <em>GameStop</em> 사례에서 공매도 잔고/유통주식 비율이 100%를 넘긴 적이 있는데, 그게 바로 <em>숏스퀴즈</em> 의 폭발력을 보여준 사례입니다. 한국은 제도적 제약상 그 정도까지 가지 않지만, <em>5% 이상</em> 부터는 비대칭 위험이 시작됩니다.</p>
+<h2 id="3">3. 추세와 속도 — 변곡점이 시그널</h2>
+<p>잔고 <em>수준</em> 보다 더 중요한 것이 <em>증감 속도</em> 입니다.</p>
+<p><strong>잔고 급증 구간</strong>:</p>
+<ul>
+<li>1주일 사이 잔고 30% 이상 증가</li>
+<li>보통 <em>악재 출현 or 실적 둔화 우려</em> 가 배경</li>
+<li>단기적으로 추가 하락 압력 (자기실현적)</li>
+</ul>
+<p><strong>잔고 급감(숏커버링) 구간</strong>:</p>
+<ul>
+<li>1주일 사이 잔고 20% 이상 감소</li>
+<li><em>공매도자들이 포지션을 청산</em> 한다는 신호 → 매수 압력</li>
+<li>이 구간에 <em>주가는 오히려 급등</em> 하는 경우가 많음</li>
+</ul>
+<p>핵심은 <em>변곡점</em> 입니다. 잔고가 <em>고점에서 꺾여 내려오기 시작</em> 한 시점이 단기 반등의 출발선인 경우가 많습니다.</p>
+<h2 id="4-4">4. 자주 빠지는 함정 4가지</h2>
+<p><strong>함정 1. "잔고가 높으니까 떨어질 것이다"</strong></p>
+<p>이미 잔고가 높다는 건 <em>팔 사람은 이미 많이 팔았다</em> 는 뜻이기도 합니다. 신규 매도가 들어올 여력이 줄어든 상태입니다.</p>
+<p><strong>함정 2. "대차잔고 = 공매도"</strong></p>
+<p>위에서 설명한 대로, 대차의 절반 정도만 공매도로 사용됩니다. 대차잔고 폭증을 곧장 공매도 폭증으로 해석하면 <em>과대평가</em> 합니다.</p>
+<p><strong>함정 3. "특정 외국인 창구의 공매도 = 그 외국인의 베팅"</strong></p>
+<p>증권사 창구는 <em>실제 거래자</em> 가 아니라 <em>경유 채널</em> 입니다. 모건스탠리 창구의 공매도는 모건스탠리가 직접 하는 것이 아니라 그곳을 통해 거래한 모든 외국인 고객의 합산입니다.</p>
+<p><strong>함정 4. "공매도 = 시장 조작"</strong></p>
+<p>공매도는 <em>가격 발견</em> 의 도구이기도 합니다. 과대평가된 자산을 적정 수준으로 끌어내리는 역할도 합니다. 모든 공매도를 <em>부정적 신호</em> 로만 보면 균형 잡힌 판단이 어렵습니다.</p>
+<h2 id="_3">마치며</h2>
+<p>공매도 데이터는 <em>날 것 그대로 보면 자주 거꾸로</em> 해석됩니다. <em>시총 대비 비율 · 증감 속도 · 변곡점</em> 의 3가지 렌즈를 통과시킨 뒤에야 시그널로 작동합니다. 특히 <em>잔고의 변곡점</em> 은 단기 매매에 가장 유용한 신호 중 하나입니다.</p>
+<p>수급 데이터 전반에 대해서는 <a href="/guide/supply-demand">수급 가이드</a>, 외국인·기관 흐름 해석은 <a href="/guide/foreign-vs-institution">외국인 vs 기관</a> 을 참고하시기 바랍니다.</p>
+<blockquote>
+<p>⚠️ 본 글은 <em>교육·정보 제공 목적</em> 의 칼럼이며, 특정 종목 추천이나 투자 권유가 아닙니다. 투자 판단과 그 결과에 대한 책임은 전적으로 이용자 본인에게 있습니다.</p>
+</blockquote>
+    </div>
+
+    <nav class="blog-nav"><a class="blog-nav-prev" href="/blog/theme-etf-vs-stock">← ETF vs 개별주 — 언제 어느 쪽이 유리한가</a><a class="blog-nav-next" href="/blog/theme-dividend-framework">배당주 투자, 무엇을 보고 골라야 하나 — 4가지 핵심 기준 →</a></nav>
+
+    <div class="blog-cta">
+      <p>관련 종목 차트가 궁금하다면?</p>
+      <a class="cta" href="/chart">세콤달.콤 주식맛집 열기 →</a>
+    </div>
+  </article>
+
+</main>
+
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot;
+  <a href="/privacy">Privacy</a>
+</footer>
+
+</body>
+</html>

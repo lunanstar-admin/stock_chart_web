@@ -4,8 +4,11 @@ date: 2026-05-16
 slug: theme-dividend-framework
 summary: "배당수익률 5%만 보고 매수했다가 주가가 빠져 손실이 더 큰 경우가 흔합니다. 배당의 지속 가능성·성장성·총수익 관점에서 종목을 거르는 4가지 기준을 정리합니다."
 tags: [배당주, 배당수익률, 배당성향, 가치투자, 포트폴리오]
+cover: "/blog/img/theme-dividend-framework.jpg"
+cover_alt: "graphs of performance analytics on a laptop screen"
+cover_credit: "Luke Chesser"
+cover_credit_url: "https://unsplash.com/@lukechesser?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 배당주 투자, 무엇을 보고 골라야 하나 — 4가지 핵심 기준
 
 *2026년 5월 발행 — 가치투자 칼럼*
