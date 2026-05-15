@@ -197,6 +197,37 @@ KEYWORD_MAP = {
     "인프라": "infrastructure",
     "GitHub Actions": "ci cd pipeline",
     "장애대응": "server monitoring",
+    # 자동 글 (시장 분석·일일 랭킹) 태그 매핑
+    "시장분석": "financial market analysis",
+    "마감시황": "stock market closing",
+    "시황": "stock market closing",
+    "주도주": "market leaders trading",
+    "급등주": "stock rising chart",
+    "테마분석": "industry sector analysis",
+    "인기종목": "popular stocks",
+    "뉴스": "financial news",
+    "외국인": "foreign investor",
+    "기관": "institutional investor",
+    "개인": "retail investor trading",
+    "랭킹": "stock ranking chart",
+    "TOP10": "stock ranking chart",
+    "시가총액": "stock market capitalization",
+    "수익률": "investment returns",
+    "거래대금": "stock trading volume",
+}
+
+# 슬러그 접두어 → fallback 검색어. KEYWORD_MAP 으로 매핑이 안 됐을 때 사용.
+SLUG_PREFIX_FALLBACK = {
+    "daily-wrap-": "stock market closing",
+    "daily-mcap-": "stock market capitalization",
+    "daily-gainer-": "stock rising chart",
+    "daily-volume-": "stock trading volume",
+    "daily-foreign-": "foreign investor trading",
+    "daily-": "financial market analysis",
+    "market-brief-": "stock market analysis",
+    "batch-": "server operations",
+    "theme-": "industry analysis",
+    "custom-": "stock chart trading",
 }
 
 
@@ -221,7 +252,14 @@ def _build_query(title: str, tags: list[str], slug: str) -> str:
             if len(candidates) >= 3:
                 break
 
-    # 슬러그 단서 (custom-{code}-... 패턴)
+    # 슬러그 접두어 fallback — 자동 글에 특히 중요
+    if not candidates:
+        for prefix, fallback in SLUG_PREFIX_FALLBACK.items():
+            if slug.startswith(prefix):
+                candidates.append(fallback)
+                break
+
+    # 그래도 비어있으면 일반 기본값
     if not candidates:
         if "ai" in slug:
             candidates.append("artificial intelligence")
@@ -274,8 +312,19 @@ def enrich_one(path: Path, sleep_after: float = 1.5) -> bool:
     logger.info("[unsplash] %s — query=%r", slug, query)
 
     photo = _search_photo(query)
+
+    # 1차 검색 실패 시 generic fallback 으로 재시도
     if not photo:
-        logger.info("[unsplash] %s — no photo, skip", slug)
+        fallback_query = "stock market chart"
+        if slug.startswith("batch-"):
+            fallback_query = "server operations"
+        elif slug.startswith("guide/") or "guide" in slug:
+            fallback_query = "finance education"
+        logger.info("[unsplash] %s — retry with %r", slug, fallback_query)
+        photo = _search_photo(fallback_query)
+
+    if not photo:
+        logger.info("[unsplash] %s — no photo even with fallback, skip", slug)
         return False
 
     # 다운로드
