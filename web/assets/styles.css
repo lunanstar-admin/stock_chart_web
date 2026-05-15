@@ -674,7 +674,7 @@ main { padding: 12px 24px 24px; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.cl-row .cl-info .cl-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cl-row .cl-info .cl-name { font-weight: 600; font-size: 14px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cl-row .cl-info .cl-code { color: var(--text-secondary); font-family: monospace; font-size: 11px; }
 .cl-row .cl-info .cl-group {
   display: inline-block;
@@ -2656,8 +2656,9 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
   font-size: 13px;
 }
 .index-card {
-  background: var(--surface, #161a22);
-  border: 1px solid var(--border, #2a2f3a);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
   cursor: pointer;
@@ -2678,11 +2679,13 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
   font-weight: 700;
   font-size: 15px;
   letter-spacing: 0.3px;
+  color: var(--text-primary);
 }
 .index-value {
   font-weight: 700;
   font-size: 17px;
   font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
 }
 .index-card-sub {
   display: flex;
@@ -2705,8 +2708,9 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
   gap: 10px;
 }
 .index-detail-summary .snap-cell {
-  background: var(--surface, #161a22);
-  border: 1px solid var(--border, #2a2f3a);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   padding: 10px 12px;
   border-radius: 8px;
 }
