@@ -43,18 +43,23 @@ jobs:
       # 이중/삼중 cron 으로 fire 되었을 때, 이미 오늘자 데이터가 수집돼 있으면
       # 비싼 pip install / 데이터 수집 단계를 모두 건너뛴다.
       # workflow_dispatch 로 강제 실행한 경우에는 항상 진행.
-      - name: Skip if today's data already collected
+      - name: Skip if today's post-close data already collected
         id: freshness
+        # 장 마감(15:30 KST) 이후의 수집만 "오늘 데이터" 로 인정.
+        # 자정~15:35 사이의 배치는 전일 종가 데이터라, 이후 fire 를 스킵하지 않도록 한다.
+        # workflow_dispatch 로 강제 실행한 경우엔 항상 진행.
         run: |
           SKIP="false"
           if [ "${{ github.event_name }}" != "workflow_dispatch" ] && [ -f web/data/meta.json ]; then
-            LAST=$(python3 -c "import json,sys; print(json.load(open('web/data/meta.json'))['updated'][:10])" 2>/dev/null || echo "")
+            LAST_TS=$(python3 -c "import json; print(json.load(open('web/data/meta.json'))['updated'])" 2>/dev/null || echo "")
             TODAY=$(TZ=Asia/Seoul date +'%Y-%m-%d')
-            if [ "$LAST" = "$TODAY" ]; then
-              echo "오늘($TODAY) 데이터 이미 수집됨. 이번 fire 는 스킵."
+            CUTOFF="${TODAY}T15:35:00+09:00"
+            # 문자열 ISO8601 비교는 사전식 정렬과 시간순이 동일.
+            if [ -n "$LAST_TS" ] && [ "$LAST_TS" \> "$CUTOFF" ]; then
+              echo "오늘($TODAY) 장마감 후 데이터 이미 수집됨 ($LAST_TS > $CUTOFF). 스킵."
               SKIP="true"
             else
-              echo "마지막 수집일=$LAST · 오늘=$TODAY · 진행."
+              echo "마지막 수집=$LAST_TS · 컷오프=$CUTOFF · 진행."
             fi
           fi
           echo "skip=$SKIP" >> "$GITHUB_OUTPUT"
