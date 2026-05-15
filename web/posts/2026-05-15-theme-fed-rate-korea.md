@@ -4,8 +4,11 @@ date: 2026-05-15
 slug: theme-fed-rate-korea
 summary: "미국 연방준비제도(Fed) 의 금리 결정이 한국 주식 시장에 전달되는 환율·자금흐름·기업비용·밸류에이션 4가지 채널을 정리하고, 시나리오별 종목군 영향을 분석합니다."
 tags: [매크로, 금리, Fed, 환율, 외국인, 가치주, 성장주]
+cover: "/blog/img/theme-fed-rate-korea.jpg"
+cover_alt: "10 and one 10 us dollar bill"
+cover_credit: "Jason Leung"
+cover_credit_url: "https://unsplash.com/@ninjason?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 미국 금리 사이클이 한국 주식·환율에 영향을 주는 4가지 경로
 
 *2026년 5월 발행 — 매크로 분석 칼럼*

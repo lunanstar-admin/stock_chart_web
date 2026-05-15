@@ -4,8 +4,11 @@ date: 2026-05-17
 slug: theme-etf-vs-stock
 summary: "한국 시장에서 ETF 와 개별주의 장단점, 자금 규모·시간 여유·관심 분야 깊이별 선택 매트릭스, 그리고 두 방식을 결합하는 코어-새틀라이트 전략을 분석합니다."
 tags: [ETF, 개별주, 포트폴리오, 코어새틀라이트, 분산투자, 매크로]
+cover: "/blog/img/theme-etf-vs-stock.jpg"
+cover_alt: "a close up of a clock with numbers on it"
+cover_credit: "Tyler Prahm"
+cover_credit_url: "https://unsplash.com/@tprahm?utm_source=secomdal&utm_medium=referral"
 ---
-
 # ETF vs 개별주 — 언제 어느 쪽이 유리한가
 
 *2026년 5월 발행 — 투자 방식 분석 칼럼*

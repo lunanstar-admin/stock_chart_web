@@ -4,8 +4,11 @@ date: 2026-05-19
 slug: theme-ipo-framework
 summary: "한국 시장 신규 상장(IPO) 종목의 가격 변동 패턴, 락업·의무보유 해제 일정, 공모가 평가 5단계 체크포인트, 그리고 IPO 후 6~12개월에 흔히 나타나는 함정을 정리합니다."
 tags: [IPO, 신규상장, 공모주, 락업, 의무보유, 밸류에이션]
+cover: "/blog/img/theme-ipo-framework.jpg"
+cover_alt: "green and white braille typewriter"
+cover_credit: "Markus Winkler"
+cover_credit_url: "https://unsplash.com/@markuswinkler?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 신규 상장(IPO) 종목 평가 프레임워크 — 첫 6개월의 함정
 
 *2026년 5월 발행 — 종목 평가 프레임워크 칼럼*
