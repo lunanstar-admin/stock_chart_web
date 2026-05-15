@@ -46,6 +46,38 @@ def _now_kst_iso() -> str:
     return datetime.now(KST).replace(microsecond=0).isoformat()
 
 
+def _detect_data_date(output_dir: Path) -> str | None:
+    """수집된 종목 차트 중 하나(삼성전자 우선)를 열어 마지막 캔들 날짜를 반환.
+
+    meta.json 의 updated 는 *배치 실행 시각*이라 데이터 트레이딩일과
+    어긋날 수 있다 (예: 자정 직후 배치는 전일 종가를 가져오지만 updated 는 오늘).
+    이 값으로 페이지의 '종가 기준' 라벨을 정확하게 표시하기 위해 별도로 산출.
+    """
+    import json
+
+    candidates = ["005930", "000660", "035720"]  # 삼성전자, SK하이닉스, 카카오
+    chart_dir = output_dir / "chart"
+    for code in candidates:
+        p = chart_dir / f"{code}.json"
+        if not p.exists():
+            continue
+        try:
+            d = json.loads(p.read_text(encoding="utf-8"))
+            rows = d.get("data") or []
+            if rows:
+                last = rows[-1]
+                # 잠정 캔들(provisional=True) 은 건너뜀
+                if last.get("provisional"):
+                    if len(rows) >= 2:
+                        last = rows[-2]
+                    else:
+                        continue
+                return last.get("date")
+        except Exception:
+            continue
+    return None
+
+
 def _process_stock(stock: dict, output_dir: Path) -> tuple[str, bool, str]:
     code = stock["code"]
     try:
@@ -160,8 +192,12 @@ def run(output_dir: Path, limit: int | None, workers: int) -> None:
                 logger.info("progress %d/%d (ok=%d, fail=%d)", i, len(all_stocks), ok_count, fail_count)
 
     # 3. 메타 파일
+    # data_date: 실제 수집된 캔들의 마지막 트레이딩일.
+    #            updated(배치 실행시각) 와 별도로, 페이지 헤더 '종가 기준' 라벨용.
+    data_date = _detect_data_date(output_dir)
     meta_payload = {
         "updated": _now_kst_iso(),
+        "data_date": data_date,
         "elapsed_sec": round(time.time() - t0, 1),
         "counts": {
             "total": len(all_stocks),
