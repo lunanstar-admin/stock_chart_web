@@ -1416,9 +1416,117 @@ function _openFromHash() {
   }
 }
 
+/* ── 주요 지수 패널 (KOSPI / KOSDAQ / KOSPI200) ────────────────── */
+
+async function loadIndices() {
+  const grid = $("indicesGrid");
+  if (!grid) return;
+  try {
+    const r = await fetch("/data/indices.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error("indices.json 로드 실패");
+    const payload = await r.json();
+    renderIndices(payload, grid);
+  } catch (e) {
+    grid.innerHTML = '<div class="indices-empty">지수 데이터를 불러올 수 없습니다.</div>';
+  }
+}
+
+function renderIndices(payload, grid) {
+  const items = payload.indices || [];
+  if (!items.length) {
+    grid.innerHTML = '<div class="indices-empty">지수 데이터 없음</div>';
+    return;
+  }
+  grid.innerHTML = items.map((idx) => {
+    const dirCls =
+      idx.changeDir === "RISING" ? "idx-up" :
+      idx.changeDir === "FALLING" ? "idx-down" : "idx-flat";
+    const arrow =
+      idx.changeDir === "RISING" ? "▲" :
+      idx.changeDir === "FALLING" ? "▼" : "—";
+    return `
+      <div class="index-card" data-code="${idx.code}" data-name="${idx.name}">
+        <div class="index-card-head">
+          <span class="index-name">${idx.name}</span>
+          <span class="index-value ${dirCls}">${idx.value}</span>
+        </div>
+        <div class="index-card-sub ${dirCls}">
+          <span>${arrow} ${idx.change}</span>
+          <span>(${idx.changeRate}%)</span>
+        </div>
+        <canvas class="index-mini" data-code="${idx.code}" width="320" height="60"></canvas>
+      </div>
+    `;
+  }).join("");
+
+  // 미니차트 그리기 (Chart.drawMini 재사용)
+  for (const idx of items) {
+    const c = grid.querySelector(`canvas.index-mini[data-code="${idx.code}"]`);
+    if (c && idx.data && idx.data.length && window.Chart && Chart.drawMini) {
+      Chart.drawMini(c, idx.data);
+    }
+  }
+
+  // 카드 클릭 → 상세 모달
+  grid.querySelectorAll(".index-card").forEach((el) => {
+    el.addEventListener("click", () => {
+      const code = el.dataset.code;
+      const idx = items.find((x) => x.code === code);
+      if (idx) openIndexDetail(idx);
+    });
+  });
+}
+
+function openIndexDetail(idx) {
+  // 기존 종목 상세 모달을 재사용하되, 종목 메타 대신 지수 요약을 표시.
+  const modal = $("detailModal");
+  const titleEl = $("detailTitle");
+  const codeEl = $("detailCode");
+  const body = $("detailBody");
+  const dateEl = $("detailBaseDate");
+  const delayEl = $("detailDelayTag");
+  const star = $("detailStar");
+  if (titleEl) titleEl.textContent = idx.name;
+  if (codeEl) codeEl.textContent = idx.code;
+  if (dateEl) {
+    const last = (idx.data || []).slice().reverse().find((r) => !r.provisional);
+    dateEl.textContent = `📅 ${last ? last.date : "-"} 종가`;
+    dateEl.hidden = false;
+  }
+  if (delayEl) delayEl.hidden = true;
+  if (star) star.style.display = "none";
+
+  const dirCls =
+    idx.changeDir === "RISING" ? "sup-pos" :
+    idx.changeDir === "FALLING" ? "sup-neg" : "";
+  if (body) {
+    body.innerHTML = `
+      <div class="index-detail-summary">
+        <div class="snapshot-grid">
+          <div class="snap-cell"><div class="snap-k">현재값</div><div class="snap-v ${dirCls}">${idx.value}</div></div>
+          <div class="snap-cell"><div class="snap-k">전일대비</div><div class="snap-v ${dirCls}">${idx.change}</div></div>
+          <div class="snap-cell"><div class="snap-k">등락률</div><div class="snap-v ${dirCls}">${idx.changeRate}%</div></div>
+        </div>
+        <canvas id="indexDetailChart" width="1100" height="360" style="width:100%;max-width:1100px;margin-top:16px;"></canvas>
+      </div>
+    `;
+  }
+  modal?.classList.add("is-open");
+  document.body.style.overflow = "hidden";
+
+  const c = document.getElementById("indexDetailChart");
+  if (c && window.Chart && Chart.drawCandle && idx.data) {
+    Chart.drawCandle(c, idx.data);
+  } else if (c && window.Chart && Chart.drawMini && idx.data) {
+    Chart.drawMini(c, idx.data);
+  }
+}
+
 (async function init() {
   bindInputs();
   await loadMeta();
+  // 지수 패널 — 종목 리스트보다 먼저 로딩 (가벼움)
+  loadIndices();
   try {
     await loadStocks();
   } catch (e) {

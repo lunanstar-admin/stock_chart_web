@@ -218,6 +218,13 @@ def run(output_dir: Path, limit: int | None, workers: int) -> None:
     except Exception as e:
         logger.warning("short_balance.collect 실패(무시): %s", e)
 
+    # 3.6 주요 지수(KOSPI/KOSDAQ/KOSPI200) 일/주/월봉 수집 → indices.json
+    try:
+        from batch import indices as _indices_mod
+        _indices_mod.build_indices(output_dir)
+    except Exception as e:
+        logger.warning("indices.build_indices 실패(무시): %s", e)
+
     # 4. 일간 포스트 생성 + 블로그 정적 빌드 (실패해도 배치 자체는 성공으로 본다)
     try:
         from batch import daily_post

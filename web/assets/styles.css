@@ -2587,3 +2587,98 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
   .rel-table th, .rel-table td { padding: 8px; font-size: 12px; }
   .rel-tree-children { margin-left: 12px; padding-left: 10px; }
 }
+
+/* ─── 주요 지수 패널 (KOSPI/KOSDAQ/KOSPI200) ─── */
+.indices-panel {
+  margin: 12px 0 18px;
+  padding: 0 12px;
+}
+.indices-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.indices-loading,
+.indices-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 18px;
+  font-size: 13px;
+}
+.index-card {
+  background: var(--surface, #161a22);
+  border: 1px solid var(--border, #2a2f3a);
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+}
+.index-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent, #ffb84d);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+.index-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.index-name {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+.index-value {
+  font-weight: 700;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.index-card-sub {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.idx-up   { color: #ef4444; }      /* 한국 관례: 상승 = 빨강 */
+.idx-down { color: #3b82f6; }      /* 하락 = 파랑 */
+.idx-flat { color: var(--text-secondary); }
+.index-mini {
+  width: 100%;
+  height: 60px;
+  display: block;
+}
+.index-detail-summary .snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.index-detail-summary .snap-cell {
+  background: var(--surface, #161a22);
+  border: 1px solid var(--border, #2a2f3a);
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.index-detail-summary .snap-k {
+  color: var(--text-secondary);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.index-detail-summary .snap-v {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .indices-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .index-mini { height: 50px; }
+  .index-detail-summary .snapshot-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
