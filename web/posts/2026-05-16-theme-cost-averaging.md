@@ -4,8 +4,11 @@ date: 2026-05-16
 slug: theme-cost-averaging
 summary: "분할매수(코스트 평균법)는 위험을 줄이는 것처럼 보이지만, 실제 수익률 관점에서는 일시매수보다 불리한 경우가 많습니다. 어떤 시장 환경에서 분할매수가 유리하고 어떤 환경에서 불리한지 수학적으로 정리합니다."
 tags: [분할매수, 코스트평균법, DCA, 자산배분, 매매전략]
+cover: "/blog/img/theme-cost-averaging.jpg"
+cover_alt: "A ferris wheel with a mickey mouse face on it"
+cover_credit: "Jordan"
+cover_credit_url: "https://unsplash.com/@jordesigns?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유
 
 *2026년 5월 발행 — 매매전략 칼럼*

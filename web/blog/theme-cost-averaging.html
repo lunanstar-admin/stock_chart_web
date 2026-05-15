@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유 — 세콤달.콤 주식맛집</title>
+<meta name="description" content="분할매수(코스트 평균법)는 위험을 줄이는 것처럼 보이지만, 실제 수익률 관점에서는 일시매수보다 불리한 경우가 많습니다. 어떤 시장 환경에서 분할매수가 유리하고 어떤 환경에서 불리한지 수학적으로 정리합니다." />
+<meta name="keywords" content="주식, 투자, 분할매수, 코스트평균법, DCA, 자산배분, 매매전략" />
+<meta name="author" content="세콤달.콤" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+<link rel="canonical" href="https://secomdal.com/blog/theme-cost-averaging" />
+<meta property="og:type" content="article" /><meta property="og:site_name" content="세콤달.콤 주식맛집" /><meta property="og:title" content="분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유" /><meta property="og:description" content="분할매수(코스트 평균법)는 위험을 줄이는 것처럼 보이지만, 실제 수익률 관점에서는 일시매수보다 불리한 경우가 많습니다. 어떤 시장 환경에서 분할매수가 유리하고 어떤 환경에서 불리한지 수학적으로 정리합니다." /><meta property="og:locale" content="ko_KR" /><meta property="og:image" content="https://secomdal.com/blog/img/theme-cost-averaging.jpg" /><meta property="og:url" content="https://secomdal.com/blog/theme-cost-averaging" />
+<meta property="article:published_time" content="2026-05-16" /><meta property="article:author" content="세콤달" /><meta property="article:tag" content="분할매수" /><meta property="article:tag" content="코스트평균법" /><meta property="article:tag" content="DCA" /><meta property="article:tag" content="자산배분" /><meta property="article:tag" content="매매전략" />
+<meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유" /><meta name="twitter:description" content="분할매수(코스트 평균법)는 위험을 줄이는 것처럼 보이지만, 실제 수익률 관점에서는 일시매수보다 불리한 경우가 많습니다. 어떤 시장 환경에서 분할매수가 유리하고 어떤 환경에서 불리한지 수학적으로 정리합니다." /><meta name="twitter:image" content="https://secomdal.com/blog/img/theme-cost-averaging.jpg" />
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유", "description": "분할매수(코스트 평균법)는 위험을 줄이는 것처럼 보이지만, 실제 수익률 관점에서는 일시매수보다 불리한 경우가 많습니다. 어떤 시장 환경에서 분할매수가 유리하고 어떤 환경에서 불리한지 수학적으로 정리합니다.", "datePublished": "2026-05-16", "dateModified": "2026-05-16", "author": {"@type": "Person", "name": "세콤달"}, "publisher": {"@type": "Organization", "name": "세콤달.콤 주식맛집", "logo": {"@type": "ImageObject", "url": "https://secomdal.com/og-image.png"}}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://secomdal.com/blog/theme-cost-averaging"}, "image": "https://secomdal.com/blog/img/theme-cost-averaging.jpg", "inLanguage": "ko-KR", "keywords": "분할매수, 코스트평균법, DCA, 자산배분, 매매전략"}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-2454082917321119">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<script src="/assets/nav.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/styles.css" />
+<!-- Google Analytics (gtag.js) — G-QG41JS7EJ1 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QG41JS7EJ1');
+</script>
+</head>
+<body class="page-about">
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈"><svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+</svg></a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">Blog</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <a href="/">Home</a>
+  <a href="/chart">Stock Chart</a>
+  <a href="/guide/technical-indicators">기술적 지표</a>
+  <a href="/guide/supply-demand">수급 가이드</a>
+  <a href="/guide/candle-patterns">캔들 가이드</a>
+  <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+  <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+  <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+  <a href="/guide/market-metrics">시총·거래량</a>
+  <a href="/guide/holidays">휴장일</a>
+  <a href="/glossary">용어집</a>
+  <a href="/relations">📊 그룹사 관계도</a>
+  <a href="/ownership">계열사 관계도</a>
+  <a href="/blog">Blog</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact Us</a>
+  <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+
+<main class="static-main">
+  <article class="blog-article">
+    <header class="blog-article-head">
+      <div class="blog-breadcrumb"><a href="/blog">← 블로그 목록</a></div>
+      <h2>분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유</h2>
+      <div class="blog-meta">
+        <time datetime="2026-05-16">2026-05-16</time>
+        <div class="blog-tags"><span class="blog-tag">#분할매수</span><span class="blog-tag">#코스트평균법</span><span class="blog-tag">#DCA</span><span class="blog-tag">#자산배분</span><span class="blog-tag">#매매전략</span></div>
+      </div>
+      <figure class="blog-cover-wrap"><img class="blog-cover" src="/blog/img/theme-cost-averaging.jpg" alt="A ferris wheel with a mickey mouse face on it" loading="eager" /><div class="blog-cover-credit">Photo by <a href="https://unsplash.com/@jordesigns?utm_source=secomdal&amp;utm_medium=referral" target="_blank" rel="noopener nofollow">Jordan</a> on <a href="https://unsplash.com/?utm_source=secomdal&amp;utm_medium=referral" target="_blank" rel="noopener nofollow">Unsplash</a></div></figure>
+    </header>
+
+    <div class="blog-body">
+      <h1 id="_1">분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유</h1>
+<p><em>2026년 5월 발행 — 매매전략 칼럼</em></p>
+<p>"분할매수가 안전하다"는 말은 투자 커뮤니티의 <em>공리</em> 처럼 통용됩니다. 하지만 실제 데이터를 보면 <em>장기 우상향</em> 시장에서는 분할매수가 일시매수보다 <em>수익률이 낮다</em> 는 결과가 반복적으로 나옵니다. 이 글은 분할매수의 진짜 강점과 약점을 <em>수학적으로</em> 정리합니다.</p>
+<h2 id="_2">📌 핵심 요약</h2>
+<ul>
+<li>분할매수는 <em>수익률 극대화</em> 도구가 아니라 <em>후회 최소화</em> 도구입니다.</li>
+<li>우상향 시장에서는 <em>일시매수</em> 가 평균적으로 더 높은 수익을 냅니다.</li>
+<li>횡보·하락 시장에서는 <em>분할매수</em> 가 평균 매입단가를 낮춥니다.</li>
+<li>시장 방향을 모를 때 <em>심리적 안정</em> 의 비용을 지불하고 사는 것이 분할매수입니다.</li>
+</ul>
+<h2 id="1">1. 분할매수가 작동하는 원리</h2>
+<p>자금 1,200만 원을 매월 100만 원씩 12개월에 걸쳐 매수한다고 가정합시다. 주가가 다음과 같이 움직였다면:</p>
+<table>
+<thead>
+<tr>
+<th>월</th>
+<th>주가</th>
+<th>매수 주식 수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1월</td>
+<td>10,000원</td>
+<td>100주</td>
+</tr>
+<tr>
+<td>6월</td>
+<td>5,000원</td>
+<td>200주</td>
+</tr>
+<tr>
+<td>12월</td>
+<td>8,000원</td>
+<td>125주</td>
+</tr>
+</tbody>
+</table>
+<p>평균 매입단가 = (1,200만 ÷ 총 매수 주식 수) → 단순 산술평균보다 <em>낮은 가격</em> 에 가중치가 쏠립니다. 이것이 분할매수의 <em>수학적 정체</em> 입니다. 가격이 낮을 때 <em>자동으로 더 많은 주식</em> 을 사게 됩니다.</p>
+<p>이 메커니즘 자체는 <em>횡보 또는 V자 회복</em> 시장에서 강력합니다.</p>
+<h2 id="2">2. 우상향 시장에서는 왜 불리한가</h2>
+<p>문제는 시장이 <em>지속적으로 상승</em> 하는 경우입니다.</p>
+<table>
+<thead>
+<tr>
+<th>월</th>
+<th>주가</th>
+<th>100만원으로 매수 가능 주식</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1월</td>
+<td>10,000원</td>
+<td>100주</td>
+</tr>
+<tr>
+<td>6월</td>
+<td>13,000원</td>
+<td>76주</td>
+</tr>
+<tr>
+<td>12월</td>
+<td>16,000원</td>
+<td>62주</td>
+</tr>
+</tbody>
+</table>
+<p>분할매수자의 평균 단가는 약 13,000원. 반면 <em>1월에 1,200만 원 일시매수</em> 한 사람의 단가는 10,000원. 같은 종착점(16,000원)에서 <em>수익률 차이는 30%</em> 가 넘습니다.</p>
+<p><strong>Vanguard 의 1976~2015년 실증연구</strong>에서, S&amp;P500 기준 일시매수가 분할매수(12개월 분할)를 <em>약 2/3 의 확률로 이긴다</em> 는 결과가 나왔습니다. 주식시장이 <em>장기적으로 우상향</em> 한다는 전제 하에, 일찍 들어갈수록 평균적으로 더 유리하다는 의미입니다.</p>
+<h2 id="3">3. 그럼 왜 분할매수를 권하는가</h2>
+<p>수익률이 평균적으로 낮다면, 왜 책마다 분할매수를 권할까요? 그것은 <em>분포의 꼬리</em> 때문입니다.</p>
+<ul>
+<li>일시매수는 <strong>고점에 물릴 확률</strong> 도 33% 정도 존재합니다.</li>
+<li>그 경우 <em>수년간 마이너스</em> 를 견뎌야 하고, 심리적으로 무너지면 <em>바닥에서 손절</em> 하기 쉽습니다.</li>
+<li>분할매수는 <em>최악의 시나리오</em> 를 완화하여, 투자자가 <em>시장에 머무를 확률</em> 을 높입니다.</li>
+</ul>
+<p>즉, 분할매수의 진짜 가치는 <em>기대 수익률</em> 이 아니라 <em>행동 편향 방어</em> 에 있습니다. 사람이 합리적이지 않다는 <em>현실</em> 을 반영한 전략입니다.</p>
+<h2 id="4">4. 언제 분할, 언제 일시매수인가</h2>
+<p>상황별 의사결정 가이드:</p>
+<p><strong>일시매수가 유리한 환경</strong>:</p>
+<ul>
+<li>시장이 <em>장기 추세적 상승</em> 구간 (예: 강세장 초기)</li>
+<li>본인의 <em>심리적 내성</em> 이 충분히 강해 단기 -20% 를 견딜 수 있음</li>
+<li>투자 기간이 충분히 길다(10년 이상)</li>
+</ul>
+<p><strong>분할매수가 유리한 환경</strong>:</p>
+<ul>
+<li><em>고점 부근</em> 의심 또는 <em>변동성 확대</em> 국면</li>
+<li>매수 시점에 시장 방향을 <em>전혀 자신할 수 없음</em></li>
+<li>본인의 <em>손실 회피</em> 성향이 강해, 즉시 -10% 도 손절 충동이 큼</li>
+</ul>
+<p><strong>섞어 쓰는 방법</strong>:</p>
+<p>자금의 <em>50% 는 일시매수</em>, <em>50% 는 6~12개월 분할</em> 하는 하이브리드도 합리적인 선택지입니다. 기대수익과 후회 최소화의 <em>중간</em> 을 가져갑니다.</p>
+<h2 id="_3">마치며</h2>
+<p>분할매수는 <em>항상 유리한 전략</em> 이 아니라, <em>특정 환경과 특정 투자자</em> 에게 유리한 전략입니다. "분할이 안전하다"는 격언을 무비판적으로 따르기보다는, <em>내 심리 + 시장 환경</em> 에 맞춰 선택해야 합니다.</p>
+<p>기본 매매 개념이 처음이라면 <a href="/glossary">용어집</a>, 시장 환경 판단에는 <a href="/guide/technical-indicators">기술적 지표 가이드</a> 가 도움이 됩니다.</p>
+<blockquote>
+<p>⚠️ 본 글은 <em>교육·정보 제공 목적</em> 의 칼럼이며, 특정 종목 추천이나 투자 권유가 아닙니다. 투자 판단과 그 결과에 대한 책임은 전적으로 이용자 본인에게 있습니다.</p>
+</blockquote>
+    </div>
+
+    <nav class="blog-nav"><a class="blog-nav-prev" href="/blog/theme-dividend-framework">← 배당주 투자, 무엇을 보고 골라야 하나 — 4가지 핵심 기준</a><a class="blog-nav-next" href="/blog/theme-fed-rate-korea">미국 금리 사이클이 한국 주식·환율에 영향을 주는 4가지 경로 →</a></nav>
+
+    <div class="blog-cta">
+      <p>관련 종목 차트가 궁금하다면?</p>
+      <a class="cta" href="/chart">세콤달.콤 주식맛집 열기 →</a>
+    </div>
+  </article>
+
+</main>
+
+
+<footer>
+  데이터 제공: FinanceDataReader · pykrx · Naver Finance &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot;
+  <a href="/privacy">Privacy</a>
+</footer>
+
+</body>
+</html>

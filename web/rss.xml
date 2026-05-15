@@ -5,7 +5,7 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 15 May 2026 23:28:13 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 16 May 2026 01:24:58 +0900</lastBuildDate>
     <item>
       <title>신규 상장(IPO) 종목 평가 프레임워크 — 첫 6개월의 함정</title>
       <link>https://secomdal.com/blog/theme-ipo-framework</link>
@@ -19,6 +19,27 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-etf-vs-stock</guid>
       <pubDate>Sun, 17 May 2026 00:00:00 +0900</pubDate>
       <description>한국 시장에서 ETF 와 개별주의 장단점, 자금 규모·시간 여유·관심 분야 깊이별 선택 매트릭스, 그리고 두 방식을 결합하는 코어-새틀라이트 전략을 분석합니다.</description>
+    </item>
+    <item>
+      <title>공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나</title>
+      <link>https://secomdal.com/blog/theme-short-interest</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-short-interest</guid>
+      <pubDate>Sat, 16 May 2026 00:00:00 +0900</pubDate>
+      <description>공매도 잔고가 늘면 주가가 빠진다는 단순 해석은 자주 틀립니다. 잔고의 절대 수준·증감 속도·대차잔고와의 관계를 구분해서 읽는 방법과 자주 빠지는 함정을 정리합니다.</description>
+    </item>
+    <item>
+      <title>배당주 투자, 무엇을 보고 골라야 하나 — 4가지 핵심 기준</title>
+      <link>https://secomdal.com/blog/theme-dividend-framework</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-dividend-framework</guid>
+      <pubDate>Sat, 16 May 2026 00:00:00 +0900</pubDate>
+      <description>배당수익률 5%만 보고 매수했다가 주가가 빠져 손실이 더 큰 경우가 흔합니다. 배당의 지속 가능성·성장성·총수익 관점에서 종목을 거르는 4가지 기준을 정리합니다.</description>
+    </item>
+    <item>
+      <title>분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유</title>
+      <link>https://secomdal.com/blog/theme-cost-averaging</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-cost-averaging</guid>
+      <pubDate>Sat, 16 May 2026 00:00:00 +0900</pubDate>
+      <description>분할매수(코스트 평균법)는 위험을 줄이는 것처럼 보이지만, 실제 수익률 관점에서는 일시매수보다 불리한 경우가 많습니다. 어떤 시장 환경에서 분할매수가 유리하고 어떤 환경에서 불리한지 수학적으로 정리합니다.</description>
     </item>
     <item>
       <title>미국 금리 사이클이 한국 주식·환율에 영향을 주는 4가지 경로</title>
@@ -124,27 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-ai-vs-dotcom</guid>
       <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
       <description>현재의 AI 자본 사이클이 1995~2000년 닷컴 버블과 닮은 점과 다른 점, 그리고 사이클 후반에 들어섰다는 신호로 봐야 할 7가지 점검 포인트를 정리합니다.</description>
-    </item>
-    <item>
-      <title>데이터센터 폭증 → 전력 인프라 — 왜 전선·발전기·중전기기인가</title>
-      <link>https://secomdal.com/blog/theme-ai-power-infra</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-ai-power-infra</guid>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
-      <description>AI 데이터센터의 폭발적 전력 수요가 발전기·전선·변압기·중전기기 산업을 어떻게 재평가시키고 있는지, 그리고 한국 종목이 이 사이클에서 차지하는 위치를 분석합니다.</description>
-    </item>
-    <item>
-      <title>AI 의 다음 격전지 — 엣지 추론과 온디바이스 AI</title>
-      <link>https://secomdal.com/blog/theme-ai-edge-inference</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-ai-edge-inference</guid>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
-      <description>클라우드 학습에서 디바이스 추론으로 — AI 의 다음 단계인 &#x27;엣지 추론(edge inference)&#x27; 의 산업 구조, NPU·저전력 메모리·후공정의 위치, 그리고 한국 종목이 차지할 수 있는 자리를 분석합니다.</description>
-    </item>
-    <item>
-      <title>AI 상승 사이클의 흐름 — 메모리 반도체에서 통신까지, 다음 단계는?</title>
-      <link>https://secomdal.com/blog/theme-ai-cycle-flow</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-ai-cycle-flow</guid>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
-      <description>최근 한국 시장의 AI 관련 상승 흐름이 메모리반도체 → 피지컬 AI → 발전설비 → 전력 인프라 → 통신 순으로 진행되는 구조적 이유와, 다음 대두될 후속 테마 후보를 분석합니다.</description>
     </item>
   </channel>
 </rss>
