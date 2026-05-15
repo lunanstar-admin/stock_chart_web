@@ -5,7 +5,28 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 15 May 2026 18:22:14 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 15 May 2026 18:59:39 +0900</lastBuildDate>
+    <item>
+      <title>신규 상장(IPO) 종목 평가 프레임워크 — 첫 6개월의 함정</title>
+      <link>https://secomdal.com/blog/theme-ipo-framework</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-ipo-framework</guid>
+      <pubDate>Tue, 19 May 2026 00:00:00 +0900</pubDate>
+      <description>한국 시장 신규 상장(IPO) 종목의 가격 변동 패턴, 락업·의무보유 해제 일정, 공모가 평가 5단계 체크포인트, 그리고 IPO 후 6~12개월에 흔히 나타나는 함정을 정리합니다.</description>
+    </item>
+    <item>
+      <title>ETF vs 개별주 — 언제 어느 쪽이 유리한가</title>
+      <link>https://secomdal.com/blog/theme-etf-vs-stock</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-etf-vs-stock</guid>
+      <pubDate>Sun, 17 May 2026 00:00:00 +0900</pubDate>
+      <description>한국 시장에서 ETF 와 개별주의 장단점, 자금 규모·시간 여유·관심 분야 깊이별 선택 매트릭스, 그리고 두 방식을 결합하는 코어-새틀라이트 전략을 분석합니다.</description>
+    </item>
+    <item>
+      <title>미국 금리 사이클이 한국 주식·환율에 영향을 주는 4가지 경로</title>
+      <link>https://secomdal.com/blog/theme-fed-rate-korea</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-fed-rate-korea</guid>
+      <pubDate>Fri, 15 May 2026 00:00:00 +0900</pubDate>
+      <description>미국 연방준비제도(Fed) 의 금리 결정이 한국 주식 시장에 전달되는 환율·자금흐름·기업비용·밸류에이션 4가지 채널을 정리하고, 시나리오별 종목군 영향을 분석합니다.</description>
+    </item>
     <item>
       <title>2026년 05월 15일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260515</link>
@@ -124,27 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-ai-cycle-flow</guid>
       <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
       <description>최근 한국 시장의 AI 관련 상승 흐름이 메모리반도체 → 피지컬 AI → 발전설비 → 전력 인프라 → 통신 순으로 진행되는 구조적 이유와, 다음 대두될 후속 테마 후보를 분석합니다.</description>
-    </item>
-    <item>
-      <title>2026년 05월 08일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260508</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260508</guid>
-      <pubDate>Fri, 08 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 08일 한국 주식시장 시황 분석 — 급등 주도주: 한울반도체 · 현대오토에버 · 가온전선. 오늘의 부각 테마: 금융 · 반도체 · AI · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 05월 08일 마켓 랩업 — KOSPI·KOSDAQ 상승/하락 Top 5</title>
-      <link>https://secomdal.com/blog/daily-wrap-20260508</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-wrap-20260508</guid>
-      <pubDate>Fri, 08 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 08일 장마감 마켓 랩업. KOSPI 상승 1228·하락 1028, KOSDAQ 상승 729·하락 856.</description>
-    </item>
-    <item>
-      <title>2026년 05월 07일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260507</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260507</guid>
-      <pubDate>Thu, 07 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 07일 한국 주식시장 시황 분석 — 급등 주도주: 젠큐릭스 · 희림 · 대원전선우. 오늘의 부각 테마: 금융 · 실적 · 어닝 · 반도체.</description>
     </item>
   </channel>
 </rss>

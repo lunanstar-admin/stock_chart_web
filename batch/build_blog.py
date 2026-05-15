@@ -578,6 +578,15 @@ def build() -> int:
         except Exception as e:
             print(f"[blog] {f.name} 파싱 실패: {e}", file=sys.stderr)
 
+    # 미래 발행일 글은 hidden 처리 — 영상 가이드의 '예약 발행 분산' 패턴 지원
+    today_str = datetime.now(KST).strftime("%Y-%m-%d")
+    for p in posts:
+        if p.date > today_str:
+            p.hidden = True
+    scheduled = sum(1 for p in posts if p.hidden and p.date > today_str)
+    if scheduled:
+        print(f"[blog] {scheduled}편 미래 발행일 — hidden 처리 (date > {today_str})")
+
     # 최신순 정렬
     posts.sort(key=lambda p: (p.date, p.slug), reverse=True)
 
