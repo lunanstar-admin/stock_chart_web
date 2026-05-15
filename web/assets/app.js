@@ -135,9 +135,12 @@ async function loadMeta() {
     const metaEl = $("metaInfo");
     if (metaEl) metaEl.textContent = `업데이트: ${updated} KST · ${cnt}종목`;
     // 헤더 우측 '마지막 데이터 날짜 기준' 라벨 (chart.html)
+    // data_date(실제 트레이딩일) 우선, 없으면 updated(배치 실행시각) 폴백.
+    // updated 만 쓰면 자정 직후 배치가 전일 데이터를 가져왔을 때 라벨이
+    // 한 칸 앞서 표시되는 문제 발생.
     const dataDateEl = $("dataDate");
     if (dataDateEl) {
-      const ymd = (state.meta.updated || "").slice(0, 10);
+      const ymd = state.meta.data_date || (state.meta.updated || "").slice(0, 10);
       dataDateEl.textContent = ymd
         ? `${ymd} 종가 기준`
         : "마지막 데이터 날짜 기준";
