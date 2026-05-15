@@ -25,9 +25,11 @@
   <script defer src="/assets/auth.js"></script>
   <link rel="stylesheet" href="/assets/styles.css?v=20260516a" />
   <style>
-    .dart-page { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
-    .dart-page h2 { margin: 0 0 8px; }
-    .dart-page .sub { color: var(--c-text-mute, #888); font-size: 14px; margin-bottom: 20px; }
+    /* DART 페이지 — 글로벌 테마 변수(--bg-card/--text-primary 등) 사용.
+       자체 --c-* 변수는 styles.css 에 정의되지 않아 라이트 폴백으로 깔리던 문제 수정. */
+    .dart-page { max-width: 1100px; margin: 0 auto; padding: 24px 16px; color: var(--text-primary); }
+    .dart-page h2 { margin: 0 0 8px; color: var(--text-primary); }
+    .dart-page .sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
     .dart-filters {
       display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
       margin-bottom: 14px;
@@ -35,80 +37,86 @@
     .dart-filters input[type=text] {
       flex: 1; min-width: 200px;
       padding: 9px 12px; border-radius: 6px;
-      border: 1px solid var(--c-border, #ddd);
-      background: var(--c-bg, #fff); color: var(--c-text, #111);
+      border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--text-primary);
       font-size: 14px;
     }
     .dart-filters select {
       padding: 9px 10px; border-radius: 6px;
-      border: 1px solid var(--c-border, #ddd);
-      background: var(--c-bg, #fff); color: var(--c-text, #111);
+      border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--text-primary);
       font-size: 14px;
     }
-    .dart-checks { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-bottom: 16px; }
+    .dart-checks { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-bottom: 16px; color: var(--text-primary); }
     .dart-checks label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
-    .dart-checks .lbl-group { color: var(--c-text-mute, #888); }
-    .dart-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--c-text-mute, #888); margin-bottom: 8px; }
+    .dart-checks .lbl-group { color: var(--text-secondary); }
+    .dart-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
     .dart-list {
       display: flex; flex-direction: column; gap: 1px;
-      background: var(--c-border, #eee);
+      background: var(--border);
       border-radius: 8px; overflow: hidden;
-      border: 1px solid var(--c-border, #eee);
+      border: 1px solid var(--border);
     }
     .dart-card {
-      background: var(--c-bg, #fff);
+      background: var(--bg-card);
+      color: var(--text-primary);
       padding: 14px 16px;
       display: grid; grid-template-columns: 1fr auto; gap: 4px 12px;
       align-items: start;
-      text-decoration: none; color: inherit;
+      text-decoration: none;
     }
-    .dart-card:hover { background: var(--c-bg-hover, #fafafa); }
+    .dart-card:hover { background: var(--bg-hover); }
     .dart-card .row1 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; }
-    .dart-card .row1 .name { font-weight: 600; }
-    .dart-card .row1 .code { color: var(--c-text-mute, #888); font-size: 12px; }
-    .dart-card .report { color: var(--c-text, #333); font-size: 14px; word-break: keep-all; }
-    .dart-card .summary { font-size: 13px; color: var(--c-text-mute, #666); margin-top: 4px; grid-column: 1 / -1; line-height: 1.5; }
+    .dart-card .row1 .name { font-weight: 600; color: var(--text-primary); }
+    .dart-card .row1 .code { color: var(--text-secondary); font-size: 12px; }
+    .dart-card .report { color: var(--text-primary); font-size: 14px; word-break: keep-all; }
+    .dart-card .summary { font-size: 13px; color: var(--text-secondary); margin-top: 4px; grid-column: 1 / -1; line-height: 1.5; }
     .dart-card .right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 100px; }
-    .dart-card .date { font-size: 12px; color: var(--c-text-mute, #888); }
+    .dart-card .date { font-size: 12px; color: var(--text-secondary); }
     .chip { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-    .chip.positive { background: #dcfce7; color: #15803d; }
-    .chip.negative { background: #fee2e2; color: #b91c1c; }
-    .chip.neutral { background: #f1f5f9; color: #475569; }
-    @media (prefers-color-scheme: dark) {
-      .chip.positive { background: rgba(34,197,94,0.2); color: #4ade80; }
-      .chip.negative { background: rgba(239,68,68,0.2); color: #f87171; }
-      .chip.neutral { background: rgba(255,255,255,0.07); color: #cbd5e1; }
-    }
+    /* chip — 다크 테마 기본값 */
+    .chip.positive { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .chip.negative { background: rgba(239,68,68,0.2); color: #f87171; }
+    .chip.neutral  { background: rgba(255,255,255,0.07); color: var(--text-secondary); }
+    /* 라이트 계열 테마에서는 채도 있는 파스텔 톤 */
+    html[data-theme="light"] .chip.positive,
+    html[data-theme="gray"] .chip.positive,
+    html[data-theme="sweet"] .chip.positive { background: #dcfce7; color: #15803d; }
+    html[data-theme="light"] .chip.negative,
+    html[data-theme="gray"] .chip.negative,
+    html[data-theme="sweet"] .chip.negative { background: #fee2e2; color: #b91c1c; }
+    html[data-theme="light"] .chip.neutral,
+    html[data-theme="gray"] .chip.neutral,
+    html[data-theme="sweet"] .chip.neutral { background: rgba(0,0,0,0.06); color: var(--text-secondary); }
     .dart-pagination {
       display: flex; justify-content: space-between; padding: 16px 0; font-size: 14px;
     }
     .dart-pagination button {
       padding: 8px 14px; border-radius: 6px;
-      border: 1px solid var(--c-border, #ddd);
-      background: var(--c-bg, #fff); color: var(--c-text, #111);
+      border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--text-primary);
       cursor: pointer; font-size: 14px;
     }
     .dart-pagination button:disabled { opacity: 0.3; cursor: default; }
-    .dart-empty { padding: 40px 16px; text-align: center; color: var(--c-text-mute, #888); }
-    .dart-intro { background: var(--c-bg-soft, #fafafa); border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; }
-    .dart-intro b { color: var(--c-text, #111); }
+    .dart-empty { padding: 40px 16px; text-align: center; color: var(--text-secondary); }
+    .dart-intro { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; color: var(--text-primary); }
+    .dart-intro b { color: var(--text-primary); }
     .dart-disclaimer {
-      background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px;
+      background: var(--disclaimer-tint, rgba(245, 158, 11, 0.08));
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 12px 16px; margin-bottom: 18px;
       font-size: 13px; line-height: 1.6;
-      color: #78350f;
+      color: var(--text-primary);
     }
-    .dart-disclaimer .label { font-weight: 700; margin-right: 6px; }
-    @media (prefers-color-scheme: dark) {
-      .dart-disclaimer { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.35); color: #fde68a; }
-    }
+    .dart-disclaimer .label { font-weight: 700; margin-right: 6px; color: var(--orange, #f59e0b); }
     .dart-footer-notice {
       margin-top: 36px; padding: 16px 18px;
-      border-top: 1px solid var(--c-border, #e5e7eb);
+      border-top: 1px solid var(--border);
       font-size: 12px; line-height: 1.7;
-      color: var(--c-text-mute, #6b7280);
+      color: var(--text-secondary);
     }
-    .dart-footer-notice b { color: var(--c-text, #111); }
+    .dart-footer-notice b { color: var(--text-primary); }
   </style>
 <!-- Google Analytics (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
