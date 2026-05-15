@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-2454082917321119">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DART 공시 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="DART 전자공시 사업·반기·분기보고서를 종목명·키워드로 검색. 호재/악재 자동 분류와 AI 한줄요약 제공. 매일 갱신." />
+  <meta name="keywords" content="DART, 전자공시, 분기보고서, 사업보고서, 반기보고서, 공시검색, 호재, 악재, 종목공시, 세콤달" />
+  <meta name="author" content="세콤달.콤" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://secomdal.com/dart" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="세콤달.콤 주식맛집" />
+  <meta property="og:title" content="DART 공시 — 세콤달.콤 주식맛집" />
+  <meta property="og:description" content="DART 전자공시를 종목명·키워드로 검색. 호재/악재 자동 분류 + AI 한줄요약." />
+  <meta property="og:url" content="https://secomdal.com/dart" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:image" content="https://secomdal.com/og-image.png" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%91%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js"></script>
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516a" />
+  <style>
+    .dart-page { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    .dart-page h2 { margin: 0 0 8px; }
+    .dart-page .sub { color: var(--c-text-mute, #888); font-size: 14px; margin-bottom: 20px; }
+    .dart-filters {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      margin-bottom: 14px;
+    }
+    .dart-filters input[type=text] {
+      flex: 1; min-width: 200px;
+      padding: 9px 12px; border-radius: 6px;
+      border: 1px solid var(--c-border, #ddd);
+      background: var(--c-bg, #fff); color: var(--c-text, #111);
+      font-size: 14px;
+    }
+    .dart-filters select {
+      padding: 9px 10px; border-radius: 6px;
+      border: 1px solid var(--c-border, #ddd);
+      background: var(--c-bg, #fff); color: var(--c-text, #111);
+      font-size: 14px;
+    }
+    .dart-checks { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-bottom: 16px; }
+    .dart-checks label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .dart-checks .lbl-group { color: var(--c-text-mute, #888); }
+    .dart-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--c-text-mute, #888); margin-bottom: 8px; }
+    .dart-list {
+      display: flex; flex-direction: column; gap: 1px;
+      background: var(--c-border, #eee);
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--c-border, #eee);
+    }
+    .dart-card {
+      background: var(--c-bg, #fff);
+      padding: 14px 16px;
+      display: grid; grid-template-columns: 1fr auto; gap: 4px 12px;
+      align-items: start;
+      text-decoration: none; color: inherit;
+    }
+    .dart-card:hover { background: var(--c-bg-hover, #fafafa); }
+    .dart-card .row1 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; }
+    .dart-card .row1 .name { font-weight: 600; }
+    .dart-card .row1 .code { color: var(--c-text-mute, #888); font-size: 12px; }
+    .dart-card .report { color: var(--c-text, #333); font-size: 14px; word-break: keep-all; }
+    .dart-card .summary { font-size: 13px; color: var(--c-text-mute, #666); margin-top: 4px; grid-column: 1 / -1; line-height: 1.5; }
+    .dart-card .right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 100px; }
+    .dart-card .date { font-size: 12px; color: var(--c-text-mute, #888); }
+    .chip { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+    .chip.positive { background: #dcfce7; color: #15803d; }
+    .chip.negative { background: #fee2e2; color: #b91c1c; }
+    .chip.neutral { background: #f1f5f9; color: #475569; }
+    @media (prefers-color-scheme: dark) {
+      .chip.positive { background: rgba(34,197,94,0.2); color: #4ade80; }
+      .chip.negative { background: rgba(239,68,68,0.2); color: #f87171; }
+      .chip.neutral { background: rgba(255,255,255,0.07); color: #cbd5e1; }
+    }
+    .dart-pagination {
+      display: flex; justify-content: space-between; padding: 16px 0; font-size: 14px;
+    }
+    .dart-pagination button {
+      padding: 8px 14px; border-radius: 6px;
+      border: 1px solid var(--c-border, #ddd);
+      background: var(--c-bg, #fff); color: var(--c-text, #111);
+      cursor: pointer; font-size: 14px;
+    }
+    .dart-pagination button:disabled { opacity: 0.3; cursor: default; }
+    .dart-empty { padding: 40px 16px; text-align: center; color: var(--c-text-mute, #888); }
+    .dart-intro { background: var(--c-bg-soft, #fafafa); border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; }
+    .dart-intro b { color: var(--c-text, #111); }
+    .dart-disclaimer {
+      background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px;
+      padding: 12px 16px; margin-bottom: 18px;
+      font-size: 13px; line-height: 1.6;
+      color: #78350f;
+    }
+    .dart-disclaimer .label { font-weight: 700; margin-right: 6px; }
+    @media (prefers-color-scheme: dark) {
+      .dart-disclaimer { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.35); color: #fde68a; }
+    }
+    .dart-footer-notice {
+      margin-top: 36px; padding: 16px 18px;
+      border-top: 1px solid var(--c-border, #e5e7eb);
+      font-size: 12px; line-height: 1.7;
+      color: var(--c-text-mute, #6b7280);
+    }
+    .dart-footer-notice b { color: var(--c-text, #111); }
+  </style>
+<!-- Google Analytics (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QG41JS7EJ1');
+</script>
+</head>
+<body class="page-dart">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈">
+        <svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+        </svg>
+      </a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">📑 DART 공시</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+    <div class="nav-group">
+      <a href="/">Home</a>
+      <a href="/chart">Stock Chart</a>
+      <a href="/dart">📑 DART 공시</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <details>
+      <summary>학습 가이드</summary>
+      <a href="/guide/technical-indicators">기술적 지표</a>
+      <a href="/guide/supply-demand">수급 가이드</a>
+      <a href="/guide/candle-patterns">캔들 가이드</a>
+      <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+      <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+      <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+      <a href="/guide/market-metrics">시총·거래량</a>
+      <a href="/guide/holidays">휴장일</a>
+    </details>
+    <div class="nav-group">
+      <div class="nav-group-label">참고자료</div>
+      <a href="/glossary">용어집</a>
+      <a href="/relations">📊 그룹사 관계도</a>
+      <a href="/ownership">계열사 관계도</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">정보</div>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/terms">이용약관</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
+    </div>
+  </nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <div class="dart-page">
+    <h2>📑 DART 공시 검색</h2>
+    <p class="sub">전자공시 사업·반기·분기보고서를 종목명·키워드로 검색합니다. 호재/악재 자동 분류 + AI 한줄요약.</p>
+
+    <div class="dart-disclaimer">
+      <span class="label">⚠️ 투자 면책 고지</span>
+      본 페이지의 공시 요약·호재/악재 분류·밸류에이션 논평·주가영향 데이터는 <b>AI가 자동 생성한 단순 참고자료</b>입니다.
+      <b>투자 판단은 반드시 본인 책임으로 직접 하셔야 하며</b>, 본 자료의 정확성·완전성을 보장하지 않습니다.
+      손익에 대한 책임은 운영자에게 없습니다.
+    </div>
+
+    <div class="dart-intro">
+      <b>데이터:</b> 금융감독원 전자공시시스템(DART) 정기공시 4종 (사업·반기·1Q·3Q 보고서) +
+      자동매매 트래커 watchlist 종목의 주요공시. 매일 1회 갱신.<br />
+      <b>분류:</b> 보고서 제목의 키워드(자기주식취득·합병·계약체결·상장폐지·감사의견 등)로 자동 호재/악재 판정.<br />
+      <b>AI 요약 + 밸류에이션 논평:</b> 정기공시 본문과 종목의 현재 시총·PER·PBR·ROE·연간 실적 추세를 Claude Haiku로 분석.
+    </div>
+
+    <div class="dart-filters">
+      <input id="q" type="text" placeholder="종목명·종목코드·보고서 제목 (예: 삼성, 005930, 대규모 계약)" />
+      <select id="days">
+        <option value="7">7일</option>
+        <option value="30" selected>30일</option>
+        <option value="90">90일</option>
+        <option value="0">전체</option>
+      </select>
+    </div>
+    <div class="dart-checks">
+      <span class="lbl-group">보고서:</span>
+      <label><input type="checkbox" class="type-check" value="사업보고서" /> 사업보고서</label>
+      <label><input type="checkbox" class="type-check" value="반기보고서" /> 반기보고서</label>
+      <label><input type="checkbox" class="type-check" value="분기보고서" /> 분기보고서</label>
+      <span class="lbl-group" style="margin-left:12px">분류:</span>
+      <label><input type="checkbox" class="sent-check" value="positive" /> 🚀 호재</label>
+      <label><input type="checkbox" class="sent-check" value="negative" /> ⚠️ 악재</label>
+      <label><input type="checkbox" class="sent-check" value="neutral" /> 📋 중립</label>
+    </div>
+
+    <div class="dart-meta">
+      <span id="dataMeta">로딩 중...</span>
+      <span id="resultCount"></span>
+    </div>
+
+    <div class="dart-list" id="dartList"></div>
+
+    <div class="dart-pagination">
+      <button id="prevBtn" disabled>← 이전</button>
+      <span id="pageInfo"></span>
+      <button id="nextBtn" disabled>다음 →</button>
+    </div>
+
+    <div class="dart-footer-notice">
+      <b>※ 본 페이지는 단순 참고자료입니다.</b><br />
+      여기 제공되는 공시 요약·호재/악재 분류·AI 밸류에이션 논평·주가영향 통계는 모두
+      공개 정보(DART OpenAPI)를 기계적으로 가공한 결과이며, 정확성·완전성·시의성을 보장하지 않습니다.
+      특정 종목에 대한 매수·매도 추천이 아니며, 투자에 따른 손익은 전적으로 투자자 본인의 책임입니다.
+      구체적 투자 판단은 본인이 직접 공시 본문·재무제표·시장 상황을 종합적으로 검토한 후 결정하시기 바랍니다.
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  const PAGE_SIZE = 50;
+  const state = {
+    all: [],         // 전체 데이터 (메모리)
+    filtered: [],    // 검색 결과
+    page: 0,
+    generatedAt: '',
+  };
+
+  const $q = document.getElementById('q');
+  const $days = document.getElementById('days');
+  const $list = document.getElementById('dartList');
+  const $meta = document.getElementById('dataMeta');
+  const $count = document.getElementById('resultCount');
+  const $prev = document.getElementById('prevBtn');
+  const $next = document.getElementById('nextBtn');
+  const $pageInfo = document.getElementById('pageInfo');
+  const typeChecks = Array.from(document.querySelectorAll('.type-check'));
+  const sentChecks = Array.from(document.querySelectorAll('.sent-check'));
+
+  function formatDate(ts) {
+    if (!ts) return '';
+    const d = new Date(ts * 1000);
+    return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\. /g, '.').replace(/\.$/, '');
+  }
+
+  function debounce(fn, ms) {
+    let t = null;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  }
+
+  function applyFilters() {
+    const q = ($q.value || '').trim().toLowerCase();
+    const days = parseInt($days.value, 10);
+    const minTs = days > 0 ? Date.now() / 1000 - days * 86400 : 0;
+    const types = typeChecks.filter(c => c.checked).map(c => c.value);
+    const sents = sentChecks.filter(c => c.checked).map(c => c.value);
+
+    state.filtered = state.all.filter(it => {
+      if (it.ts_epoch < minTs) return false;
+      if (q) {
+        const hay = `${it.name || ''} ${it.code || ''} ${it.report_nm || ''}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      if (types.length && !types.some(t => (it.report_nm || '').includes(t))) return false;
+      if (sents.length && !sents.includes(it.sentiment || 'neutral')) return false;
+      return true;
+    });
+    state.page = 0;
+    render();
+  }
+
+  function render() {
+    const total = state.filtered.length;
+    const start = state.page * PAGE_SIZE;
+    const end = Math.min(start + PAGE_SIZE, total);
+    const slice = state.filtered.slice(start, end);
+
+    if (total === 0) {
+      $list.innerHTML = '<div class="dart-empty">검색 결과가 없습니다.</div>';
+    } else {
+      $list.innerHTML = slice.map(it => {
+        const sent = it.sentiment || 'neutral';
+        const sentEmoji = sent === 'positive' ? '🚀 호재' : sent === 'negative' ? '⚠️ 악재' : '📋 중립';
+        const summary = it.summary_short ? `<div class="summary">${escapeHtml(it.summary_short)}</div>` : '';
+        return `
+          <a class="dart-card" href="/dart/disclosure.html?rcept_no=${encodeURIComponent(it.rcept_no)}">
+            <div>
+              <div class="row1">
+                <span class="name">${escapeHtml(it.name || '')}</span>
+                <span class="code">${escapeHtml(it.code || '')}</span>
+              </div>
+              <div class="report">${escapeHtml(it.report_nm || '')}</div>
+              ${summary}
+            </div>
+            <div class="right">
+              <span class="chip ${sent}">${sentEmoji}</span>
+              <span class="date">${formatDate(it.ts_epoch)}</span>
+            </div>
+          </a>`;
+      }).join('');
+    }
+
+    $count.textContent = total > 0
+      ? `결과 ${total.toLocaleString()}건 · ${start + 1}–${end}번째`
+      : '';
+    $prev.disabled = state.page === 0;
+    $next.disabled = end >= total;
+    $pageInfo.textContent = total > 0 ? `${state.page + 1} / ${Math.ceil(total / PAGE_SIZE)}` : '';
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  $prev.addEventListener('click', () => { state.page = Math.max(0, state.page - 1); render(); window.scrollTo(0, 0); });
+  $next.addEventListener('click', () => {
+    if ((state.page + 1) * PAGE_SIZE < state.filtered.length) { state.page++; render(); window.scrollTo(0, 0); }
+  });
+
+  const debouncedFilter = debounce(applyFilters, 200);
+  $q.addEventListener('input', debouncedFilter);
+  $days.addEventListener('change', applyFilters);
+  typeChecks.forEach(c => c.addEventListener('change', applyFilters));
+  sentChecks.forEach(c => c.addEventListener('change', applyFilters));
+
+  // 초기 URL query
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('q')) $q.value = params.get('q');
+  if (params.get('days')) $days.value = params.get('days');
+
+  fetch('/data/dart/disclosures.json', { cache: 'no-cache' })
+    .then(r => r.json())
+    .then(data => {
+      state.all = data.items || [];
+      state.generatedAt = data.generated_at || '';
+      $meta.textContent = `총 ${state.all.length.toLocaleString()}건 · 갱신 ${state.generatedAt}`;
+      applyFilters();
+    })
+    .catch(err => {
+      $meta.textContent = '데이터 로드 실패';
+      $list.innerHTML = '<div class="dart-empty">데이터가 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.</div>';
+      console.error(err);
+    });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>공시 상세 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="DART 전자공시 한 건의 AI 한줄요약, 핵심 수치, 주가 영향(T-1/T+0/T+5/T+20)." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%91%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js"></script>
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516a" />
+  <style>
+    .detail-page { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+    .detail-back { display: inline-block; font-size: 13px; color: var(--c-text-mute, #888); text-decoration: none; margin-bottom: 16px; }
+    .detail-back:hover { text-decoration: underline; }
+    .detail-head { margin-bottom: 22px; }
+    .detail-head .name { font-size: 26px; font-weight: 700; }
+    .detail-head .code { color: var(--c-text-mute, #888); font-size: 14px; margin-left: 6px; }
+    .detail-head .report { font-size: 17px; margin-top: 4px; }
+    .detail-head .date { color: var(--c-text-mute, #888); font-size: 13px; margin-top: 6px; }
+    .detail-head .chip { vertical-align: middle; margin-left: 8px; }
+    .chip { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .chip.positive { background: #dcfce7; color: #15803d; }
+    .chip.negative { background: #fee2e2; color: #b91c1c; }
+    .chip.neutral { background: #f1f5f9; color: #475569; }
+    @media (prefers-color-scheme: dark) {
+      .chip.positive { background: rgba(34,197,94,0.2); color: #4ade80; }
+      .chip.negative { background: rgba(239,68,68,0.2); color: #f87171; }
+      .chip.neutral { background: rgba(255,255,255,0.07); color: #cbd5e1; }
+    }
+    section.box {
+      background: var(--c-bg-soft, #fafafa);
+      border: 1px solid var(--c-border, #eee);
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+    section.box h3 {
+      font-size: 12px; color: var(--c-text-mute, #888); text-transform: uppercase;
+      margin: 0 0 12px; letter-spacing: 0.5px;
+    }
+    section.box .lead { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    section.box .long { font-size: 14px; color: var(--c-text-mute, #555); line-height: 1.7; white-space: pre-line; }
+    .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .fig { background: var(--c-bg, #fff); border: 1px solid var(--c-border, #eee); border-radius: 6px; padding: 10px 12px; }
+    .fig .lbl { font-size: 11px; color: var(--c-text-mute, #888); }
+    .fig .val { font-size: 18px; font-weight: 700; margin-top: 2px; }
+    .impact { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .impact .col { text-align: center; padding: 12px; background: var(--c-bg, #fff); border: 1px solid var(--c-border, #eee); border-radius: 6px; }
+    .impact .lbl { font-size: 12px; color: var(--c-text-mute, #888); }
+    .impact .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
+    .impact .pos { color: #16a34a; }
+    .impact .neg { color: #dc2626; }
+    .vctx { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; padding: 8px 0; border-bottom: 1px dashed var(--c-border, #e5e7eb); }
+    .vctx span { white-space: nowrap; color: var(--c-text-mute, #555); }
+    .vctx b { color: var(--c-text, #111); font-weight: 600; margin-right: 4px; }
+    section.box.valuation { background: rgba(37, 99, 235, 0.04); border-color: rgba(37, 99, 235, 0.15); }
+    @media (prefers-color-scheme: dark) {
+      section.box.valuation { background: rgba(96, 165, 250, 0.07); border-color: rgba(96, 165, 250, 0.2); }
+    }
+    .detail-disclaimer-top {
+      background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px;
+      padding: 10px 14px; margin-bottom: 16px;
+      font-size: 12px; line-height: 1.55; color: #78350f;
+    }
+    @media (prefers-color-scheme: dark) {
+      .detail-disclaimer-top { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.35); color: #fde68a; }
+    }
+    .valuation-warn {
+      margin-top: 12px; padding: 8px 12px;
+      background: rgba(220, 38, 38, 0.06); border-left: 3px solid #dc2626;
+      font-size: 12px; color: var(--c-text-mute, #555); line-height: 1.5;
+    }
+    @media (prefers-color-scheme: dark) {
+      .valuation-warn { background: rgba(248, 113, 113, 0.1); color: #fca5a5; }
+    }
+    .detail-disclaimer-bottom {
+      margin-top: 28px; padding: 16px 18px;
+      border-top: 1px solid var(--c-border, #e5e7eb);
+      font-size: 12px; line-height: 1.7;
+      color: var(--c-text-mute, #6b7280);
+    }
+    .detail-disclaimer-bottom b { color: var(--c-text, #111); }
+    .source-link { display: inline-block; color: #2563eb; text-decoration: none; font-size: 14px; }
+    .source-link:hover { text-decoration: underline; }
+    .empty { color: var(--c-text-mute, #888); font-size: 14px; }
+  </style>
+</head>
+<body class="page-dart">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈">
+        <svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+        </svg>
+      </a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">공시 상세</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+    <div class="nav-group">
+      <a href="/">Home</a>
+      <a href="/chart">Stock Chart</a>
+      <a href="/dart">📑 DART 공시</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <details>
+      <summary>학습 가이드</summary>
+      <a href="/guide/technical-indicators">기술적 지표</a>
+      <a href="/guide/supply-demand">수급 가이드</a>
+      <a href="/guide/candle-patterns">캔들 가이드</a>
+      <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+      <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+      <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+      <a href="/guide/market-metrics">시총·거래량</a>
+      <a href="/guide/holidays">휴장일</a>
+    </details>
+    <div class="nav-group">
+      <div class="nav-group-label">참고자료</div>
+      <a href="/glossary">용어집</a>
+      <a href="/relations">📊 그룹사 관계도</a>
+      <a href="/ownership">계열사 관계도</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">정보</div>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/terms">이용약관</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
+    </div>
+  </nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="static-main">
+  <div class="detail-page" id="detailRoot">
+    <a class="detail-back" href="/dart">← 목록으로</a>
+    <div id="content">로딩 중...</div>
+  </div>
+</main>
+
+<script>
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const rceptNo = params.get('rcept_no');
+  const $content = document.getElementById('content');
+
+  if (!rceptNo) {
+    $content.innerHTML = '<p class="empty">잘못된 접근 — rcept_no 파라미터가 없습니다.</p>';
+    return;
+  }
+
+  function fmtDate(ts) {
+    if (!ts) return '';
+    const d = new Date(ts * 1000);
+    return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+  }
+  function fmtPct(v) {
+    if (v === null || v === undefined) return '-';
+    const sign = v > 0 ? '+' : '';
+    return `${sign}${v.toFixed(2)}%`;
+  }
+  function fmtKRW(v) {
+    if (v === null || v === undefined) return '-';
+    const abs = Math.abs(v);
+    if (abs >= 1e12) return `${(v / 1e12).toFixed(1)}조`;
+    if (abs >= 1e8)  return `${(v / 1e8).toFixed(0)}억`;
+    if (abs >= 1e4)  return `${(v / 1e4).toFixed(0)}만`;
+    return v.toLocaleString('ko-KR');
+  }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  Promise.all([
+    fetch(`/data/dart/detail/${rceptNo}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch('/data/dart/disclosures.json').then(r => r.json()).catch(() => null),
+  ]).then(([detail, index]) => {
+    // detail이 없으면 index에서 fallback (LLM 요약 X, impact X)
+    let item = detail;
+    if (!item && index) {
+      item = (index.items || []).find(x => x.rcept_no === rceptNo);
+    }
+    if (!item) {
+      $content.innerHTML = '<p class="empty">공시를 찾을 수 없습니다.</p>';
+      return;
+    }
+    render(item);
+  });
+
+  function render(it) {
+    const sent = it.sentiment || 'neutral';
+    const sentEmoji = sent === 'positive' ? '🚀 호재' : sent === 'negative' ? '⚠️ 악재' : '📋 중립';
+    const conf = (it.confidence !== undefined && it.confidence !== null && it.confidence > 0)
+      ? ` (신뢰도 ${(+it.confidence).toFixed(2)})` : '';
+
+    // 페이지 title 동적 갱신
+    document.title = `${it.name || ''} ${it.report_nm || ''} — 세콤달.콤`;
+
+    let html = `
+      <a class="detail-back" href="/dart">← 목록으로</a>
+      <div class="detail-disclaimer-top">
+        ⚠️ 아래 AI 요약·밸류에이션 논평은 <b>단순 참고자료</b>이며, 투자 판단은 본인이 직접 하셔야 합니다.
+      </div>
+      <div class="detail-head">
+        <div>
+          <span class="name">${escapeHtml(it.name)}</span>
+          <span class="code">${escapeHtml(it.code)}</span>
+          <span class="chip ${sent}">${sentEmoji}${conf}</span>
+        </div>
+        <div class="report">${escapeHtml(it.report_nm)}</div>
+        <div class="date">접수 ${fmtDate(it.ts_epoch)}</div>
+      </div>`;
+
+    if (it.summary_short) {
+      html += `
+        <section class="box">
+          <h3>AI 요약 (Claude Haiku)</h3>
+          <div class="lead">${escapeHtml(it.summary_short)}</div>
+          ${it.summary_long ? `<div class="long">${escapeHtml(it.summary_long)}</div>` : ''}
+        </section>`;
+    }
+
+    // 밸류에이션 논평 — 정기공시 + stock_db 데이터 있을 때만 LLM이 생성
+    if (it.valuation_comment) {
+      const vctx = (() => {
+        try {
+          return typeof it.valuation_context === 'string'
+            ? JSON.parse(it.valuation_context)
+            : it.valuation_context;
+        } catch { return null; }
+      })();
+      let snapshot = '';
+      if (vctx) {
+        const num = (v) => v == null ? '-' : Number(v).toLocaleString('ko-KR');
+        const fmtP = (v) => v == null ? '-' : Number(v).toFixed(2);
+        const fmtPct = (v) => v == null ? '-' : Number(v).toFixed(2) + '%';
+        snapshot = `
+          <div class="vctx">
+            <span><b>현재가</b> ${num(vctx.close_price)}원</span>
+            <span><b>시총</b> ${vctx.market_cap ? (vctx.market_cap / 1e8).toLocaleString('ko-KR', {maximumFractionDigits:0}) + '억' : '-'}</span>
+            <span><b>PER</b> ${fmtP(vctx.per)}</span>
+            <span><b>PBR</b> ${fmtP(vctx.pbr)}</span>
+            <span><b>EPS</b> ${num(vctx.eps)}</span>
+            <span><b>BPS</b> ${num(vctx.bps)}</span>
+            <span><b>ROE</b> ${fmtPct(vctx.roe)}</span>
+          </div>`;
+      }
+      html += `
+        <section class="box valuation">
+          <h3>밸류에이션 논평 (현재 주가 대비)</h3>
+          ${snapshot}
+          <div class="long" style="margin-top:10px">${escapeHtml(it.valuation_comment)}</div>
+          <div class="valuation-warn">
+            ※ AI(Claude Haiku)가 공시 본문과 stock_db의 현재 시점 시총·PER·PBR·연간 실적을 결합해 자동 생성한 의견입니다.
+            실시간 시세·업종 평균·시장 컨센서스 반영 안 됨. 분석 시점 이후 주가·실적 변동은 미반영.
+            <b>매수·매도 추천이 아니며 단순 참고용</b>입니다.
+          </div>
+        </section>`;
+    }
+
+    const kf = it.key_figures;
+    if (kf && typeof kf === 'object') {
+      const cells = [];
+      if (kf.revenue_yoy_pct !== null && kf.revenue_yoy_pct !== undefined)
+        cells.push({ lbl: '매출 YoY', val: fmtPct(kf.revenue_yoy_pct) });
+      if (kf.op_yoy_pct !== null && kf.op_yoy_pct !== undefined)
+        cells.push({ lbl: '영업이익 YoY', val: fmtPct(kf.op_yoy_pct) });
+      if (kf.net_yoy_pct !== null && kf.net_yoy_pct !== undefined)
+        cells.push({ lbl: '순익 YoY', val: fmtPct(kf.net_yoy_pct) });
+      if (kf.revenue_amount !== null && kf.revenue_amount !== undefined)
+        cells.push({ lbl: '매출액', val: fmtKRW(kf.revenue_amount) });
+      if (kf.op_amount !== null && kf.op_amount !== undefined)
+        cells.push({ lbl: '영업이익', val: fmtKRW(kf.op_amount) });
+      if (cells.length || kf.extra) {
+        html += `
+          <section class="box">
+            <h3>핵심 수치</h3>
+            <div class="figs">
+              ${cells.map(c => `<div class="fig"><div class="lbl">${c.lbl}</div><div class="val">${c.val}</div></div>`).join('')}
+            </div>
+            ${kf.extra ? `<div class="long" style="margin-top:10px">${escapeHtml(kf.extra)}</div>` : ''}
+          </section>`;
+      }
+    }
+
+    const im = it.impact;
+    if (im) {
+      const cls = (v) => v == null ? '' : v >= 0 ? 'pos' : 'neg';
+      html += `
+        <section class="box">
+          <h3>주가 영향 (영업일 기준, 공시 직전 종가 대비)</h3>
+          <div class="impact">
+            <div class="col"><div class="lbl">T+0</div><div class="val ${cls(im.ret_t0)}">${fmtPct(im.ret_t0)}</div></div>
+            <div class="col"><div class="lbl">T+5</div><div class="val ${cls(im.ret_t5)}">${fmtPct(im.ret_t5)}</div></div>
+            <div class="col"><div class="lbl">T+20</div><div class="val ${cls(im.ret_t20)}">${fmtPct(im.ret_t20)}</div></div>
+          </div>
+        </section>`;
+    }
+
+    if (it.url) {
+      html += `<p><a class="source-link" href="${escapeHtml(it.url)}" target="_blank" rel="noopener noreferrer">DART 본문 보기 →</a></p>`;
+    }
+
+    html += `
+      <div class="detail-disclaimer-bottom">
+        <b>※ 본 페이지는 단순 참고자료입니다.</b><br />
+        여기 제공되는 공시 요약·호재/악재 분류·AI 밸류에이션 논평·핵심 수치·주가 영향 데이터는
+        모두 공개 정보(DART OpenAPI, stock_db 시장 데이터)를 기계적으로 가공한 결과이며,
+        정확성·완전성·시의성을 보장하지 않습니다.
+        특정 종목에 대한 매수·매도 추천이 아니며, 투자에 따른 손익은 전적으로 투자자 본인의 책임입니다.
+        구체적 투자 판단은 본인이 직접 공시 본문·재무제표·시장 상황을 종합적으로 검토한 후 결정하시기 바랍니다.
+      </div>`;
+
+    $content.innerHTML = html;
+  }
+})();
+</script>
+
+</body>
+</html>
