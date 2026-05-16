@@ -208,23 +208,20 @@ def _fred_us_fed_rate() -> tuple[float | None, str | None]:
     return series[last_date], last_date
 
 
-# ─── 큐레이션 이벤트 ──────────────────────────────
+# ─── 이벤트 캘린더 — events_builder.py 가 자동 생성 ──────────────────
 
-def _load_events(path: Path) -> list[dict]:
-    if path.exists():
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-            return data if isinstance(data, list) else data.get("events", [])
-        except Exception:
-            pass
-    today = datetime.now(KST).date()
-    return [
-        {"date": str(today + timedelta(days=6)),  "title": "한국은행 금통위", "tag": "rate", "country": "KR"},
-        {"date": str(today + timedelta(days=14)), "title": "미국 FOMC", "tag": "rate", "country": "US"},
-        {"date": str(today + timedelta(days=15)), "title": "한국 CPI 발표", "tag": "cpi", "country": "KR"},
-        {"date": str(today + timedelta(days=19)), "title": "미국 CPI 발표", "tag": "cpi", "country": "US"},
-        {"date": str(today + timedelta(days=21)), "title": "KOSPI200 옵션·선물 동시만기", "tag": "expiry", "country": "KR"},
-    ]
+def _build_events(output_dir: Path) -> list[dict]:
+    """events_builder 모듈 사용. 모듈 import 실패 시 빈 리스트."""
+    try:
+        from batch import events_builder
+        return events_builder.build_events(output_dir, horizon_days=60)
+    except Exception as e:
+        logger.warning("events_builder 실패(폴백 사용): %s", e)
+        today = datetime.now(KST).date()
+        return [
+            {"date": str(today + timedelta(days=6)),  "title": "한국은행 금통위", "tag": "rate", "country": "KR"},
+            {"date": str(today + timedelta(days=14)), "title": "미국 FOMC", "tag": "rate", "country": "US"},
+        ]
 
 
 # ─── 통합 빌더 ──────────────────────────────
@@ -296,7 +293,7 @@ def build_macro(output_dir: Path) -> bool:
         })
         logger.info("US CPI YoY: %.2f%% (%s)", us_cpi_yoy, yyyy_mm)
 
-    events = _load_events(output_dir / "events.json")
+    events = _build_events(output_dir)
 
     data_date = fx[0]["spark"][-1]["date"] if fx and fx[0].get("spark") else None
     payload = {
