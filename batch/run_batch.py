@@ -225,6 +225,13 @@ def run(output_dir: Path, limit: int | None, workers: int) -> None:
     except Exception as e:
         logger.warning("indices.build_indices 실패(무시): %s", e)
 
+    # 3.7 거시 지표(환율·원자재·금리·CPI·이벤트) → macro.json
+    try:
+        from batch import macro as _macro_mod
+        _macro_mod.build_macro(output_dir)
+    except Exception as e:
+        logger.warning("macro.build_macro 실패(무시): %s", e)
+
     # 4. 일간 포스트 생성 + 블로그 정적 빌드 (실패해도 배치 자체는 성공으로 본다)
     try:
         from batch import daily_post

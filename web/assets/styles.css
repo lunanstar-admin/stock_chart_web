@@ -1,91 +1,121 @@
 /* 헤더 '맛' 글자용 한글 손글씨 폰트 — 약간 굵고 둥근 Gaegu */
 @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@700&display=swap');
 
+/* ──────────────────────────────────────────────────────────────────
+   메탈릭 골드바 테마 4종
+     · gold       : 연한 골드 (따뜻한 샴페인, default)
+     · whitegold  : 화이트 골드 (차분한 따뜻+쿨 사이)
+     · platinum   : 플래티늄 (밝은 실버)
+     · titanium   : 티타늄 (다크 메탈릭 그레이, 유일한 어두운 톤)
+   :root 는 gold 와 동일 — 사용자가 처음 진입했을 때 표시.
+   ────────────────────────────────────────────────────────────────── */
 :root {
-  --bg-primary: #0f1117;
-  --bg-card: #171a22;
-  --bg-hover: #282c3a;
-  --border: #2a2f3d;
-  --text-primary: #e9ebf2;
-  --text-secondary: #7c838f;
-  --accent: #4f8cff;
-  --red: #ef4444;
-  --green: #22c55e;
-  --orange: #f59e0b;
-  --purple: #a855f7;
-  --shadow-drawer: -4px 0 16px rgba(0, 0, 0, 0.4);
-  --shadow-cta: 0 2px 8px rgba(79, 140, 255, 0.35);
-  --shadow-close: 0 2px 6px rgba(239, 68, 68, 0.3);
-  --active-tint: rgba(79, 140, 255, 0.08);
-  --disclaimer-tint: rgba(245, 158, 11, 0.08);
-  --tooltip-bg: rgba(23, 26, 34, 0.96);   /* bg-card 계열 반투명 */
-  --tooltip-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-}
-
-/* ── 라이트(크림) 테마 ── */
-html[data-theme="light"] {
-  --bg-primary: #f6efe0;
-  --bg-card: #fdf9ed;
-  --bg-hover: #ebe2c9;
-  --border: #d4c8aa;
-  --text-primary: #2a2318;
-  --text-secondary: #7a6f5a;
-  --accent: #2563eb;
-  --red: #dc2626;
-  --green: #16a34a;
+  --bg-primary: #f6ecc8;           /* 따뜻한 샴페인 골드 */
+  --bg-card: #fbf4dc;              /* 카드 — 더 밝게 */
+  --bg-hover: #ecdda6;             /* hover */
+  --border: #c9a64a;               /* 골드 트림 */
+  --text-primary: #3d2b0a;         /* 짙은 카카오 갈색 */
+  --text-secondary: #8c7029;       /* 골드 톤 그레이 */
+  --accent: #b8902b;               /* 깊은 골드 (Pure 24K 톤) */
+  --red: #b91c1c;
+  --green: #166534;
   --orange: #b45309;
-  --purple: #7c3aed;
-  --shadow-drawer: -4px 0 16px rgba(80, 60, 20, 0.18);
-  --shadow-cta: 0 2px 8px rgba(37, 99, 235, 0.28);
-  --shadow-close: 0 2px 6px rgba(220, 38, 38, 0.28);
-  --active-tint: rgba(37, 99, 235, 0.08);
-  --disclaimer-tint: rgba(180, 83, 9, 0.1);
-  --tooltip-bg: rgba(253, 249, 237, 0.97);
-  --tooltip-shadow: 0 4px 14px rgba(80, 60, 20, 0.22);
+  --purple: #6d28d9;
+  --shadow-drawer: -4px 0 16px rgba(120, 80, 10, 0.22);
+  --shadow-cta: 0 2px 10px rgba(184, 144, 43, 0.35);
+  --shadow-close: 0 2px 6px rgba(185, 28, 28, 0.28);
+  --active-tint: rgba(184, 144, 43, 0.12);
+  --disclaimer-tint: rgba(184, 144, 43, 0.14);
+  --tooltip-bg: rgba(251, 244, 220, 0.97);
+  --tooltip-shadow: 0 4px 14px rgba(120, 80, 10, 0.22);
 }
 
-/* ── 새콤달콤 테마 (젊은 여성 취향 파스텔 핑크) ── */
-html[data-theme="sweet"] {
-  --bg-primary: #fff3f6;
+/* ── 연한 골드 (default) ── */
+html[data-theme="gold"] {
+  --bg-primary: #f6ecc8;
+  --bg-card: #fbf4dc;
+  --bg-hover: #ecdda6;
+  --border: #c9a64a;
+  --text-primary: #3d2b0a;
+  --text-secondary: #8c7029;
+  --accent: #b8902b;
+  --red: #b91c1c;
+  --green: #166534;
+  --orange: #b45309;
+  --purple: #6d28d9;
+  --shadow-drawer: -4px 0 16px rgba(120, 80, 10, 0.22);
+  --shadow-cta: 0 2px 10px rgba(184, 144, 43, 0.35);
+  --shadow-close: 0 2px 6px rgba(185, 28, 28, 0.28);
+  --active-tint: rgba(184, 144, 43, 0.12);
+  --disclaimer-tint: rgba(184, 144, 43, 0.14);
+  --tooltip-bg: rgba(251, 244, 220, 0.97);
+  --tooltip-shadow: 0 4px 14px rgba(120, 80, 10, 0.22);
+}
+
+/* ── 화이트 골드 (차분한 베이지+옅은 골드 트림) ── */
+html[data-theme="whitegold"] {
+  --bg-primary: #f3eee0;
+  --bg-card: #fbf8f0;
+  --bg-hover: #e6dfca;
+  --border: #c9bf9f;
+  --text-primary: #2b2618;
+  --text-secondary: #7d735a;
+  --accent: #a18f5b;
+  --red: #b91c1c;
+  --green: #15803d;
+  --orange: #a16207;
+  --purple: #6d28d9;
+  --shadow-drawer: -4px 0 16px rgba(80, 70, 40, 0.16);
+  --shadow-cta: 0 2px 8px rgba(161, 143, 91, 0.32);
+  --shadow-close: 0 2px 6px rgba(185, 28, 28, 0.26);
+  --active-tint: rgba(161, 143, 91, 0.12);
+  --disclaimer-tint: rgba(161, 143, 91, 0.14);
+  --tooltip-bg: rgba(251, 248, 240, 0.97);
+  --tooltip-shadow: 0 4px 14px rgba(80, 70, 40, 0.2);
+}
+
+/* ── 플래티늄 (쿨한 실버 화이트) ── */
+html[data-theme="platinum"] {
+  --bg-primary: #e8e9eb;
   --bg-card: #ffffff;
-  --bg-hover: #ffe0ec;
-  --border: #f5c7d6;
-  --text-primary: #4a2238;
-  --text-secondary: #a67384;
-  --accent: #ff6fa8;
-  --red: #e64a6b;
-  --green: #3bbf8a;
-  --orange: #f5a742;
-  --purple: #b57bd8;
-  --shadow-drawer: -4px 0 16px rgba(255, 111, 168, 0.18);
-  --shadow-cta: 0 2px 10px rgba(255, 111, 168, 0.35);
-  --shadow-close: 0 2px 6px rgba(230, 74, 107, 0.3);
-  --active-tint: rgba(255, 111, 168, 0.1);
-  --disclaimer-tint: rgba(245, 167, 66, 0.12);
+  --bg-hover: #d6d7da;
+  --border: #b9bcc2;
+  --text-primary: #1f2126;
+  --text-secondary: #5e626a;
+  --accent: #7a8089;
+  --red: #b91c1c;
+  --green: #166534;
+  --orange: #b45309;
+  --purple: #5b21b6;
+  --shadow-drawer: -4px 0 16px rgba(31, 35, 40, 0.12);
+  --shadow-cta: 0 2px 10px rgba(122, 128, 137, 0.32);
+  --shadow-close: 0 2px 6px rgba(185, 28, 28, 0.26);
+  --active-tint: rgba(122, 128, 137, 0.12);
+  --disclaimer-tint: rgba(122, 128, 137, 0.14);
   --tooltip-bg: rgba(255, 255, 255, 0.97);
-  --tooltip-shadow: 0 4px 14px rgba(255, 111, 168, 0.25);
+  --tooltip-shadow: 0 4px 14px rgba(31, 35, 40, 0.2);
 }
 
-/* ── 밝은 그레이 테마 ── 쿨 톤 라이트 그레이 (크림 테마와 웜/쿨로 구분) */
-html[data-theme="gray"] {
-  --bg-primary: #eceef2;       /* 라이트 쿨 그레이 배경 */
-  --bg-card: #ffffff;          /* 카드는 순백으로 대비 */
-  --bg-hover: #dde1e8;         /* hover */
-  --border: #c9cfd8;           /* 보더 */
-  --text-primary: #1f2328;     /* 본문 (근흑) */
-  --text-secondary: #5a6070;   /* 보조 (중간 그레이) */
-  --accent: #4a6fa5;           /* 딥 스틸 블루 포인트 */
-  --red: #d14343;
-  --green: #2e8b57;
-  --orange: #d97b2b;
-  --purple: #7851a9;
-  --shadow-drawer: -4px 0 16px rgba(31, 35, 40, 0.1);
-  --shadow-cta: 0 2px 10px rgba(74, 111, 165, 0.3);
-  --shadow-close: 0 2px 6px rgba(209, 67, 67, 0.25);
-  --active-tint: rgba(74, 111, 165, 0.1);
-  --disclaimer-tint: rgba(217, 123, 43, 0.12);
-  --tooltip-bg: rgba(255, 255, 255, 0.97);
-  --tooltip-shadow: 0 4px 14px rgba(31, 35, 40, 0.18);
+/* ── 티타늄 (다크 메탈릭 그레이) ── */
+html[data-theme="titanium"] {
+  --bg-primary: #2c2f35;
+  --bg-card: #383b43;
+  --bg-hover: #474a54;
+  --border: #565a66;
+  --text-primary: #e8eaef;
+  --text-secondary: #a5a9b3;
+  --accent: #8fa0b5;
+  --red: #f87171;
+  --green: #4ade80;
+  --orange: #fbbf24;
+  --purple: #c084fc;
+  --shadow-drawer: -4px 0 16px rgba(0, 0, 0, 0.5);
+  --shadow-cta: 0 2px 8px rgba(143, 160, 181, 0.35);
+  --shadow-close: 0 2px 6px rgba(248, 113, 113, 0.3);
+  --active-tint: rgba(143, 160, 181, 0.12);
+  --disclaimer-tint: rgba(251, 191, 36, 0.1);
+  --tooltip-bg: rgba(56, 59, 67, 0.97);
+  --tooltip-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
 }
 
 * { box-sizing: border-box; }
@@ -689,7 +719,9 @@ main { padding: 12px 24px 24px; }
   white-space: nowrap;
   max-width: fit-content;
 }
-[data-theme="light"] .cl-row .cl-info .cl-group {
+[data-theme="gold"] .cl-row .cl-info .cl-group,
+[data-theme="whitegold"] .cl-row .cl-info .cl-group,
+[data-theme="platinum"] .cl-row .cl-info .cl-group {
   background: rgba(217, 119, 6, 0.12);
   color: #b45309;
   border-color: rgba(217, 119, 6, 0.3);
@@ -1503,7 +1535,7 @@ html.is-admin .admin-only { display: revert !important; }
   color: #475569;
   vertical-align: middle;
 }
-[data-theme="dark"] .blog-card-badge {
+[data-theme="titanium"] .blog-card-badge {
   background: rgba(148, 163, 184, 0.18);
   color: #cbd5e1;
 }
@@ -2469,7 +2501,7 @@ figure.inline-figure figcaption a {
   min-height: 600px;
   overflow: hidden;
 }
-html[data-theme="dark"] .rel-canvas-wrap { background: #f8fafc; }
+html[data-theme="titanium"] .rel-canvas-wrap { background: #f8fafc; }
 .rel-status {
   position: absolute;
   top: 16px;
@@ -2520,7 +2552,7 @@ html[data-theme="dark"] .rel-canvas-wrap { background: #f8fafc; }
   font-size: 13px;
   color: #1f2328;
 }
-html[data-theme="dark"] .rel-tree-card { background: #f8fafc; }
+html[data-theme="titanium"] .rel-tree-card { background: #f8fafc; }
 .rel-tree-name { font-weight: 600; }
 .rel-tree-code {
   font-family: monospace;
@@ -2563,7 +2595,7 @@ html[data-theme="dark"] .rel-tree-card { background: #f8fafc; }
   border-radius: 8px;
   overflow: hidden;
 }
-html[data-theme="dark"] .rel-table { background: #f8fafc; }
+html[data-theme="titanium"] .rel-table { background: #f8fafc; }
 .rel-table th, .rel-table td {
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
@@ -2734,4 +2766,152 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
   .index-detail-summary .snapshot-grid {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* ─── 거시 지표 대시보드 (홈) ─── */
+.macro-dashboard {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+}
+.macro-title {
+  margin: 0 0 4px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.macro-sub {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.macro-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.macro-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.macro-card h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+.macro-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.macro-loading,
+.macro-empty {
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: 6px 2px;
+}
+.macro-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  border-bottom: 1px dashed var(--border);
+}
+.macro-row:last-child { border-bottom: none; }
+.macro-row-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.macro-row-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.macro-row-note {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.macro-row-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+.macro-row-value {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+.macro-row-change {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.macro-up   { color: #ef4444; }
+.macro-up .macro-row-value   { color: #ef4444; }
+.macro-down { color: #3b82f6; }
+.macro-down .macro-row-value { color: #3b82f6; }
+.macro-flat .macro-row-value { color: var(--text-secondary); }
+.macro-spark {
+  display: block;
+  width: 120px;
+  height: 30px;
+  margin-top: 2px;
+}
+.macro-row--event .macro-row-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: normal;
+}
+.macro-event-tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+.tag-rate     { background: rgba(79,140,255,0.15); color: #4f8cff; }
+.tag-cpi      { background: rgba(34,197,94,0.15);  color: #22c55e; }
+.tag-expiry   { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.tag-earnings { background: rgba(168,85,247,0.15); color: #a855f7; }
+.macro-row-dleft {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--active-tint, rgba(79,140,255,0.1));
+}
+.macro-row-dleft.is-past {
+  background: rgba(127,127,127,0.1);
+  color: var(--text-secondary);
+}
+.macro-foot {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+@media (max-width: 720px) {
+  .macro-dashboard { padding: 14px 16px; }
+  .macro-grid { grid-template-columns: 1fr; gap: 10px; }
+  .macro-row-value { font-size: 13px; }
+  .macro-spark { width: 90px; }
 }

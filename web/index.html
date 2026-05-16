@@ -67,7 +67,7 @@
     <script src="/assets/nav.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/assets/auth.js"></script>
-    <link rel="stylesheet" href="/assets/styles.css?v=20260516d" />
+    <link rel="stylesheet" href="/assets/styles.css?v=20260516-macro" />
 <!-- Google Analytics (gtag.js) — G-QG41JS7EJ1 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
 <script>
@@ -234,6 +234,47 @@
       </div>
     </section>
 
+    <!-- 거시 지표 대시보드 (환율 / 원자재 / 금리 / CPI / 공매도 / 이벤트) -->
+    <section class="macro-dashboard" aria-label="거시 지표 대시보드">
+      <h2 class="macro-title">📊 거시 지표 대시보드</h2>
+      <p class="macro-sub">환율·원자재는 매일 자동 갱신 · 금리/CPI/이벤트는 월 1회 큐레이션 갱신</p>
+
+      <div class="macro-grid">
+        <!-- 환율 + 원자재 -->
+        <div class="macro-card" id="macroFxCard">
+          <h3>💱 환율 · 원자재</h3>
+          <div class="macro-list" id="macroFxList">
+            <div class="macro-loading">로딩 중…</div>
+          </div>
+        </div>
+
+        <!-- 금리 -->
+        <div class="macro-card" id="macroRatesCard">
+          <h3>🏦 정책 금리</h3>
+          <div class="macro-list" id="macroRatesList">
+            <div class="macro-loading">로딩 중…</div>
+          </div>
+        </div>
+
+        <!-- CPI -->
+        <div class="macro-card" id="macroCpiCard">
+          <h3>📈 소비자물가 (YoY)</h3>
+          <div class="macro-list" id="macroCpiList">
+            <div class="macro-loading">로딩 중…</div>
+          </div>
+        </div>
+
+        <!-- 이벤트 캘린더 -->
+        <div class="macro-card" id="macroEventsCard">
+          <h3>🗓 다가오는 이벤트</h3>
+          <div class="macro-list" id="macroEventsList">
+            <div class="macro-loading">로딩 중…</div>
+          </div>
+        </div>
+      </div>
+      <p class="macro-foot">⚠️ 본 데이터는 참고용이며 투자 권유가 아닙니다. 금리·CPI 값은 발표 시점 기준.</p>
+    </section>
+
     <!-- 사이트 안내 — SEO + AdSense 콘텐츠 가치 -->
     <section class="page-intro" aria-label="사이트 안내">
       <p>
@@ -289,6 +330,7 @@
       href="/privacy">Privacy</a>
   </footer>
 
+  <script src="/assets/macro.js?v=20260516a"></script>
 </body>
 
 </html>
