@@ -537,6 +537,17 @@
     loadNotifySettings(user).catch(function (e) {
       console.warn('[notify] settings load failed:', e);
     });
+    // 동의 콜백을 SIGNED_IN 이벤트가 놓쳤을 가능성에 대비한 recovery:
+    // pending 플래그가 남아 있으면 현재 세션으로 한 번 더 토큰 저장 시도.
+    var pending = false;
+    try { pending = localStorage.getItem('notify_consent_pending') === '1'; }
+    catch (_) {}
+    if (pending) {
+      sb.auth.getSession().then(function (r) {
+        var s = r && r.data && r.data.session;
+        if (s) _persistKakaoTokenIfPending(s);
+      });
+    }
 
     var el = document.getElementById('myInfoModal');
     el.classList.add('show');
@@ -779,11 +790,23 @@
     var pending = false;
     try { pending = localStorage.getItem('notify_consent_pending') === '1'; }
     catch (_) {}
-    if (!pending) return;
-    if (!session || !session.user) return;
+    if (!pending) {
+      console.debug('[notify] persistKakaoTokenIfPending: no pending flag, skip');
+      return;
+    }
+    if (!session || !session.user) {
+      console.warn('[notify] persistKakaoTokenIfPending: no session');
+      return;
+    }
     var providerToken = session.provider_token;
+    console.info('[notify] consent callback received', {
+      hasProviderToken: !!providerToken,
+      hasRefreshToken: !!session.provider_refresh_token,
+      expiresAt: session.expires_at,
+      userId: session.user.id,
+    });
     if (!providerToken) {
-      console.info('[notify] consent pending: provider_token not yet available');
+      console.warn('[notify] consent pending: provider_token not yet available — Supabase 가 token 을 노출하지 않음. 재로그인 필요할 수 있음.');
       return;
     }
     try {
@@ -796,21 +819,33 @@
           ? new Date(session.expires_at * 1000).toISOString()
           : null,
         kakao_scopes: ['profile_nickname', 'account_email', 'talk_message'],
-      }, { onConflict: 'user_id' });
+      }, { onConflict: 'user_id' }).select();
       if (resp.error) throw resp.error;
       try { localStorage.removeItem('notify_consent_pending'); } catch (_) {}
-      console.info('[notify] consent token saved');
+      console.info('[notify] consent token saved', resp.data);
       // 모달이 열려 있다면 UI 새로고침, 닫혀 있으면 자동으로 다시 열어
       // 사용자에게 알림 활성화가 완료된 사실을 보여줌.
       var modal = document.getElementById('myInfoModal');
       if (modal && modal.classList.contains('show')) {
         loadNotifySettings(session.user).catch(function () {});
-        setNotifyMsg('동의 완료. 이벤트 종류를 선택하고 저장하세요.');
+        setNotifyMsg('✅ 동의 완료. 이벤트 종류를 선택하고 저장하세요.');
       } else if (typeof openMyInfo === 'function') {
         openMyInfo(session.user);
       }
     } catch (e) {
-      console.warn('[notify] consent token save failed:', e);
+      console.error('[notify] consent token save failed:', e);
+      // 사용자에게도 표시 — RLS / 마이그레이션 누락 등 흔한 원인 안내
+      var modal = document.getElementById('myInfoModal');
+      var hint = '';
+      var msg = (e && e.message) || String(e);
+      if (msg.indexOf('relation') >= 0 && msg.indexOf('does not exist') >= 0) {
+        hint = ' Supabase 마이그레이션이 미적용일 수 있습니다.';
+      } else if (msg.indexOf('row-level security') >= 0 || msg.indexOf('policy') >= 0) {
+        hint = ' RLS 정책 확인 필요.';
+      }
+      if (modal && modal.classList.contains('show')) {
+        setNotifyMsg('저장 실패: ' + msg + hint, true);
+      }
     }
   }
 
