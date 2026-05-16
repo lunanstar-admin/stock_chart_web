@@ -145,6 +145,27 @@
     }).join("");
   }
 
+  function fmtUpdated(iso) {
+    if (!iso) return "";
+    const m = iso.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    return m ? `${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]} KST` : iso;
+  }
+
+  function setHeaderStamp(cardId, text) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    const h3 = card.querySelector("h3");
+    if (!h3) return;
+    // 기존 스탬프 제거 후 갱신
+    const old = h3.querySelector(".macro-stamp");
+    if (old) old.remove();
+    if (!text) return;
+    const span = document.createElement("span");
+    span.className = "macro-stamp";
+    span.textContent = text;
+    h3.appendChild(span);
+  }
+
   try {
     const r = await fetch("/data/macro.json", { cache: "no-cache" });
     if (!r.ok) throw new Error("macro.json 로드 실패");
@@ -152,6 +173,18 @@
     renderFx(data);
     renderSimpleList("macroRatesList", data.rates);
     renderSimpleList("macroCpiList", data.cpi);
+
+    // 카드별 데이터 기준일 / 갱신 시각 표시
+    if (data.data_date) {
+      setHeaderStamp("macroFxCard", `${data.data_date} 종가`);
+    }
+    // 금리/CPI 는 카드별 row 안에 asof 가 이미 표시됨
+    // 푸터에 전체 갱신 시각
+    const foot = document.querySelector(".macro-dashboard .macro-foot");
+    if (foot && data.updated) {
+      foot.innerHTML = `🔄 마지막 갱신: <strong>${fmtUpdated(data.updated)}</strong> &nbsp;·&nbsp; `
+        + foot.innerHTML;
+    }
     renderEvents(data.events);
   } catch (e) {
     ["macroFxList", "macroRatesList", "macroCpiList", "macroEventsList"].forEach((id) => {

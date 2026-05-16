@@ -2915,3 +2915,16 @@ html[data-theme="titanium"] .rel-table { background: #f8fafc; }
   .macro-row-value { font-size: 13px; }
   .macro-spark { width: 90px; }
 }
+
+/* 거시 지표 카드 — 데이터 기준일 스탬프 (h3 옆) */
+.macro-card h3 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.macro-stamp {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--active-tint, rgba(127,127,127,0.08));
+  border: 1px solid var(--border);
+  padding: 1px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.2px;
+}
