@@ -373,6 +373,37 @@
             '<p class="myinfo-desc">선택한 테마는 이 브라우저와 로그인 계정 양쪽에 저장됩니다.</p>' +
             '<div class="theme-swatch-grid" id="myInfoThemeGrid" role="radiogroup" aria-label="테마 선택"></div>' +
           '</section>' +
+          // 카톡 알림 설정
+          '<section class="myinfo-section" id="myInfoNotifySection">' +
+            '<h3 class="myinfo-heading">🔔 카톡 알림</h3>' +
+            '<p class="myinfo-desc">금통위·FOMC·CPI·만기일을 본인 카톡으로 받아보세요. 알림을 켜면 카카오톡 메시지 전송 추가 동의가 필요합니다.</p>' +
+            '<div class="notify-row notify-row--toggle">' +
+              '<label class="notify-toggle">' +
+                '<input type="checkbox" id="notifyEnabledToggle" />' +
+                '<span class="notify-toggle-track" aria-hidden="true"></span>' +
+                '<span class="notify-toggle-label">카톡 알림 받기</span>' +
+              '</label>' +
+              '<span class="notify-status" id="notifyStatus"></span>' +
+            '</div>' +
+            '<div class="notify-detail" id="notifyDetail" hidden>' +
+              '<div class="notify-row">받을 이벤트</div>' +
+              '<div class="notify-checks">' +
+                '<label><input type="checkbox" data-key="notify_rate" checked /> <span>한국은행 금통위 · 미국 FOMC</span></label>' +
+                '<label><input type="checkbox" data-key="notify_cpi" checked /> <span>한국 · 미국 CPI 발표</span></label>' +
+                '<label><input type="checkbox" data-key="notify_expiry" checked /> <span>KOSPI200 옵션·선물 만기</span></label>' +
+              '</div>' +
+              '<div class="notify-row notify-row--hour">' +
+                '<label for="notifySendHour">발송 시각</label>' +
+                '<select id="notifySendHour"></select>' +
+                '<span class="notify-hint">매일 D-1 / D-0 이벤트 1회 발송</span>' +
+              '</div>' +
+              '<div class="notify-actions">' +
+                '<button type="button" class="btn-secondary" id="notifySaveBtn">저장</button>' +
+                '<button type="button" class="btn-link" id="notifyRevokeBtn">메시지 권한 철회</button>' +
+              '</div>' +
+              '<div class="notify-msg" id="notifyMsg" hidden></div>' +
+            '</div>' +
+          '</section>' +
           // 회원 탈퇴 (별도 모달로 진입)
           '<section class="myinfo-section myinfo-danger-zone">' +
             '<h3 class="myinfo-heading">회원 탈퇴</h3>' +
@@ -496,10 +527,269 @@
 
     renderThemeSwatches();
     resetConfirmPanel();
+    // 카톡 알림 설정 로드 (비동기, 실패해도 모달 자체는 정상 표시)
+    bindNotifyHandlers();
+    loadNotifySettings(user).catch(function (e) {
+      console.warn('[notify] settings load failed:', e);
+    });
 
     var el = document.getElementById('myInfoModal');
     el.classList.add('show');
     el.setAttribute('aria-hidden', 'false');
+  }
+
+  // ── 카톡 알림 설정 ─────────────────────────────────
+
+  function setNotifyMsg(text, isError) {
+    var msg = document.getElementById('notifyMsg');
+    if (!msg) return;
+    if (!text) {
+      msg.hidden = true;
+      msg.textContent = '';
+      return;
+    }
+    msg.hidden = false;
+    msg.textContent = text;
+    msg.className = 'notify-msg' + (isError ? ' notify-msg--error' : ' notify-msg--ok');
+  }
+
+  function populateHourSelect() {
+    var sel = document.getElementById('notifySendHour');
+    if (!sel || sel.options.length) return;
+    for (var h = 6; h <= 22; h++) {
+      var opt = document.createElement('option');
+      opt.value = String(h);
+      opt.textContent = (h < 10 ? '0' + h : h) + ':00 KST';
+      sel.appendChild(opt);
+    }
+    sel.value = '8';
+  }
+
+  async function loadNotifySettings(user) {
+    populateHourSelect();
+    // (sb 는 IIFE closure 에서 사용)
+    if (!sb || !user) return;
+    var resp = await sb
+      .from('user_notification_settings')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    var row = resp && resp.data;
+    var toggle = document.getElementById('notifyEnabledToggle');
+    var detail = document.getElementById('notifyDetail');
+    var statusEl = document.getElementById('notifyStatus');
+    var enabled = !!(row && row.kakao_notify_enabled);
+    if (toggle) toggle.checked = enabled;
+    if (detail) detail.hidden = !enabled;
+    if (statusEl) {
+      if (enabled) {
+        var asof = row.updated_at ? new Date(row.updated_at).toLocaleDateString('ko-KR') : '';
+        statusEl.textContent = '활성 · ' + asof;
+      } else {
+        statusEl.textContent = '꺼짐';
+      }
+    }
+    // 체크박스 + 시각 초기화
+    ['notify_rate', 'notify_cpi', 'notify_expiry'].forEach(function (key) {
+      var cb = document.querySelector('#notifyDetail input[data-key="' + key + '"]');
+      if (cb) cb.checked = row ? !!row[key] : true;
+    });
+    var sel = document.getElementById('notifySendHour');
+    if (sel) sel.value = String((row && row.send_hour) || 8);
+    setNotifyMsg('');
+  }
+
+  function bindNotifyHandlers() {
+    var toggle = document.getElementById('notifyEnabledToggle');
+    if (toggle && !toggle._bound) {
+      toggle._bound = true;
+      toggle.addEventListener('change', onNotifyToggle);
+    }
+    var saveBtn = document.getElementById('notifySaveBtn');
+    if (saveBtn && !saveBtn._bound) {
+      saveBtn._bound = true;
+      saveBtn.addEventListener('click', onNotifySave);
+    }
+    var revokeBtn = document.getElementById('notifyRevokeBtn');
+    if (revokeBtn && !revokeBtn._bound) {
+      revokeBtn._bound = true;
+      revokeBtn.addEventListener('click', onNotifyRevoke);
+    }
+  }
+
+  async function onNotifyToggle(ev) {
+    var checked = ev.target.checked;
+    var detail = document.getElementById('notifyDetail');
+    // (sb 는 IIFE closure 에서 사용)
+    if (!sb) return;
+    var sessResp = await sb.auth.getSession();
+    var session = sessResp && sessResp.data && sessResp.data.session;
+    var user = session && session.user;
+    if (!user) {
+      ev.target.checked = false;
+      setNotifyMsg('로그인이 필요합니다.', true);
+      return;
+    }
+
+    if (checked) {
+      // 첫 ON — talk_message scope 보유 여부 확인
+      var resp = await sb
+        .from('user_notification_settings')
+        .select('kakao_scopes,kakao_access_token')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      var scopes = (resp && resp.data && resp.data.kakao_scopes) || [];
+      var hasScope = scopes.indexOf('talk_message') >= 0
+                  && resp.data && resp.data.kakao_access_token;
+
+      if (!hasScope) {
+        // talk_message 재동의 필요 — 카카오 동의창 띄움
+        setNotifyMsg('카카오 추가 동의 페이지로 이동합니다…');
+        try {
+          var redirectTo = window.location.origin + window.location.pathname +
+                           '#notify=consent';
+          await sb.auth.signInWithOAuth({
+            provider: 'kakao',
+            options: {
+              scopes: 'profile_nickname account_email talk_message',
+              queryParams: { prompt: 'consent' },
+              redirectTo: redirectTo,
+            },
+          });
+          return;  // 페이지 이동
+        } catch (e) {
+          console.warn('[notify] consent failed:', e);
+          ev.target.checked = false;
+          if (detail) detail.hidden = true;
+          setNotifyMsg('동의 페이지 호출에 실패했습니다.', true);
+          return;
+        }
+      }
+      // 이미 권한 있음 → DB 만 업데이트
+      if (detail) detail.hidden = false;
+      setNotifyMsg('알림이 활성화되었습니다. 저장 버튼을 눌러 이벤트 종류를 확정하세요.');
+    } else {
+      // OFF — DB 즉시 업데이트
+      if (detail) detail.hidden = true;
+      try {
+        await sb.from('user_notification_settings')
+          .upsert({ user_id: user.id, kakao_notify_enabled: false },
+                  { onConflict: 'user_id' });
+        setNotifyMsg('알림을 껐습니다.');
+      } catch (e) {
+        setNotifyMsg('저장 실패: ' + (e.message || e), true);
+      }
+    }
+  }
+
+  async function onNotifySave() {
+    // (sb 는 IIFE closure 에서 사용)
+    if (!sb) return;
+    var sessResp = await sb.auth.getSession();
+    var user = sessResp && sessResp.data && sessResp.data.session && sessResp.data.session.user;
+    if (!user) return;
+
+    var toggle = document.getElementById('notifyEnabledToggle');
+    var payload = {
+      user_id: user.id,
+      kakao_notify_enabled: !!(toggle && toggle.checked),
+      send_hour: parseInt(document.getElementById('notifySendHour').value, 10) || 8,
+    };
+    ['notify_rate', 'notify_cpi', 'notify_expiry'].forEach(function (key) {
+      var cb = document.querySelector('#notifyDetail input[data-key="' + key + '"]');
+      payload[key] = !!(cb && cb.checked);
+    });
+    try {
+      var resp = await sb.from('user_notification_settings')
+        .upsert(payload, { onConflict: 'user_id' });
+      if (resp.error) throw resp.error;
+      setNotifyMsg('설정이 저장되었습니다.');
+    } catch (e) {
+      setNotifyMsg('저장 실패: ' + (e.message || e), true);
+    }
+  }
+
+  async function onNotifyRevoke() {
+    if (!confirm('카카오톡 메시지 전송 권한을 철회하시겠습니까?\n알림은 자동으로 꺼지며, 다시 켜려면 카카오 동의가 필요합니다.')) {
+      return;
+    }
+    // (sb 는 IIFE closure 에서 사용)
+    if (!sb) return;
+    var sessResp = await sb.auth.getSession();
+    var session = sessResp && sessResp.data && sessResp.data.session;
+    var user = session && session.user;
+    var token = session && session.provider_token;
+    if (!user) return;
+
+    // 카카오 API 직접 호출로 talk_message 스코프만 철회
+    if (token) {
+      try {
+        await fetch('https://kapi.kakao.com/v2/user/scopes', {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'scopes=' + encodeURIComponent(JSON.stringify(['talk_message'])),
+        });
+      } catch (e) {
+        console.warn('[notify] kakao scope revoke failed:', e);
+      }
+    }
+    // DB 도 같이 정리
+    try {
+      await sb.from('user_notification_settings').upsert({
+        user_id: user.id,
+        kakao_notify_enabled: false,
+        kakao_access_token: null,
+        kakao_refresh_token: null,
+        kakao_token_expires_at: null,
+        kakao_scopes: [],
+      }, { onConflict: 'user_id' });
+      var toggle = document.getElementById('notifyEnabledToggle');
+      if (toggle) toggle.checked = false;
+      var detail = document.getElementById('notifyDetail');
+      if (detail) detail.hidden = true;
+      setNotifyMsg('권한이 철회되었습니다.');
+    } catch (e) {
+      setNotifyMsg('철회 실패: ' + (e.message || e), true);
+    }
+  }
+
+  // 페이지 진입 시 #notify=consent 해시가 있으면 토큰 저장 (consent 완료 후 콜백)
+  async function _maybeProcessConsentCallback() {
+    if (window.location.hash.indexOf('notify=consent') < 0) return;
+    // (sb 는 IIFE closure 에서 사용)
+    if (!sb) return;
+    var sessResp = await sb.auth.getSession();
+    var session = sessResp && sessResp.data && sessResp.data.session;
+    if (!session || !session.user) return;
+    var providerToken = session.provider_token;
+    var providerRefreshToken = session.provider_refresh_token;
+    if (!providerToken) return;
+    try {
+      await sb.from('user_notification_settings').upsert({
+        user_id: session.user.id,
+        kakao_notify_enabled: true,
+        kakao_access_token: providerToken,
+        kakao_refresh_token: providerRefreshToken || null,
+        kakao_token_expires_at: session.expires_at
+          ? new Date(session.expires_at * 1000).toISOString()
+          : null,
+        kakao_scopes: ['profile_nickname', 'account_email', 'talk_message'],
+      }, { onConflict: 'user_id' });
+      // 해시 정리 후 모달 자동 오픈
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      if (typeof openMyInfo === 'function') openMyInfo(session.user);
+    } catch (e) {
+      console.warn('[notify] consent callback save failed:', e);
+    }
+  }
+  // 페이지 로드 후 콜백 처리 — DOMContentLoaded 보장
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _maybeProcessConsentCallback);
+  } else {
+    _maybeProcessConsentCallback();
   }
 
   function closeMyInfo() {
