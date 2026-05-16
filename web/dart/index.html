@@ -23,7 +23,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css?v=20260516a" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516d" />
   <style>
     /* DART 페이지 — 글로벌 테마 변수(--bg-card/--text-primary 등) 사용.
        자체 --c-* 변수는 styles.css 에 정의되지 않아 라이트 폴백으로 깔리던 문제 수정. */
@@ -361,8 +361,13 @@
   if (params.get('q')) $q.value = params.get('q');
   if (params.get('days')) $days.value = params.get('days');
 
-  fetch('/data/dart/disclosures.json', { cache: 'no-cache' })
-    .then(r => r.json())
+  // cache-busting + 정확한 에러 메시지
+  const dataUrl = `/data/dart/disclosures.json?_=${Date.now()}`;
+  fetch(dataUrl, { cache: 'no-store' })
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
+      return r.json();
+    })
     .then(data => {
       state.all = data.items || [];
       state.generatedAt = data.generated_at || '';
@@ -370,9 +375,10 @@
       applyFilters();
     })
     .catch(err => {
-      $meta.textContent = '데이터 로드 실패';
-      $list.innerHTML = '<div class="dart-empty">데이터가 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.</div>';
-      console.error(err);
+      const msg = err && err.message ? err.message : String(err);
+      $meta.textContent = `데이터 로드 실패: ${msg}`;
+      $list.innerHTML = `<div class="dart-empty">데이터 로드 실패: ${escapeHtml(msg)}<br><small style="opacity:0.7">URL: ${escapeHtml(dataUrl)}<br>새로고침 (Cmd+Shift+R) 또는 시크릿 창에서 다시 시도해보세요.</small></div>`;
+      console.error('fetch failed:', dataUrl, err);
     });
 })();
 </script>

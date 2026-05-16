@@ -12,7 +12,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css?v=20260516a" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516d" />
   <style>
     .detail-page { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
     .detail-back { display: inline-block; font-size: 13px; color: var(--text-secondary); text-decoration: none; margin-bottom: 16px; }
@@ -190,9 +190,12 @@
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  const cacheBust = `?_=${Date.now()}`;
   Promise.all([
-    fetch(`/data/dart/detail/${rceptNo}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
-    fetch('/data/dart/disclosures.json').then(r => r.json()).catch(() => null),
+    fetch(`/data/dart/detail/${rceptNo}.json${cacheBust}`, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(`/data/dart/disclosures.json${cacheBust}`, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null).catch(() => null),
   ]).then(([detail, index]) => {
     // detail이 없으면 index에서 fallback (LLM 요약 X, impact X)
     let item = detail;
@@ -280,16 +283,22 @@
     const kf = it.key_figures;
     if (kf && typeof kf === 'object') {
       const cells = [];
-      if (kf.revenue_yoy_pct !== null && kf.revenue_yoy_pct !== undefined)
-        cells.push({ lbl: '매출 YoY', val: fmtPct(kf.revenue_yoy_pct) });
-      if (kf.op_yoy_pct !== null && kf.op_yoy_pct !== undefined)
-        cells.push({ lbl: '영업이익 YoY', val: fmtPct(kf.op_yoy_pct) });
-      if (kf.net_yoy_pct !== null && kf.net_yoy_pct !== undefined)
-        cells.push({ lbl: '순익 YoY', val: fmtPct(kf.net_yoy_pct) });
       if (kf.revenue_amount !== null && kf.revenue_amount !== undefined)
         cells.push({ lbl: '매출액', val: fmtKRW(kf.revenue_amount) });
+      if (kf.revenue_yoy_pct !== null && kf.revenue_yoy_pct !== undefined)
+        cells.push({ lbl: '매출 YoY', val: fmtPct(kf.revenue_yoy_pct) });
       if (kf.op_amount !== null && kf.op_amount !== undefined)
         cells.push({ lbl: '영업이익', val: fmtKRW(kf.op_amount) });
+      if (kf.op_yoy_pct !== null && kf.op_yoy_pct !== undefined)
+        cells.push({ lbl: '영업이익 YoY', val: fmtPct(kf.op_yoy_pct) });
+      if (kf.operating_margin_pct !== null && kf.operating_margin_pct !== undefined)
+        cells.push({ lbl: '영업이익률', val: fmtPct(kf.operating_margin_pct) });
+      if (kf.net_amount !== null && kf.net_amount !== undefined)
+        cells.push({ lbl: '순이익', val: fmtKRW(kf.net_amount) });
+      if (kf.net_yoy_pct !== null && kf.net_yoy_pct !== undefined)
+        cells.push({ lbl: '순익 YoY', val: fmtPct(kf.net_yoy_pct) });
+      if (kf.debt_ratio_pct !== null && kf.debt_ratio_pct !== undefined)
+        cells.push({ lbl: '부채비율', val: fmtPct(kf.debt_ratio_pct) });
       if (cells.length || kf.extra) {
         html += `
           <section class="box">

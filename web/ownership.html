@@ -24,21 +24,21 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js"></script>
-  <link rel="stylesheet" href="/assets/styles.css?v=20260516a" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516d" />
   <link rel="stylesheet" href="https://unpkg.com/vis-network@9.1.9/styles/vis-network.min.css">
   <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
   <style>
-    .own-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:10px 14px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; margin-bottom:10px; }
-    .own-toolbar input, .own-toolbar select { padding:6px 10px; border-radius:6px; border:1px solid var(--border,#cbd5e1); background:var(--bg,#fff); color:var(--text,#0f172a); font-size:13px; }
+    .own-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:10px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; margin-bottom:10px; }
+    .own-toolbar input, .own-toolbar select { padding:6px 10px; border-radius:6px; border:1px solid var(--border); background:var(--bg,#fff); color:var(--text,#0f172a); font-size:13px; }
     .own-toolbar .stat { font-size:12px; color:var(--text-secondary,#64748b); margin-left:auto; }
     .own-search-wrap { position:relative; }
-    .own-suggest { position:absolute; top:calc(100% + 2px); left:0; background:var(--card,#fff); border:1px solid var(--border,#cbd5e1); border-radius:6px; display:none; z-index:1000; max-height:280px; overflow-y:auto; width:300px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+    .own-suggest { position:absolute; top:calc(100% + 2px); left:0; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; display:none; z-index:1000; max-height:280px; overflow-y:auto; width:300px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
     .own-suggest .item { padding:8px 10px; cursor:pointer; border-bottom:1px solid #eef2f6; font-size:12px; }
     .own-suggest .item:hover { background:var(--bg,#f1f5f9); }
-    .own-legend { display:flex; flex-wrap:wrap; gap:12px; padding:8px 12px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; font-size:11px; align-items:center; margin-bottom:8px; }
+    .own-legend { display:flex; flex-wrap:wrap; gap:12px; padding:8px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; font-size:11px; align-items:center; margin-bottom:8px; }
     .own-area { display:flex; gap:10px; height: calc(100vh - 280px); min-height:500px; }
-    .own-graph { flex:1; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; }
-    .own-side { width:280px; background:var(--card,#fff); border:1px solid var(--border,#e5e7eb); border-radius:8px; padding:12px; overflow-y:auto; font-size:12px; }
+    .own-graph { flex:1; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; }
+    .own-side { width:280px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:12px; overflow-y:auto; font-size:12px; }
     @media (max-width: 768px) {
       .own-area { flex-direction: column; height:auto; }
       .own-side { width:auto; max-height:280px; }

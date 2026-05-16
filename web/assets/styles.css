@@ -1515,12 +1515,12 @@ html.is-admin .admin-only { display: revert !important; }
   max-width: 960px;
   margin: 24px auto;
   padding: 20px 24px;
-  background: var(--card, #fff);
-  border: 1px solid var(--border, #e5e7eb);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 14px;
   line-height: 1.7;
-  color: var(--text-primary, #1e293b);
+  color: var(--text-primary);
 }
 .page-intro h2 {
   font-size: 20px;
