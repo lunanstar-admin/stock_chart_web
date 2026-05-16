@@ -292,10 +292,15 @@
   }
 
   // 세션 변화 시 헤더 갱신 + 관심종목 동기화 (있을 때만).
-  sb.auth.onAuthStateChange(function () {
+  sb.auth.onAuthStateChange(function (event, session) {
     renderAuthUI();
     if (window.Watchlist && typeof window.Watchlist.load === 'function') {
       window.Watchlist.load();
+    }
+    // 카톡 알림 동의 콜백 — talk_message scope 재동의 후 SIGNED_IN/TOKEN_REFRESHED
+    // 이벤트로 새 provider_token 이 도착함. localStorage 플래그가 있으면 저장.
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      try { _persistKakaoTokenIfPending(session); } catch (_) {}
     }
   });
 
@@ -644,10 +649,14 @@
 
       if (!hasScope) {
         // talk_message 재동의 필요 — 카카오 동의창 띄움
+        // 콜백 후 onAuthStateChange 가 토큰을 저장하도록 localStorage 플래그를 둠.
+        try {
+          localStorage.setItem('notify_consent_pending', '1');
+        } catch (_) {}
         setNotifyMsg('카카오 추가 동의 페이지로 이동합니다…');
         try {
-          var redirectTo = window.location.origin + window.location.pathname +
-                           '#notify=consent';
+          // 같은 페이지로 단순 리턴 — Supabase OAuth 콜백이 자동 처리.
+          var redirectTo = window.location.origin + window.location.pathname;
           await sb.auth.signInWithOAuth({
             provider: 'kakao',
             options: {
@@ -659,6 +668,7 @@
           return;  // 페이지 이동
         } catch (e) {
           console.warn('[notify] consent failed:', e);
+          try { localStorage.removeItem('notify_consent_pending'); } catch (_) {}
           ev.target.checked = false;
           if (detail) detail.hidden = true;
           setNotifyMsg('동의 페이지 호출에 실패했습니다.', true);
@@ -666,6 +676,11 @@
         }
       }
       // 이미 권한 있음 → DB 만 업데이트
+      try {
+        await sb.from('user_notification_settings')
+          .upsert({ user_id: user.id, kakao_notify_enabled: true },
+                  { onConflict: 'user_id' });
+      } catch (_) {}
       if (detail) detail.hidden = false;
       setNotifyMsg('알림이 활성화되었습니다. 저장 버튼을 눌러 이벤트 종류를 확정하세요.');
     } else {
@@ -756,40 +771,47 @@
     }
   }
 
-  // 페이지 진입 시 #notify=consent 해시가 있으면 토큰 저장 (consent 완료 후 콜백)
-  async function _maybeProcessConsentCallback() {
-    if (window.location.hash.indexOf('notify=consent') < 0) return;
-    // (sb 는 IIFE closure 에서 사용)
-    if (!sb) return;
-    var sessResp = await sb.auth.getSession();
-    var session = sessResp && sessResp.data && sessResp.data.session;
+  // SIGNED_IN / TOKEN_REFRESHED 이벤트에서 호출.
+  // localStorage 'notify_consent_pending' 플래그가 있으면 provider_token 을 DB 에 저장.
+  // 페이지 reload 후 getSession() 만으로는 provider_token 을 늘 받을 수 없어,
+  // Supabase 의 onAuthStateChange 콜백 시점이 가장 안정적.
+  async function _persistKakaoTokenIfPending(session) {
+    var pending = false;
+    try { pending = localStorage.getItem('notify_consent_pending') === '1'; }
+    catch (_) {}
+    if (!pending) return;
     if (!session || !session.user) return;
     var providerToken = session.provider_token;
-    var providerRefreshToken = session.provider_refresh_token;
-    if (!providerToken) return;
+    if (!providerToken) {
+      console.info('[notify] consent pending: provider_token not yet available');
+      return;
+    }
     try {
-      await sb.from('user_notification_settings').upsert({
+      var resp = await sb.from('user_notification_settings').upsert({
         user_id: session.user.id,
         kakao_notify_enabled: true,
         kakao_access_token: providerToken,
-        kakao_refresh_token: providerRefreshToken || null,
+        kakao_refresh_token: session.provider_refresh_token || null,
         kakao_token_expires_at: session.expires_at
           ? new Date(session.expires_at * 1000).toISOString()
           : null,
         kakao_scopes: ['profile_nickname', 'account_email', 'talk_message'],
       }, { onConflict: 'user_id' });
-      // 해시 정리 후 모달 자동 오픈
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-      if (typeof openMyInfo === 'function') openMyInfo(session.user);
+      if (resp.error) throw resp.error;
+      try { localStorage.removeItem('notify_consent_pending'); } catch (_) {}
+      console.info('[notify] consent token saved');
+      // 모달이 열려 있다면 UI 새로고침, 닫혀 있으면 자동으로 다시 열어
+      // 사용자에게 알림 활성화가 완료된 사실을 보여줌.
+      var modal = document.getElementById('myInfoModal');
+      if (modal && modal.classList.contains('show')) {
+        loadNotifySettings(session.user).catch(function () {});
+        setNotifyMsg('동의 완료. 이벤트 종류를 선택하고 저장하세요.');
+      } else if (typeof openMyInfo === 'function') {
+        openMyInfo(session.user);
+      }
     } catch (e) {
-      console.warn('[notify] consent callback save failed:', e);
+      console.warn('[notify] consent token save failed:', e);
     }
-  }
-  // 페이지 로드 후 콜백 처리 — DOMContentLoaded 보장
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _maybeProcessConsentCallback);
-  } else {
-    _maybeProcessConsentCallback();
   }
 
   function closeMyInfo() {
