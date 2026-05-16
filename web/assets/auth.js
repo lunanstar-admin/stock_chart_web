@@ -372,13 +372,7 @@
               '</div>' +
             '</div>' +
           '</section>' +
-          // 테마 선택
-          '<section class="myinfo-section">' +
-            '<h3 class="myinfo-heading">테마</h3>' +
-            '<p class="myinfo-desc">선택한 테마는 이 브라우저와 로그인 계정 양쪽에 저장됩니다.</p>' +
-            '<div class="theme-swatch-grid" id="myInfoThemeGrid" role="radiogroup" aria-label="테마 선택"></div>' +
-          '</section>' +
-          // 카톡 알림 설정
+          // 카톡 알림 설정 (테마보다 위 — 활용 빈도 우선)
           '<section class="myinfo-section" id="myInfoNotifySection">' +
             '<h3 class="myinfo-heading">🔔 카톡 알림</h3>' +
             '<p class="myinfo-desc">금통위·FOMC·CPI·만기일을 본인 카톡으로 받아보세요. 알림을 켜면 카카오톡 메시지 전송 추가 동의가 필요합니다.</p>' +
@@ -408,6 +402,12 @@
               '</div>' +
               '<div class="notify-msg" id="notifyMsg" hidden></div>' +
             '</div>' +
+          '</section>' +
+          // 테마 선택
+          '<section class="myinfo-section">' +
+            '<h3 class="myinfo-heading">테마</h3>' +
+            '<p class="myinfo-desc">선택한 테마는 이 브라우저와 로그인 계정 양쪽에 저장됩니다.</p>' +
+            '<div class="theme-swatch-grid" id="myInfoThemeGrid" role="radiogroup" aria-label="테마 선택"></div>' +
           '</section>' +
           // 회원 탈퇴 (별도 모달로 진입)
           '<section class="myinfo-section myinfo-danger-zone">' +
