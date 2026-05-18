@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dart공시분석 — 고객 지원</title>
+  <meta name="description" content="iOS 앱 'Dart공시분석' 사용법, 자주 묻는 질문, 문의처." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://secomdal.com/dart/app-support" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%91%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516-revert" />
+  <style>
+    .legal { max-width: 760px; margin: 24px auto; padding: 0 16px; color: var(--text-primary); line-height: 1.7; font-size: 14px; }
+    .legal h1 { font-size: 24px; margin-bottom: 4px; }
+    .legal h2 { font-size: 17px; margin-top: 28px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    .legal h3 { font-size: 14px; margin-top: 18px; color: var(--accent); }
+    .legal ul, .legal ol { padding-left: 20px; }
+    .legal li { margin: 4px 0; }
+    .legal code { background: var(--bg-card); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    .legal .updated { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+<main class="legal">
+  <h1>Dart공시분석 — 고객 지원</h1>
+  <p class="updated">최종 업데이트: 2026-05-16 · iOS App</p>
+
+  <h2>앱 소개</h2>
+  <p>「Dart공시분석」은 금융감독원 전자공시시스템(DART)의 공개 공시 데이터를 실시간으로 수집하고,
+  분기·반기·사업 보고서의 핵심 재무 지표(매출·영업이익·순이익·부채비율·현금흐름)와 함께
+  AI 기반 밸류에이션 논평을 한 화면에서 보여주는 단순 정보 서비스입니다.</p>
+
+  <h2>주요 기능</h2>
+  <ul>
+    <li><b>공시 검색</b>: 종목코드/종목명/보고서 제목으로 빠른 검색</li>
+    <li><b>AI 요약</b>: 정기공시 본문을 한 줄 + 5섹션 상세 분석</li>
+    <li><b>핵심 수치</b>: 매출/영업이익/순이익/영업이익률/부채비율 (전년 동기 대비 변화율 포함)</li>
+    <li><b>밸류에이션 논평</b>: 현재 시총·PER·PBR·ROE와 결합한 적정성 평가</li>
+    <li><b>주가 영향</b>: 공시 직전(T-1) → T+0 → T+5 → T+20 영업일 종가 변화</li>
+    <li><b>실시간 푸시 알림</b>: 신규 정기공시 발생 시 즉시 알림 (옵션)</li>
+    <li><b>테마</b>: 4종 메탈릭 (연한 골드·화이트 골드·플래티늄·티타늄)</li>
+  </ul>
+
+  <h2>FAQ</h2>
+
+  <h3>Q. 회원가입이 필요한가요?</h3>
+  <p>아닙니다. 본 앱은 회원가입 없이 누구나 사용할 수 있으며, 사용자 식별 정보를 수집하지 않습니다.</p>
+
+  <h3>Q. 무료인가요?</h3>
+  <p>네, 완전 무료입니다. 광고도 없으며, 인앱 결제도 없습니다.</p>
+
+  <h3>Q. 어떤 종목까지 분석되나요?</h3>
+  <p>현재 KOSPI200 + KOSDAQ 시총 상위 150개 종목의 분기/반기/사업 보고서가 AI 분석 대상입니다.
+  나머지 종목은 공시 메타데이터(제목·접수일·호재/악재 분류)는 검색되지만 풍부한 AI 요약은
+  추가 운영 비용 발생 시 점진적으로 확대됩니다.</p>
+
+  <h3>Q. 알림이 안 와요</h3>
+  <ol>
+    <li>iOS 시스템 설정 → 알림 → Dart공시분석 → "알림 허용"이 켜져 있는지 확인</li>
+    <li>앱을 한 번 실행해 디바이스 토큰을 서버에 재등록</li>
+    <li>인터넷 연결 상태 확인 (Wi-Fi 또는 셀룰러)</li>
+    <li>그래도 해결되지 않으면 아래 이메일로 문의</li>
+  </ol>
+
+  <h3>Q. 데이터는 얼마나 자주 갱신되나요?</h3>
+  <p>DART 공시 데이터는 매 1분마다 폴링되며, 정기보고서가 발견되면 자동으로 AI 분석이 시작되어
+  보통 30초~1분 안에 앱에 반영됩니다. 주가 영향 데이터는 영업일 기준 T+0/T+5/T+20에 자동
+  채워집니다.</p>
+
+  <h3>Q. AI 요약은 정확한가요?</h3>
+  <p>AI(Anthropic Claude Haiku) 분석은 DART 공시 본문과 공식 재무제표(fnlttSinglAcntAll) 수치를
+  근거로 생성되지만, <b>단순 참고자료</b>이며 정확성·완전성을 보장하지 않습니다. 매수·매도 추천이
+  아니며, 투자 판단은 본인 책임으로 직접 하셔야 합니다.</p>
+
+  <h3>Q. 종목 매매도 가능한가요?</h3>
+  <p>아닙니다. 본 앱은 정보 조회·검색·분석만 제공하며 매매 기능은 일절 포함하지 않습니다.</p>
+
+  <h2>웹 버전</h2>
+  <p>같은 데이터를 PC/모바일 브라우저에서도 보실 수 있습니다:
+  <a href="https://secomdal.com/dart">https://secomdal.com/dart</a></p>
+
+  <h2>문의</h2>
+  <p>
+    버그 신고·기능 제안·기타 문의:<br/>
+    이메일: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a><br/>
+    응답 시간: 영업일 기준 1-3일 이내
+  </p>
+
+  <h2>관련 링크</h2>
+  <ul>
+    <li><a href="/dart/app-privacy">개인정보 처리방침</a></li>
+    <li><a href="/dart">DART 공시 검색 (웹)</a></li>
+    <li><a href="/terms">이용약관</a></li>
+  </ul>
+
+  <p style="margin-top:36px;color:var(--text-secondary);font-size:12px">
+    <a href="/dart">← DART 공시 검색으로 돌아가기</a>
+  </p>
+</main>
+</body>
+</html>

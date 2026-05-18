@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dart공시분석 — 개인정보 처리방침</title>
+  <meta name="description" content="iOS 앱 'Dart공시분석' 개인정보 처리방침. 수집 항목, 이용 목적, 보관 기간, 제3자 제공 안내." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://secomdal.com/dart/app-privacy" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%91%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516-revert" />
+  <style>
+    .legal { max-width: 760px; margin: 24px auto; padding: 0 16px; color: var(--text-primary); line-height: 1.7; font-size: 14px; }
+    .legal h1 { font-size: 24px; margin-bottom: 4px; }
+    .legal .updated { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; }
+    .legal h2 { font-size: 17px; margin-top: 28px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    .legal table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+    .legal table th, .legal table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+    .legal table th { background: var(--bg-card); }
+    .legal ul { padding-left: 20px; }
+    .legal li { margin: 4px 0; }
+  </style>
+</head>
+<body>
+<main class="legal">
+  <h1>Dart공시분석 — 개인정보 처리방침</h1>
+  <p class="updated">최종 업데이트: 2026-05-16 · iOS App · Bundle ID com.kimkihong.DartReader</p>
+
+  <h2>1. 개요</h2>
+  <p>「Dart공시분석」(이하 "본 앱")은 금융감독원 전자공시시스템(DART)의 공개 공시 데이터를 검색·분석·요약하여
+  제공하는 단순 정보 서비스입니다. 본 앱은 사용자에 대한 회원 가입을 요구하지 않으며, 광고 추적·마케팅 목적의
+  개인정보를 수집하지 않습니다.</p>
+
+  <h2>2. 수집하는 정보</h2>
+  <table>
+    <thead>
+      <tr><th>항목</th><th>수집 시점</th><th>이용 목적</th><th>보유 기간</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>APNs 디바이스 토큰<br/><span style="color:var(--text-secondary);font-size:12px">(개인 식별 불가)</span></td>
+        <td>사용자가 푸시 알림 권한을 허용한 시점</td>
+        <td>분기보고서·반기보고서 등 신규 공시 발생 시 푸시 알림 발송</td>
+        <td>앱 삭제 또는 토큰 만료 시 자동 폐기 (최대 1년)</td>
+      </tr>
+      <tr>
+        <td>광고 식별자(IDFA)<br/><span style="color:var(--text-secondary);font-size:12px">(ATT 권한 허용 시에만)</span></td>
+        <td>앱 첫 실행 시 Apple ATT 권한 요청 → 사용자가 "허용"한 경우</td>
+        <td>Google AdMob 맞춤형 광고 노출. 거부 시 비맞춤 광고로 대체</td>
+        <td>iOS 시스템 → 설정 → 일반 → 추적에서 언제든 철회 가능</td>
+      </tr>
+      <tr>
+        <td>앱 설정<br/><span style="color:var(--text-secondary);font-size:12px">(테마, API URL 등)</span></td>
+        <td>사용자가 설정 변경 시</td>
+        <td>다음 실행 시 동일 환경 유지</td>
+        <td>디바이스 내 UserDefaults — 외부 전송 없음</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. 수집하지 않는 정보</h2>
+  <ul>
+    <li>이름, 이메일, 전화번호, 주소 등 직접 식별 정보</li>
+    <li>위치 정보 (GPS, IP 기반 위치 모두)</li>
+    <li>연락처, 사진, 캘린더 등 디바이스 데이터</li>
+    <li>금융 계좌 정보, 거래 내역 (본 앱은 매매 기능 없음)</li>
+  </ul>
+
+  <h2>3-1. 광고 안내</h2>
+  <p>본 앱은 <b>Google AdMob</b> 전면 광고(Interstitial)를 포함합니다. 공시 상세 화면 3회 진입마다 1회 광고가 표시됩니다.</p>
+  <ul>
+    <li><b>맞춤형 광고</b>: 앱 첫 실행 시 Apple ATT(App Tracking Transparency) 권한을 요청합니다. 허용 시 Google이 IDFA를 사용해 관심사 기반 광고를 표시합니다.</li>
+    <li><b>비맞춤 광고</b>: ATT를 거부해도 광고는 정상 노출되며, 일반 광고로 대체됩니다. 앱의 모든 기능은 동일하게 이용 가능합니다.</li>
+    <li><b>광고 사업자</b>: Google LLC. 자세한 데이터 처리는 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google 개인정보처리방침</a> 참조</li>
+  </ul>
+
+  <h2>4. 제3자 제공 및 위탁</h2>
+  <p>본 앱은 수집한 정보를 제3자에게 판매·공유·제공하지 않습니다. 다음 외부 서비스의 공개 데이터만 사용합니다:</p>
+  <ul>
+    <li><b>금융감독원 전자공시시스템(DART OpenAPI)</b> — 공시 데이터 조회 (사용자 정보 전송 없음)</li>
+    <li><b>Anthropic Claude API</b> — 공시 본문의 AI 요약 생성 (공시 원문만 전송, 사용자 정보 없음)</li>
+    <li><b>Apple Push Notification service (APNs)</b> — 디바이스 토큰으로만 푸시 발송</li>
+  </ul>
+
+  <h2>5. 사용자의 권리</h2>
+  <ul>
+    <li><b>알림 거부</b>: iOS 시스템 설정 → 알림 → Dart공시분석 에서 언제든 해제</li>
+    <li><b>데이터 삭제</b>: 앱을 삭제하면 디바이스 토큰은 자동으로 무효화되며 더 이상 알림이 발송되지 않음</li>
+    <li><b>문의·열람 요청</b>: 아래 이메일로 요청 시 30일 이내 응답</li>
+  </ul>
+
+  <h2>6. 데이터 보호 조치</h2>
+  <ul>
+    <li>모든 통신은 HTTPS/TLS 1.2 이상으로 암호화됩니다 (App Transport Security 준수)</li>
+    <li>서버는 KIS·DART 키 등 운영 시크릿을 환경변수로 격리 보관합니다</li>
+    <li>디바이스 토큰은 운영자만 접근 가능한 서버 SQLite에 저장됩니다</li>
+  </ul>
+
+  <h2>7. 면책</h2>
+  <p>본 앱이 제공하는 모든 공시 요약·호재/악재 분류·AI 밸류에이션 논평·주가 영향 데이터는
+  공개 정보(DART OpenAPI)를 기계적으로 가공한 단순 참고자료입니다.
+  특정 종목의 매수·매도 추천이 아니며, 투자에 따른 손익은 전적으로 투자자 본인의 책임입니다.</p>
+
+  <h2>8. 변경 사항</h2>
+  <p>본 방침은 법령 변경 또는 서비스 변경 시 갱신될 수 있으며, 변경 시 본 페이지 상단의 업데이트
+  날짜를 통해 고지합니다.</p>
+
+  <h2>9. 연락처</h2>
+  <p>
+    개인정보 보호 책임자 (App Operator)<br/>
+    이메일: my.lunanstar@gmail.com<br/>
+    웹: <a href="https://secomdal.com">https://secomdal.com</a>
+  </p>
+
+  <p style="margin-top:36px;color:var(--text-secondary);font-size:12px">
+    <a href="/dart">← DART 공시 검색으로 돌아가기</a>
+  </p>
+</main>
+</body>
+</html>

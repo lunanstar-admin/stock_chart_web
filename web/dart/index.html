@@ -23,7 +23,7 @@
   <script src="/assets/nav.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="/assets/auth.js?v=20260516-notify4"></script>
-  <link rel="stylesheet" href="/assets/styles.css?v=20260516-metallic" />
+  <link rel="stylesheet" href="/assets/styles.css?v=20260516-revert" />
   <style>
     /* DART 페이지 — 글로벌 테마 변수(--bg-card/--text-primary 등) 사용.
        자체 --c-* 변수는 styles.css 에 정의되지 않아 라이트 폴백으로 깔리던 문제 수정. */
@@ -80,15 +80,15 @@
     .chip.neutral  { background: rgba(255,255,255,0.07); color: var(--text-secondary); }
     /* 라이트 계열 테마에서는 채도 있는 파스텔 톤 */
     /* 라이트 계열 메탈릭 테마 (gold/whitegold/platinum) — 채도 있는 파스텔 chip */
-    html[data-theme="gold"] .chip.positive,
-    html[data-theme="whitegold"] .chip.positive,
-    html[data-theme="platinum"] .chip.positive { background: #dcfce7; color: #15803d; }
-    html[data-theme="gold"] .chip.negative,
-    html[data-theme="whitegold"] .chip.negative,
-    html[data-theme="platinum"] .chip.negative { background: #fee2e2; color: #b91c1c; }
-    html[data-theme="gold"] .chip.neutral,
-    html[data-theme="whitegold"] .chip.neutral,
-    html[data-theme="platinum"] .chip.neutral { background: rgba(0,0,0,0.06); color: var(--text-secondary); }
+    html[data-theme="light"] .chip.positive,
+    html[data-theme="gray"] .chip.positive,
+    html[data-theme="sweet"] .chip.positive { background: #dcfce7; color: #15803d; }
+    html[data-theme="light"] .chip.negative,
+    html[data-theme="gray"] .chip.negative,
+    html[data-theme="sweet"] .chip.negative { background: #fee2e2; color: #b91c1c; }
+    html[data-theme="light"] .chip.neutral,
+    html[data-theme="gray"] .chip.neutral,
+    html[data-theme="sweet"] .chip.neutral { background: rgba(0,0,0,0.06); color: var(--text-secondary); }
     .dart-pagination {
       display: flex; justify-content: space-between; padding: 16px 0; font-size: 14px;
     }
