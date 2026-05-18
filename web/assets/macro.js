@@ -107,10 +107,20 @@
 
   function daysUntil(iso) {
     if (!iso) return null;
+    // KST 기준 *달력일* 차이만 계산 (시간 무관).
+    // 이전 코드는 ms 차이 floor 라 같은 날 시각에 따라 D-day 가 1 적게 표시됨.
+    const m = iso.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (!m) return null;
+    const targetUtcMs = Date.UTC(+m[1], +m[2] - 1, +m[3]);
+    // KST 오늘 = UTC 시각에 +9h 더한 후 그 날짜 부분.
     const now = new Date();
-    const target = new Date(iso + "T00:00:00+09:00");
-    const ms = target - now;
-    return Math.floor(ms / (24 * 3600 * 1000));
+    const nowKst = new Date(now.getTime() + 9 * 3600 * 1000);
+    const todayUtcMs = Date.UTC(
+      nowKst.getUTCFullYear(),
+      nowKst.getUTCMonth(),
+      nowKst.getUTCDate(),
+    );
+    return Math.round((targetUtcMs - todayUtcMs) / (24 * 3600 * 1000));
   }
 
   function renderEvents(events) {
@@ -187,6 +197,18 @@
         + foot.innerHTML;
     }
     renderEvents(data.events);
+
+    // KST 자정을 넘기면 D-day 자동 재계산 (오래 열어둔 탭 대응).
+    // 자정까지 남은 시간 + 약간의 여유(1분) 후 재렌더.
+    const now = new Date();
+    const nowKst = new Date(now.getTime() + 9 * 3600 * 1000);
+    const msToMidnight =
+      (24 * 3600 * 1000) -
+      (nowKst.getUTCHours() * 3600 * 1000 +
+        nowKst.getUTCMinutes() * 60 * 1000 +
+        nowKst.getUTCSeconds() * 1000) +
+      60 * 1000;
+    setTimeout(() => renderEvents(data.events), msToMidnight);
   } catch (e) {
     ["macroFxList", "macroRatesList", "macroCpiList", "macroBondsList", "macroEventsList"].forEach((id) => {
       const el = $(id);
