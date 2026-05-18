@@ -5,7 +5,7 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 18 May 2026 17:34:05 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 18 May 2026 19:19:32 +0900</lastBuildDate>
     <item>
       <title>신규 상장(IPO) 종목 평가 프레임워크 — 첫 6개월의 함정</title>
       <link>https://secomdal.com/blog/theme-ipo-framework</link>
@@ -26,6 +26,20 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-may-crash-analysis</guid>
       <pubDate>Mon, 18 May 2026 00:00:00 +0900</pubDate>
       <description>5/12 코스피가 8,000선 직전에서 2.29% 급락한 데 이어 5/15엔 8,000을 잠시 돌파한 직후 매도 사이드카가 발동했습니다. 이번 폭락의 트리거 3가지(과열 후 차익실현·중동 리스크·외국인 대량 매도)와 사이드카 메커니즘, 그리고 투자자가 사이클 변곡점에서 점검해야 할 신호 4가지를 정리합니다.</description>
+    </item>
+    <item>
+      <title>2026년 05월 18일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260518</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260518</guid>
+      <pubDate>Mon, 18 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 18일 한국 주식시장 시황 분석 — 급등 주도주: 에스에이엠티 · 비투엔 · 주성엔지니어링. 오늘의 부각 테마: 반도체 · AI · 반도체 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 05월 18일 시가총액 상위 10 종목 — 대장주 흐름</title>
+      <link>https://secomdal.com/blog/daily-mcap-20260518</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260518</guid>
+      <pubDate>Mon, 18 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 18일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
     </item>
     <item>
       <title>ETF vs 개별주 — 언제 어느 쪽이 유리한가</title>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260511</guid>
       <pubDate>Mon, 11 May 2026 00:00:00 +0900</pubDate>
       <description>2026년 05월 11일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · SK스퀘어 중심으로 대형주 흐름 정리.</description>
-    </item>
-    <item>
-      <title>피지컬 AI — 자율주행과 휴머노이드가 만드는 새 사이클</title>
-      <link>https://secomdal.com/blog/theme-physical-ai</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-physical-ai</guid>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
-      <description>디지털 AI 가 물리 환경으로 확장되는 &#x27;피지컬 AI&#x27; — 자율주행·휴머노이드 로봇·산업용 협동 로봇의 산업 구조와 한국 부품·소재·플랫폼 종목들이 차지하는 위치를 분석합니다.</description>
-    </item>
-    <item>
-      <title>AI 다음 대두될 테마 후보 — 양자·우주·핵융합·바이오 AI</title>
-      <link>https://secomdal.com/blog/theme-next-candidates</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-next-candidates</guid>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
-      <description>AI 사이클 이후 시장이 다음으로 주목할 가능성이 있는 테마 5개 — 양자컴퓨팅, 우주산업, SMR/핵융합, 바이오 AI, 합성 데이터·합성 생물학 — 의 산업 구조와 한국 종목의 위치를 정리합니다.</description>
     </item>
   </channel>
 </rss>
