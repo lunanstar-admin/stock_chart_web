@@ -3,11 +3,14 @@ name: daily-batch
 on:
   schedule:
     # GitHub Actions schedule 은 best-effort — 부하/장애 시 일부 fire 가 누락될 수 있음.
-    # 동일 데이터 재수집은 idempotent 라서 이중으로 트리거해 안정성 확보.
-    # 첫 fire 가 성공해 데이터가 commit 되어 있으면 두 번째 fire 는 "no changes" 로 즉시 종료.
-    - cron: "40 6 * * 1-5"     # 1차: 15:40 KST (장마감 10분 후)
-    - cron: "20 7 * * 1-5"     # 2차 백업: 16:20 KST (1차 누락 대비)
-    - cron: "0 9 * * 1-5"      # 3차 안전망: 18:00 KST (앞 두 번 모두 누락 시)
+    # 2026-05-18 사고: 3개 cron 모두 silently skipped → 종일 데이터 갱신 안 됨.
+    # 대응: fire 횟수를 5개로 확장 + 정각/정각15분 같은 GH 부하 시점 회피.
+    # 동일 데이터 재수집은 idempotent (skip 로직이 cutoff 비교)라서 다중 트리거 안전.
+    - cron: "35 6 * * 1-5"     # 1차: 15:35 KST (장마감 5분 후)
+    - cron: "55 6 * * 1-5"     # 2차: 15:55 KST (1차 누락 대비)
+    - cron: "30 7 * * 1-5"     # 3차: 16:30 KST
+    - cron: "10 9 * * 1-5"     # 4차: 18:10 KST (모든 사이트가 정각 피해 분산)
+    - cron: "30 13 * * 1-5"    # 5차 최후 안전망: 22:30 KST (저녁 늦게라도 보강)
   workflow_dispatch:
     inputs:
       limit:
