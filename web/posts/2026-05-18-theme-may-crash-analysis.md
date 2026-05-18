@@ -4,8 +4,11 @@ date: 2026-05-18
 slug: theme-may-crash-analysis
 summary: "5/12 코스피가 8,000선 직전에서 2.29% 급락한 데 이어 5/15엔 8,000을 잠시 돌파한 직후 매도 사이드카가 발동했습니다. 이번 폭락의 트리거 3가지(과열 후 차익실현·중동 리스크·외국인 대량 매도)와 사이드카 메커니즘, 그리고 투자자가 사이클 변곡점에서 점검해야 할 신호 4가지를 정리합니다."
 tags: [코스피, 코스닥, 폭락, 사이드카, 외국인매도, 중동리스크, 차익실현, 시황분석]
+cover: "/blog/img/theme-may-crash-analysis.jpg"
+cover_alt: "stock market candlestick chart on dark screen"
+cover_credit: "Maxim Hopman"
+cover_credit_url: "https://unsplash.com/@nampoh?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 코스피 '8천' 찍자마자 7,600으로 — 5월 중순 폭락의 세 가지 트리거
 
 *2026년 5월 발행 — 시황 분석 칼럼*

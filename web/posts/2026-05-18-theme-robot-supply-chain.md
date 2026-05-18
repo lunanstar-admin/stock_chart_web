@@ -4,8 +4,11 @@ date: 2026-05-18
 slug: theme-robot-supply-chain
 summary: "같은 '로봇 테마'라도 글로벌 Big 4·한국 협동로봇 4사·SI 통합업체는 매출 구조와 평가축이 전부 다릅니다. 한 바구니에 묶지 않고 평가하는 8단계 프레임과 자주 빠지는 함정 5가지, 그리고 분기별로 추적해야 할 신호 6가지를 정리합니다."
 tags: [로봇주, 협동로봇, 휴머노이드, 두산로보틱스, 레인보우로보틱스, 한화로보틱스, 포스코DX, 현대오토에버, 산업분석]
+cover: "/blog/img/theme-robot-supply-chain.jpg"
+cover_alt: "A white robot is standing in front of a black background"
+cover_credit: "Gabriele Malaspina"
+cover_credit_url: "https://unsplash.com/@gabrielemalaspina?utm_source=secomdal&utm_medium=referral"
 ---
-
 # 로봇 종목, 다 같은 거 아닙니다 — 8단계로 풀어보는 공급망과 평가축
 
 *2026년 5월 발행 — 산업·테마 분석 칼럼*

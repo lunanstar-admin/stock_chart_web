@@ -5,13 +5,27 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 18 May 2026 08:36:57 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 18 May 2026 13:23:11 +0900</lastBuildDate>
     <item>
       <title>신규 상장(IPO) 종목 평가 프레임워크 — 첫 6개월의 함정</title>
       <link>https://secomdal.com/blog/theme-ipo-framework</link>
       <guid isPermaLink="true">https://secomdal.com/blog/theme-ipo-framework</guid>
       <pubDate>Tue, 19 May 2026 00:00:00 +0900</pubDate>
       <description>한국 시장 신규 상장(IPO) 종목의 가격 변동 패턴, 락업·의무보유 해제 일정, 공모가 평가 5단계 체크포인트, 그리고 IPO 후 6~12개월에 흔히 나타나는 함정을 정리합니다.</description>
+    </item>
+    <item>
+      <title>로봇 종목, 다 같은 거 아닙니다 — 8단계로 풀어보는 공급망과 평가축</title>
+      <link>https://secomdal.com/blog/theme-robot-supply-chain</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-robot-supply-chain</guid>
+      <pubDate>Mon, 18 May 2026 00:00:00 +0900</pubDate>
+      <description>같은 &#x27;로봇 테마&#x27;라도 글로벌 Big 4·한국 협동로봇 4사·SI 통합업체는 매출 구조와 평가축이 전부 다릅니다. 한 바구니에 묶지 않고 평가하는 8단계 프레임과 자주 빠지는 함정 5가지, 그리고 분기별로 추적해야 할 신호 6가지를 정리합니다.</description>
+    </item>
+    <item>
+      <title>코스피 &#x27;8천&#x27; 찍자마자 7,600으로 — 5월 중순 폭락의 세 가지 트리거</title>
+      <link>https://secomdal.com/blog/theme-may-crash-analysis</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/theme-may-crash-analysis</guid>
+      <pubDate>Mon, 18 May 2026 00:00:00 +0900</pubDate>
+      <description>5/12 코스피가 8,000선 직전에서 2.29% 급락한 데 이어 5/15엔 8,000을 잠시 돌파한 직후 매도 사이드카가 발동했습니다. 이번 폭락의 트리거 3가지(과열 후 차익실현·중동 리스크·외국인 대량 매도)와 사이드카 메커니즘, 그리고 투자자가 사이클 변곡점에서 점검해야 할 신호 4가지를 정리합니다.</description>
     </item>
     <item>
       <title>ETF vs 개별주 — 언제 어느 쪽이 유리한가</title>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-next-candidates</guid>
       <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
       <description>AI 사이클 이후 시장이 다음으로 주목할 가능성이 있는 테마 5개 — 양자컴퓨팅, 우주산업, SMR/핵융합, 바이오 AI, 합성 데이터·합성 생물학 — 의 산업 구조와 한국 종목의 위치를 정리합니다.</description>
-    </item>
-    <item>
-      <title>중동 지정학과 한국 주식 — 유가·방산·건설의 연결고리</title>
-      <link>https://secomdal.com/blog/theme-middle-east</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-middle-east</guid>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
-      <description>중동 지정학적 긴장이 한국 주식 시장에 영향을 미치는 4가지 채널(유가·환율·방산·건설/플랜트) 의 구조를 정리하고, 시나리오별 종목군 영향을 분석합니다.</description>
-    </item>
-    <item>
-      <title>AI 사이클은 닷컴 버블의 데자뷰? — 차이와 점검 포인트 7가지</title>
-      <link>https://secomdal.com/blog/theme-ai-vs-dotcom</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-ai-vs-dotcom</guid>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0900</pubDate>
-      <description>현재의 AI 자본 사이클이 1995~2000년 닷컴 버블과 닮은 점과 다른 점, 그리고 사이클 후반에 들어섰다는 신호로 봐야 할 7가지 점검 포인트를 정리합니다.</description>
     </item>
   </channel>
 </rss>
