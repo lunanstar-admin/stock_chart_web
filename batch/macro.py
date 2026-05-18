@@ -26,19 +26,96 @@ KST = ZoneInfo("Asia/Seoul")
 ECOS_BASE = "https://ecos.bok.or.kr/api"
 ECOS_KEY = "sample"   # 무료 sample 키 (월간 5,000건/일 제한, 충분)
 
-# 환율 — FDR
-FX_DEFS = [
-    ("USD/KRW", "원/달러", 2),
-    ("EUR/KRW", "원/유로", 2),
-    ("JPY/KRW", "원/엔(100엔)", 2),
+# 환율 — ECOS (한국은행 매매기준율) — FDR/Yahoo 의 1~3일 지연 문제 해결
+# 통계표 731Y001 의 item code:
+#   0000001 = 원/미국달러(매매기준율)
+#   0000002 = 원/일본엔(100엔)
+#   0000003 = 원/유로
+ECOS_FX_DEFS = [
+    ("0000001", "원/달러", 2),
+    ("0000003", "원/유로", 2),
+    ("0000002", "원/엔(100엔)", 2),
 ]
+# 원자재 — FDR (Yahoo) 유지 — 글로벌 상품은 Yahoo 가 정상
 COMMODITY_DEFS = [
     ("CL=F", "WTI 원유 (USD/배럴)", 2),
     ("GC=F", "금 (USD/oz)", 1),
 ]
 
 
-# ─── FDR 시계열 (환율/원자재) ──────────────────────────────
+# ─── ECOS 시계열 (한국 원화 FX) ──────────────────────────────
+
+def _ecos_fx_series(item_code: str, name: str, dec: int = 2,
+                    days: int = 35) -> dict | None:
+    """ECOS 731Y001 (주요국 통화의 대원화환율) 시계열로 sparkline + change 계산.
+
+    Yahoo Finance 가 KRW FX 페어에서 1~3일 지연을 보이는 문제를 회피.
+    ECOS 는 매일 17:00 KST 경 매매기준율을 공식 발표.
+    sample 키는 호출당 10건이 max 라 페이지네이션.
+    """
+    end = datetime.now(KST)
+    start = end - timedelta(days=days + 10)
+    start_s = start.strftime("%Y%m%d")
+    end_s = end.strftime("%Y%m%d")
+
+    rows: list[dict] = []
+    for page_start in range(1, 71, 10):
+        page_end = page_start + 9
+        url = (f"{ECOS_BASE}/StatisticSearch/{ECOS_KEY}/json/kr"
+               f"/{page_start}/{page_end}/731Y001/D/{start_s}/{end_s}/{item_code}")
+        try:
+            r = requests.get(url, timeout=10)
+            data = r.json()
+        except Exception as e:
+            logger.warning("ECOS FX %s page %d 실패: %s", item_code, page_start, e)
+            continue
+        page_rows = data.get("StatisticSearch", {}).get("row", [])
+        if not page_rows:
+            break
+        rows.extend(page_rows)
+        total = data.get("StatisticSearch", {}).get("list_total_count", 0)
+        if len(rows) >= total:
+            break
+
+    if len(rows) < 2:
+        logger.warning("ECOS FX %s — 데이터 부족 (rows=%d)", item_code, len(rows))
+        return None
+
+    # TIME=YYYYMMDD 정렬 + float 변환
+    parsed = []
+    for r in rows:
+        try:
+            parsed.append((r["TIME"], float(r["DATA_VALUE"])))
+        except (KeyError, ValueError):
+            continue
+    parsed.sort(key=lambda x: x[0])
+    if len(parsed) < 2:
+        return None
+
+    last_time, last_val = parsed[-1]
+    prev_time, prev_val = parsed[-2]
+    chg = last_val - prev_val
+    rate = (chg / prev_val * 100.0) if prev_val else 0.0
+    direction = "RISING" if chg > 0 else ("FALLING" if chg < 0 else "FLAT")
+
+    # sparkline — 최근 30일
+    spark = []
+    for t, v in parsed[-30:]:
+        d_iso = f"{t[:4]}-{t[4:6]}-{t[6:8]}"
+        spark.append({"date": d_iso, "close": round(v, max(2, dec))})
+
+    return {
+        "code": f"ECOS:731Y001:{item_code}",
+        "name": name,
+        "value": f"{last_val:,.{dec}f}",
+        "change": ("+" if chg > 0 else "") + f"{chg:,.{dec}f}",
+        "changeRate": f"{rate:+.2f}",
+        "changeDir": direction,
+        "spark": spark,
+    }
+
+
+# ─── FDR 시계열 (원자재) ──────────────────────────────
 
 def _build_series(code: str, name: str, dec: int, days: int = 35) -> dict | None:
     import FinanceDataReader as fdr
@@ -228,7 +305,8 @@ def _build_events(output_dir: Path) -> list[dict]:
 
 def build_macro(output_dir: Path) -> bool:
     # 환율 + 원자재 — FDR
-    fx = [it for it in (_build_series(c, n, d) for c, n, d in FX_DEFS) if it]
+    # 환율 — ECOS (한국은행 매매기준율). Yahoo 의 KRW 페어 지연 회피.
+    fx = [it for it in (_ecos_fx_series(c, n, d) for c, n, d in ECOS_FX_DEFS) if it]
     commodities = [it for it in (_build_series(c, n, d) for c, n, d in COMMODITY_DEFS) if it]
     for it in fx:
         logger.info("fx: %s = %s (%s%%)", it["name"], it["value"], it["changeRate"])
