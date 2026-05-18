@@ -173,6 +173,7 @@
     renderFx(data);
     renderSimpleList("macroRatesList", data.rates);
     renderSimpleList("macroCpiList", data.cpi);
+    renderSimpleList("macroBondsList", data.bonds);
 
     // 카드별 데이터 기준일 / 갱신 시각 표시
     if (data.data_date) {
@@ -187,7 +188,7 @@
     }
     renderEvents(data.events);
   } catch (e) {
-    ["macroFxList", "macroRatesList", "macroCpiList", "macroEventsList"].forEach((id) => {
+    ["macroFxList", "macroRatesList", "macroCpiList", "macroBondsList", "macroEventsList"].forEach((id) => {
       const el = $(id);
       if (el) el.innerHTML = '<div class="macro-empty">불러올 수 없습니다.</div>';
     });

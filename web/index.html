@@ -67,7 +67,7 @@
     <script src="/assets/nav.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/assets/auth.js?v=20260516-notify4"></script>
-    <link rel="stylesheet" href="/assets/styles.css?v=20260516-notify" />
+    <link rel="stylesheet" href="/assets/styles.css?v=20260519-bonds" />
 <!-- Google Analytics (gtag.js) — G-QG41JS7EJ1 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
 <script>
@@ -160,15 +160,16 @@
       </div>
     </section>
 
-    <!-- 거시 지표 대시보드 — 상단 배치, 2x2 그리드:
-         [정책 금리]  [소비자물가 CPI]
-         [환율·원자재] [다가오는 이벤트] -->
+    <!-- 거시 지표 대시보드 — 상단 배치, 3x2 그리드 (모바일은 자동 1열):
+         [정책 금리]   [소비자물가 CPI]
+         [국채 금리]   [환율·원자재]
+         [다가오는 이벤트] -->
     <section class="macro-dashboard" aria-label="거시 지표 대시보드">
       <h2 class="macro-title">📊 거시 지표 대시보드</h2>
-      <p class="macro-sub">환율·원자재·금리·CPI·이벤트 모두 공개 API 자동 수집 (ECOS · FRED · FDR)</p>
+      <p class="macro-sub">환율·국채·금리·CPI·이벤트 모두 공개 API 자동 수집 (ECOS · FRED · FDR)</p>
 
       <div class="macro-grid">
-        <!-- 윗단 좌 — 금리 -->
+        <!-- 1행 좌 — 정책 금리 -->
         <div class="macro-card" id="macroRatesCard">
           <h3>🏦 정책 금리</h3>
           <div class="macro-list" id="macroRatesList">
@@ -176,7 +177,7 @@
           </div>
         </div>
 
-        <!-- 윗단 우 — CPI -->
+        <!-- 1행 우 — CPI -->
         <div class="macro-card" id="macroCpiCard">
           <h3>📈 소비자물가 (YoY)</h3>
           <div class="macro-list" id="macroCpiList">
@@ -184,7 +185,15 @@
           </div>
         </div>
 
-        <!-- 아랫단 좌 — 환율 / 원자재 -->
+        <!-- 2행 좌 — 국채 금리 (NEW) -->
+        <div class="macro-card" id="macroBondsCard">
+          <h3>🏛 국채 금리</h3>
+          <div class="macro-list" id="macroBondsList">
+            <div class="macro-loading">로딩 중…</div>
+          </div>
+        </div>
+
+        <!-- 2행 우 — 환율 / 원자재 -->
         <div class="macro-card" id="macroFxCard">
           <h3>💱 환율 · 원자재</h3>
           <div class="macro-list" id="macroFxList">
@@ -192,8 +201,8 @@
           </div>
         </div>
 
-        <!-- 아랫단 우 — 이벤트 캘린더 -->
-        <div class="macro-card" id="macroEventsCard">
+        <!-- 3행 — 이벤트 캘린더 (전체 가로) -->
+        <div class="macro-card macro-card--wide" id="macroEventsCard">
           <h3>🗓 다가오는 이벤트</h3>
           <div class="macro-list" id="macroEventsList">
             <div class="macro-loading">로딩 중…</div>
@@ -332,7 +341,7 @@
       href="/privacy">Privacy</a>
   </footer>
 
-  <script src="/assets/macro.js?v=20260516b"></script>
+  <script src="/assets/macro.js?v=20260519-bonds"></script>
 </body>
 
 </html>

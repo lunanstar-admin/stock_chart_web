@@ -285,6 +285,16 @@ def _fred_us_fed_rate() -> tuple[float | None, str | None]:
     return series[last_date], last_date
 
 
+def _fred_latest(series_id: str) -> tuple[float | None, str | None]:
+    """FRED 시계열의 가장 최신 값 + 날짜."""
+    series = _fred_csv(series_id, since="2025-01-01")
+    if not series:
+        return None, None
+    dates = sorted(series.keys())
+    last_date = dates[-1]
+    return series[last_date], last_date
+
+
 # ─── 이벤트 캘린더 — events_builder.py 가 자동 생성 ──────────────────
 
 def _build_events(output_dir: Path) -> list[dict]:
@@ -371,6 +381,52 @@ def build_macro(output_dir: Path) -> bool:
         })
         logger.info("US CPI YoY: %.2f%% (%s)", us_cpi_yoy, yyyy_mm)
 
+    # 국채 금리 — ECOS (한국) + FRED (미국)
+    bonds: list[dict] = []
+    # 🇰🇷 ECOS KeyStat 에서 시장금리 추출
+    for kr_name, label in [
+        ("국고채수익률(3년)", "한국 국고채 3년"),
+        ("국고채수익률(5년)", "한국 국고채 5년"),
+        ("회사채수익률(3년,AA-)", "한국 회사채 3년 (AA-)"),
+    ]:
+        row = ks.get(kr_name)
+        if not row:
+            continue
+        cycle = row.get("CYCLE", "")
+        asof = (f"{cycle[:4]}-{cycle[4:6]}-{cycle[6:8]}"
+                if len(cycle) == 8 else cycle)
+        try:
+            v = float(row["DATA_VALUE"])
+        except (KeyError, ValueError):
+            continue
+        bonds.append({
+            "name": label,
+            "value": f"{v:.2f}",
+            "unit": "%",
+            "asof": asof,
+            "note": "한국은행 ECOS",
+        })
+        logger.info("KR bond: %s = %.2f%% (%s)", label, v, asof)
+
+    # 🇺🇸 FRED — 미국 10년 / 2년 / 10Y-2Y 스프레드
+    for sid, label, note in [
+        ("DGS10", "미국 국채 10년", "FRED DGS10"),
+        ("DGS2",  "미국 국채 2년",  "FRED DGS2"),
+        ("T10Y2Y", "미국 10Y-2Y 스프레드", "FRED T10Y2Y · 경기침체 선행"),
+    ]:
+        v, d = _fred_latest(sid)
+        if v is None:
+            continue
+        sign = "+" if v > 0 and "Spread" in note or sid == "T10Y2Y" else ""
+        bonds.append({
+            "name": label,
+            "value": f"{sign}{v:.2f}",
+            "unit": "%p" if sid == "T10Y2Y" else "%",
+            "asof": d,
+            "note": note,
+        })
+        logger.info("US bond: %s = %.2f (%s)", label, v, d)
+
     events = _build_events(output_dir)
 
     data_date = fx[0]["spark"][-1]["date"] if fx and fx[0].get("spark") else None
@@ -380,13 +436,14 @@ def build_macro(output_dir: Path) -> bool:
         "fx": fx,
         "commodities": commodities,
         "rates": rates,
+        "bonds": bonds,
         "cpi": cpi,
         "events": sorted(events, key=lambda e: e.get("date", ""))[:20],
     }
     out = output_dir / "macro.json"
     out.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-    logger.info("wrote %s (fx=%d commod=%d rates=%d cpi=%d events=%d)",
-                out, len(fx), len(commodities), len(rates), len(cpi), len(events))
+    logger.info("wrote %s (fx=%d commod=%d rates=%d bonds=%d cpi=%d events=%d)",
+                out, len(fx), len(commodities), len(rates), len(bonds), len(cpi), len(events))
     return True
 
 
