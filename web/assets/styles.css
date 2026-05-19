@@ -3139,3 +3139,19 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
 @media (max-width: 480px) {
   .detail-dart-btn { font-size: 11px; padding: 4px 8px; }
 }
+
+/* 거시 카드 — 이름 line wrapper (ⓘ 툴팁 잘림 방지) */
+.macro-row-name-line {
+  display: flex;
+  align-items: center;
+  gap: 0;            /* .macro-tip 자체 margin-left:6px 사용 */
+  min-width: 0;
+  /* overflow visible — ::after 툴팁 박스가 위로 뜰 때 잘리지 않도록 */
+  overflow: visible;
+}
+/* 기존 .macro-row-name 의 overflow:hidden 은 유지하되 ⓘ 는 형제로 분리됨.
+   .macro-tip 의 마지막-margin 으로 자연스러운 간격. */
+.macro-row-name-line .macro-row-name {
+  min-width: 0;
+  flex: 0 1 auto;
+}

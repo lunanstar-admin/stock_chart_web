@@ -87,10 +87,15 @@
         ? `<span class="macro-tip" tabindex="0" aria-label="설명"
                  data-tooltip="${escAttr(r.tooltip)}">ⓘ</span>`
         : "";
+      // ⓘ 를 .macro-row-name (overflow:hidden) 밖에 두어 호버 박스 잘림 방지.
+      // 이름과 ⓘ 는 .macro-row-name-line 의 inline-flex 자식으로 정렬.
       return `
       <div class="macro-row macro-row--simple">
         <div class="macro-row-left">
-          <div class="macro-row-name">${r.name}${tip}</div>
+          <div class="macro-row-name-line">
+            <span class="macro-row-name">${r.name}</span>
+            ${tip}
+          </div>
           <div class="macro-row-note">${r.note || ""} · ${r.asof || ""}</div>
         </div>
         <div class="macro-row-right">
