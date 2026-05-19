@@ -763,6 +763,12 @@ async function openDetail(stock) {
   _activeDetailCode = stock.code;
   $("detailTitle").textContent = stock.name;
   $("detailCode").textContent = `${stock.code} · ${stock.market}`;
+  // DART 공시 모아보기 링크 — ?q={code} 로 필터링된 페이지 새 탭 열기
+  const dartLink = $("detailDart");
+  if (dartLink) {
+    dartLink.href = `/dart?q=${encodeURIComponent(stock.code)}`;
+    dartLink.hidden = false;
+  }
   // 모달 열릴 때 지연 태그 초기화 (데이터 로딩 전이므로 숨김)
   const _delayTag = $("detailDelayTag");
   if (_delayTag) _delayTag.hidden = true;
@@ -1495,6 +1501,9 @@ function openIndexDetail(idx) {
   }
   if (delayEl) delayEl.hidden = true;
   if (star) star.style.display = "none";
+  // 지수는 공시가 없으므로 DART 링크 숨김
+  const dartBtn = $("detailDart");
+  if (dartBtn) dartBtn.hidden = true;
 
   const dirCls =
     idx.changeDir === "RISING" ? "sup-pos" :

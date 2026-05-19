@@ -3110,3 +3110,32 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
     transform: scale(1);
   }
 }
+
+/* 상세 모달 — DART 공시 모아보기 버튼 */
+.detail-dart-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  margin-left: 4px;
+  background: var(--active-tint, rgba(127,127,127,0.12));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.detail-dart-btn:hover,
+.detail-dart-btn:focus-visible {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #f59e0b;
+  color: #f59e0b;
+  outline: none;
+}
+.detail-dart-btn:active { transform: translateY(1px); }
+@media (max-width: 480px) {
+  .detail-dart-btn { font-size: 11px; padding: 4px 8px; }
+}
