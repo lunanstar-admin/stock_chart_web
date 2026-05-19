@@ -384,10 +384,15 @@ def build_macro(output_dir: Path) -> bool:
     # 국채 금리 — ECOS (한국) + FRED (미국)
     bonds: list[dict] = []
     # 🇰🇷 ECOS KeyStat 에서 시장금리 추출
-    for kr_name, label in [
-        ("국고채수익률(3년)", "한국 국고채 3년"),
-        ("국고채수익률(5년)", "한국 국고채 5년"),
-        ("회사채수익률(3년,AA-)", "한국 회사채 3년 (AA-)"),
+    for kr_name, label, tooltip in [
+        ("국고채수익률(3년)", "한국 국고채 3년",
+         "한국 단기 시장금리 벤치마크. 한국은행 기준금리 변화에 가장 직접 반응. "
+         "기준금리 인하 사이클이 시작되면 가장 먼저 빠집니다."),
+        ("국고채수익률(5년)", "한국 국고채 5년",
+         "중기 국채. 3년 대비 갭이 좁으면 *시장이 한은 인하를 빠르게 가격 반영* 한다는 신호."),
+        ("회사채수익률(3년,AA-)", "한국 회사채 3년 (AA-)",
+         "우량 등급 회사채. *국고채 3년과의 스프레드* 가 신용 리스크 지표 — "
+         "스프레드가 0.5%p 미만이면 시장 정상, 1.0%p 이상 벌어지면 경기침체 우려 신호."),
     ]:
         row = ks.get(kr_name)
         if not row:
@@ -405,25 +410,39 @@ def build_macro(output_dir: Path) -> bool:
             "unit": "%",
             "asof": asof,
             "note": "한국은행 ECOS",
+            "tooltip": tooltip,
         })
         logger.info("KR bond: %s = %.2f%% (%s)", label, v, asof)
 
     # 🇺🇸 FRED — 미국 10년 / 2년 / 10Y-2Y 스프레드
-    for sid, label, note in [
-        ("DGS10", "미국 국채 10년", "FRED DGS10"),
-        ("DGS2",  "미국 국채 2년",  "FRED DGS2"),
-        ("T10Y2Y", "미국 10Y-2Y 스프레드", "FRED T10Y2Y · 경기침체 선행"),
+    SPREAD_TOOLTIP = (
+        "장기(10년) 국채금리 − 단기(2년) 국채금리. "
+        "양수(+)면 정상 yield curve, 음수(−)면 '장단기 역전' 으로 "
+        "약 1~2년 후 경기침체를 80% 확률로 선행했습니다. "
+        "현재가 양수라도 0에 가까울수록 침체 우려, 1.0%p 이상이면 정상 확장 국면. "
+        "역전 → 양전환 변곡점도 침체 직전 신호."
+    )
+    for sid, label, note, tooltip in [
+        ("DGS10", "미국 국채 10년", "FRED DGS10",
+         "글로벌 무위험금리 벤치마크. 주식·부동산 등 모든 자산 할인율의 기준. "
+         "급등하면 기술주·성장주 밸류에이션 압박."),
+        ("DGS2",  "미국 국채 2년",  "FRED DGS2",
+         "Fed 정책금리에 가장 민감. 단기 금리 기대치 반영. "
+         "Fed 인하 사이클 진입 시 가장 먼저 빠짐."),
+        ("T10Y2Y", "미국 10Y-2Y 스프레드", "FRED T10Y2Y · 경기침체 선행",
+         SPREAD_TOOLTIP),
     ]:
         v, d = _fred_latest(sid)
         if v is None:
             continue
-        sign = "+" if v > 0 and "Spread" in note or sid == "T10Y2Y" else ""
+        sign = "+" if sid == "T10Y2Y" and v > 0 else ""
         bonds.append({
             "name": label,
             "value": f"{sign}{v:.2f}",
             "unit": "%p" if sid == "T10Y2Y" else "%",
             "asof": d,
             "note": note,
+            "tooltip": tooltip,
         })
         logger.info("US bond: %s = %.2f (%s)", label, v, d)
 

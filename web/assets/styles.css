@@ -3024,3 +3024,89 @@ html[data-theme="dark"] .rel-table { background: #f8fafc; }
   margin-left: auto;
 }
 .btn-link:hover { color: #ef4444; }
+
+/* 거시 카드 — ⓘ 아이콘 + 풀텍스트 툴팁 */
+.macro-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--active-tint, rgba(127,127,127,0.15));
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: help;
+  vertical-align: middle;
+  user-select: none;
+  position: relative;
+  transition: background 0.15s, color 0.15s;
+}
+.macro-tip:hover,
+.macro-tip:focus-visible {
+  background: var(--orange, #f59e0b);
+  color: #fff;
+  outline: none;
+}
+.macro-tip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  transform-origin: bottom center;
+  width: max-content;
+  max-width: 320px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  white-space: normal;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s, transform 0.12s;
+  z-index: 1000;
+}
+.macro-tip::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--border);
+  opacity: 0;
+  transition: opacity 0.12s;
+  z-index: 1001;
+}
+.macro-tip:hover::after,
+.macro-tip:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.macro-tip:hover::before,
+.macro-tip:focus-visible::before {
+  opacity: 1;
+}
+@media (max-width: 640px) {
+  .macro-tip::after {
+    left: auto;
+    right: -8px;
+    transform: scale(0.95);
+    transform-origin: top right;
+  }
+  .macro-tip::before { display: none; }
+  .macro-tip:hover::after,
+  .macro-tip:focus-visible::after {
+    transform: scale(1);
+  }
+}

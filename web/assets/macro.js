@@ -69,6 +69,12 @@
     });
   }
 
+  function escAttr(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
   function renderSimpleList(elId, rows) {
     const el = $(elId);
     if (!el) return;
@@ -76,17 +82,22 @@
       el.innerHTML = '<div class="macro-empty">데이터 없음</div>';
       return;
     }
-    el.innerHTML = rows.map((r) => `
+    el.innerHTML = rows.map((r) => {
+      const tip = r.tooltip
+        ? `<span class="macro-tip" tabindex="0" aria-label="설명"
+                 data-tooltip="${escAttr(r.tooltip)}">ⓘ</span>`
+        : "";
+      return `
       <div class="macro-row macro-row--simple">
         <div class="macro-row-left">
-          <div class="macro-row-name">${r.name}</div>
+          <div class="macro-row-name">${r.name}${tip}</div>
           <div class="macro-row-note">${r.note || ""} · ${r.asof || ""}</div>
         </div>
         <div class="macro-row-right">
           <div class="macro-row-value">${r.value}${r.unit || ""}</div>
         </div>
-      </div>
-    `).join("");
+      </div>`;
+    }).join("");
   }
 
   function tagLabel(tag) {
