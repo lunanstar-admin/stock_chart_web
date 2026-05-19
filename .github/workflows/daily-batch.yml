@@ -6,11 +6,14 @@ on:
     # 2026-05-18 사고: 3개 cron 모두 silently skipped → 종일 데이터 갱신 안 됨.
     # 대응: fire 횟수를 5개로 확장 + 정각/정각15분 같은 GH 부하 시점 회피.
     # 동일 데이터 재수집은 idempotent (skip 로직이 cutoff 비교)라서 다중 트리거 안전.
-    - cron: "35 6 * * 1-5"     # 1차: 15:35 KST (장마감 5분 후)
-    - cron: "55 6 * * 1-5"     # 2차: 15:55 KST (1차 누락 대비)
-    - cron: "30 7 * * 1-5"     # 3차: 16:30 KST
-    - cron: "10 9 * * 1-5"     # 4차: 18:10 KST (모든 사이트가 정각 피해 분산)
-    - cron: "30 13 * * 1-5"    # 5차 최후 안전망: 22:30 KST (저녁 늦게라도 보강)
+    # ⚠️ GH Actions cron 은 매우 불안정 — 자주 silently skip.
+    # 보조: 로컬 Mac launchd 로도 15:31 KST 트리거 (com.kihong.daily-batch-trigger).
+    - cron: "31 6 * * 1-5"     # 1차: 15:31 KST (장마감 1분 후)
+    - cron: "40 6 * * 1-5"     # 2차: 15:40 KST
+    - cron: "55 6 * * 1-5"     # 3차: 15:55 KST
+    - cron: "30 7 * * 1-5"     # 4차: 16:30 KST
+    - cron: "10 9 * * 1-5"     # 5차: 18:10 KST
+    - cron: "30 13 * * 1-5"    # 6차 최후 안전망: 22:30 KST
   workflow_dispatch:
     inputs:
       limit:
