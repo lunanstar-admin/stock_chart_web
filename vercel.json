@@ -9,7 +9,7 @@
     {
       "source": "/data/chart/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=3600" }
       ]
     },
     {
@@ -21,7 +21,7 @@
     {
       "source": "/data/stocks.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800" }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=3600" }
       ]
     },
     {
