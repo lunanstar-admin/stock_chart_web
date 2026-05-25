@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 25 May 2026 14:09:07 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2026 16:20:41 +0900</lastBuildDate>
+    <item>
+      <title>2026년 05월 25일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260525</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260525</guid>
+      <pubDate>Mon, 25 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 25일 한국 주식시장 시황 분석 — 급등 주도주: 포톤 · 시지트로닉스 · 네이처셀. 오늘의 부각 테마: AI · 반도체 · 반도체 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 05월 25일 시가총액 상위 10 종목 — 대장주 흐름</title>
+      <link>https://secomdal.com/blog/daily-mcap-20260525</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260525</guid>
+      <pubDate>Mon, 25 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 25일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · SK스퀘어 중심으로 대형주 흐름 정리.</description>
+    </item>
     <item>
       <title>2026년 05월 22일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260522</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-fed-rate-korea</guid>
       <pubDate>Fri, 15 May 2026 00:00:00 +0900</pubDate>
       <description>미국 연방준비제도(Fed) 의 금리 결정이 한국 주식 시장에 전달되는 환율·자금흐름·기업비용·밸류에이션 4가지 채널을 정리하고, 시나리오별 종목군 영향을 분석합니다.</description>
-    </item>
-    <item>
-      <title>2026년 05월 15일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260515</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260515</guid>
-      <pubDate>Fri, 15 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 15일 한국 주식시장 시황 분석 — 급등 주도주: 폴레드 · 소룩스 · 코아시아씨엠. 오늘의 부각 테마: AI · 반도체 · 금융 · 실적 · 어닝.</description>
-    </item>
-    <item>
-      <title>2026년 05월 15일 마켓 랩업 — KOSPI·KOSDAQ 상승/하락 Top 5</title>
-      <link>https://secomdal.com/blog/daily-wrap-20260515</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-wrap-20260515</guid>
-      <pubDate>Fri, 15 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 15일 장마감 마켓 랩업. KOSPI 상승 1624·하락 650, KOSDAQ 상승 851·하락 748.</description>
     </item>
   </channel>
 </rss>
