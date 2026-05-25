@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 25 May 2026 22:36:22 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 26 May 2026 02:28:36 +0900</lastBuildDate>
+    <item>
+      <title>2026년 05월 26일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260526</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260526</guid>
+      <pubDate>Tue, 26 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 26일 한국 주식시장 시황 분석 — 급등 주도주: 포톤 · 시지트로닉스 · 네이처셀. 오늘의 부각 테마: AI · 반도체 · 반도체 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 05월 26일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20260526</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260526</guid>
+      <pubDate>Tue, 26 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 26일 종가 기준 상승률 상위 10 종목. 상위 3종목은 포톤(+30.0%) · 시지트로닉스(+30.0%) · 네이처셀(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 05월 25일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260525</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-dividend-framework</guid>
       <pubDate>Sat, 16 May 2026 00:00:00 +0900</pubDate>
       <description>배당수익률 5%만 보고 매수했다가 주가가 빠져 손실이 더 큰 경우가 흔합니다. 배당의 지속 가능성·성장성·총수익 관점에서 종목을 거르는 4가지 기준을 정리합니다.</description>
-    </item>
-    <item>
-      <title>분할매수의 수학 — 코스트 평균법이 항상 옳지 않은 이유</title>
-      <link>https://secomdal.com/blog/theme-cost-averaging</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-cost-averaging</guid>
-      <pubDate>Sat, 16 May 2026 00:00:00 +0900</pubDate>
-      <description>분할매수(코스트 평균법)는 위험을 줄이는 것처럼 보이지만, 실제 수익률 관점에서는 일시매수보다 불리한 경우가 많습니다. 어떤 시장 환경에서 분할매수가 유리하고 어떤 환경에서 불리한지 수학적으로 정리합니다.</description>
-    </item>
-    <item>
-      <title>미국 금리 사이클이 한국 주식·환율에 영향을 주는 4가지 경로</title>
-      <link>https://secomdal.com/blog/theme-fed-rate-korea</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-fed-rate-korea</guid>
-      <pubDate>Fri, 15 May 2026 00:00:00 +0900</pubDate>
-      <description>미국 연방준비제도(Fed) 의 금리 결정이 한국 주식 시장에 전달되는 환율·자금흐름·기업비용·밸류에이션 4가지 채널을 정리하고, 시나리오별 종목군 영향을 분석합니다.</description>
     </item>
   </channel>
 </rss>
