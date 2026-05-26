@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 26 May 2026 22:30:52 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 27 May 2026 02:50:43 +0900</lastBuildDate>
+    <item>
+      <title>2026년 05월 27일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260527</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260527</guid>
+      <pubDate>Wed, 27 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 27일 한국 주식시장 시황 분석 — 급등 주도주: SK네트웍스 · 삼화콘덴서 · 네이처셀. 오늘의 부각 테마: AI · 반도체 · 금융 · 실적 · 어닝.</description>
+    </item>
+    <item>
+      <title>2026년 05월 27일 거래량 상위 10 종목 — 자금이 몰린 주식</title>
+      <link>https://secomdal.com/blog/daily-volume-20260527</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20260527</guid>
+      <pubDate>Wed, 27 May 2026 00:00:00 +0900</pubDate>
+      <description>2026년 05월 27일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · 빛과전자 중심으로 관찰된 자금 유입.</description>
+    </item>
     <item>
       <title>2026년 05월 26일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260526</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/theme-etf-vs-stock</guid>
       <pubDate>Sun, 17 May 2026 00:00:00 +0900</pubDate>
       <description>한국 시장에서 ETF 와 개별주의 장단점, 자금 규모·시간 여유·관심 분야 깊이별 선택 매트릭스, 그리고 두 방식을 결합하는 코어-새틀라이트 전략을 분석합니다.</description>
-    </item>
-    <item>
-      <title>공매도 잔고(대차잔고) 데이터, 어떻게 읽고 어떻게 속지 않나</title>
-      <link>https://secomdal.com/blog/theme-short-interest</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-short-interest</guid>
-      <pubDate>Sat, 16 May 2026 00:00:00 +0900</pubDate>
-      <description>공매도 잔고가 늘면 주가가 빠진다는 단순 해석은 자주 틀립니다. 잔고의 절대 수준·증감 속도·대차잔고와의 관계를 구분해서 읽는 방법과 자주 빠지는 함정을 정리합니다.</description>
-    </item>
-    <item>
-      <title>배당주 투자, 무엇을 보고 골라야 하나 — 4가지 핵심 기준</title>
-      <link>https://secomdal.com/blog/theme-dividend-framework</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-dividend-framework</guid>
-      <pubDate>Sat, 16 May 2026 00:00:00 +0900</pubDate>
-      <description>배당수익률 5%만 보고 매수했다가 주가가 빠져 손실이 더 큰 경우가 흔합니다. 배당의 지속 가능성·성장성·총수익 관점에서 종목을 거르는 4가지 기준을 정리합니다.</description>
     </item>
   </channel>
 </rss>
