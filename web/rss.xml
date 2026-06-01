@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 01 Jun 2026 22:15:55 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 02 Jun 2026 01:22:44 +0900</lastBuildDate>
+    <item>
+      <title>2026년 06월 02일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260602</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260602</guid>
+      <pubDate>Tue, 02 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 02일 한국 주식시장 시황 분석 — 급등 주도주: LG헬로비전 · 로보스타 · LG전자우. 오늘의 부각 테마: AI · 반도체 · 반도체 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 06월 02일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20260602</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260602</guid>
+      <pubDate>Tue, 02 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 02일 종가 기준 상승률 상위 10 종목. 상위 3종목은 LG헬로비전(+30.0%) · 로보스타(+30.0%) · LG전자우(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 06월 01일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260601</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20260520</guid>
       <pubDate>Wed, 20 May 2026 00:00:00 +0900</pubDate>
       <description>2026년 05월 20일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
-    </item>
-    <item>
-      <title>신규 상장(IPO) 종목 평가 프레임워크 — 첫 6개월의 함정</title>
-      <link>https://secomdal.com/blog/theme-ipo-framework</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/theme-ipo-framework</guid>
-      <pubDate>Tue, 19 May 2026 00:00:00 +0900</pubDate>
-      <description>한국 시장 신규 상장(IPO) 종목의 가격 변동 패턴, 락업·의무보유 해제 일정, 공모가 평가 5단계 체크포인트, 그리고 IPO 후 6~12개월에 흔히 나타나는 함정을 정리합니다.</description>
-    </item>
-    <item>
-      <title>2026년 05월 19일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260519</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260519</guid>
-      <pubDate>Tue, 19 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 19일 한국 주식시장 시황 분석 — 급등 주도주: 진원생명과학 · 티웨이홀딩스 · 코스모로보틱스. 오늘의 부각 테마: 반도체 · 금융 · AI · 반도체.</description>
     </item>
   </channel>
 </rss>
