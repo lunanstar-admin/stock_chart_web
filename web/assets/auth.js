@@ -390,6 +390,7 @@
                 '<label><input type="checkbox" data-key="notify_rate" checked /> <span>한국은행 금통위 · 미국 FOMC</span></label>' +
                 '<label><input type="checkbox" data-key="notify_cpi" checked /> <span>한국 · 미국 CPI 발표</span></label>' +
                 '<label><input type="checkbox" data-key="notify_expiry" checked /> <span>KOSPI200 옵션·선물 만기</span></label>' +
+                '<label><input type="checkbox" data-key="notify_fda" checked /> <span>국내 바이오기업 FDA 신규 허가</span></label>' +
               '</div>' +
               '<div class="notify-row notify-row--hour">' +
                 '<label for="notifySendHour">발송 시각</label>' +
@@ -606,7 +607,7 @@
       }
     }
     // 체크박스 + 시각 초기화
-    ['notify_rate', 'notify_cpi', 'notify_expiry'].forEach(function (key) {
+    ['notify_rate', 'notify_cpi', 'notify_expiry', 'notify_fda'].forEach(function (key) {
       var cb = document.querySelector('#notifyDetail input[data-key="' + key + '"]');
       if (cb) cb.checked = row ? !!row[key] : true;
     });
@@ -721,7 +722,7 @@
       kakao_notify_enabled: !!(toggle && toggle.checked),
       send_hour: parseInt(document.getElementById('notifySendHour').value, 10) || 8,
     };
-    ['notify_rate', 'notify_cpi', 'notify_expiry'].forEach(function (key) {
+    ['notify_rate', 'notify_cpi', 'notify_expiry', 'notify_fda'].forEach(function (key) {
       var cb = document.querySelector('#notifyDetail input[data-key="' + key + '"]');
       payload[key] = !!(cb && cb.checked);
     });
