@@ -131,6 +131,12 @@ KOREAN_BIO_COMPANIES: list[dict] = [
 ]
 
 
+_HEADERS = {
+    "User-Agent": "secomdal-fda-tracker/1.0 (https://secomdal.com; contact@secomdal.com)",
+    "Accept": "application/json",
+}
+
+
 def _fetch_applications(query_term: str) -> list[dict]:
     """openFDA drug applications API 에서 스폰서명으로 결과 조회."""
     try:
@@ -138,7 +144,7 @@ def _fetch_applications(query_term: str) -> list[dict]:
             "search": f'sponsor_name:"{query_term}"',
             "limit": 100,
         }
-        r = requests.get(FDA_BASE, params=params, timeout=20)
+        r = requests.get(FDA_BASE, params=params, headers=_HEADERS, timeout=20)
         if r.status_code == 404:
             return []
         r.raise_for_status()
