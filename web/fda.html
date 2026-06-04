@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2454082917321119"
+     crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-2454082917321119">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>국내 바이오기업 FDA 허가 현황 — 세콤달.콤 주식맛집</title>
+  <meta name="description" content="셀트리온·삼성바이오에피스·SK바이오팜·휴젤 등 국내 주요 바이오·제약기업의 미국 FDA NDA·BLA·ANDA 허가 현황을 한눈에. 신규 허가 카카오톡 알림 지원." />
+  <meta name="keywords" content="FDA허가, 바이오기업, 셀트리온, 삼성바이오에피스, SK바이오팜, 휴젤, NDA, BLA, ANDA, 신약허가, 바이오시밀러, 카카오알림" />
+  <meta name="author" content="세콤달.콤" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://secomdal.com/fda" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="세콤달.콤 주식맛집" />
+  <meta property="og:title" content="국내 바이오기업 FDA 허가 현황 — 세콤달.콤" />
+  <meta property="og:description" content="국내 주요 바이오·제약기업의 미국 FDA 허가 현황과 신규 허가 알림 서비스." />
+  <meta property="og:url" content="https://secomdal.com/fda" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:image" content="https://secomdal.com/og-image.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="국내 바이오기업 FDA 허가 현황 — 세콤달.콤" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20y%3D%2252%22%20font-size%3D%2256%22%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <script src="/assets/nav.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/auth.js?v=20260604-fda1"></script>
+  <link rel="stylesheet" href="/assets/styles.css?v=20260604-fda1" />
+<!-- Google Analytics (gtag.js) — G-QG41JS7EJ1 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QG41JS7EJ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QG41JS7EJ1');
+</script>
+<style>
+/* ── FDA 페이지 전용 스타일 ── */
+.fda-hero { margin-bottom: 16px; }
+.fda-hero h2 { font-size: 22px; margin: 0 0 6px; }
+.fda-hero p { color: var(--text-secondary); font-size: 14px; margin: 0; line-height: 1.6; }
+
+.fda-summary-bar {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px;
+}
+.fda-summary-bar .stat { color: var(--text-secondary); }
+.fda-summary-bar .stat strong { color: var(--text-primary); }
+.fda-summary-bar .stat-new { color: var(--accent); font-weight: 600; }
+.fda-updated { margin-left: auto; font-size: 12px; color: var(--text-secondary); }
+
+.fda-toolbar {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
+}
+.fda-toolbar input, .fda-toolbar select {
+  padding: 6px 10px; border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary); color: var(--text-primary);
+  font-size: 13px;
+}
+.fda-toolbar input { min-width: 180px; flex: 1; }
+.fda-toolbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.fda-count { font-size: 12px; color: var(--text-secondary); }
+
+/* 알림 배너 */
+.fda-alert-banner {
+  display: none;
+  background: rgba(79,140,255,0.08); border: 1px solid rgba(79,140,255,0.25);
+  border-radius: 8px; padding: 12px 16px; margin-bottom: 14px;
+  font-size: 13px; line-height: 1.6;
+}
+.fda-alert-banner.show { display: block; }
+.fda-alert-banner strong { color: var(--accent); }
+.fda-alert-banner .fda-alert-items { margin: 8px 0 0; padding: 0; list-style: none; }
+.fda-alert-banner .fda-alert-items li {
+  display: flex; align-items: baseline; gap: 8px; padding: 4px 0;
+  border-bottom: 1px solid rgba(79,140,255,0.1);
+}
+.fda-alert-banner .fda-alert-items li:last-child { border: none; }
+.fda-alert-banner .fda-alert-date { font-size: 11px; color: var(--text-secondary); flex-shrink: 0; }
+
+/* 기업 카드 */
+.fda-grid {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.fda-company-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.fda-company-card.has-new { border-color: rgba(79,140,255,0.4); }
+.fda-company-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; cursor: pointer;
+  transition: background 0.15s;
+}
+.fda-company-header:hover { background: var(--bg-hover); }
+.fda-company-name { font-weight: 700; font-size: 15px; }
+.fda-company-en { font-size: 12px; color: var(--text-secondary); }
+.fda-company-code {
+  font-size: 11px; color: var(--text-secondary);
+  background: var(--bg-primary); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px;
+}
+.fda-company-sector {
+  font-size: 11px; color: var(--text-secondary);
+  background: var(--bg-primary); border: 1px solid var(--border);
+  border-radius: 10px; padding: 2px 8px;
+}
+.fda-company-stats { margin-left: auto; text-align: right; flex-shrink: 0; }
+.fda-company-stats .cnt { font-size: 18px; font-weight: 700; color: var(--accent); }
+.fda-company-stats .cnt-label { font-size: 11px; color: var(--text-secondary); }
+.fda-company-chevron {
+  font-size: 11px; color: var(--text-secondary);
+  transition: transform 0.2s; flex-shrink: 0; margin-left: 8px;
+}
+.fda-company-card.open .fda-company-chevron { transform: rotate(180deg); }
+
+/* 허가 목록 */
+.fda-approvals {
+  display: none; border-top: 1px solid var(--border);
+}
+.fda-company-card.open .fda-approvals { display: block; }
+.fda-approvals-inner { padding: 4px 0; }
+.fda-approval-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 9px 16px; border-bottom: 1px solid var(--border);
+  font-size: 13px; transition: background 0.1s;
+}
+.fda-approval-row:last-child { border-bottom: none; }
+.fda-approval-row:hover { background: var(--bg-hover); }
+.fda-approval-row.is-new { background: rgba(79,140,255,0.04); }
+
+.badge-type {
+  font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+  flex-shrink: 0;
+}
+.badge-type.NDA { background: rgba(34,197,94,0.15); color: var(--green); }
+.badge-type.BLA { background: rgba(79,140,255,0.15); color: var(--accent); }
+.badge-type.ANDA { background: rgba(168,85,247,0.15); color: var(--purple); }
+.badge-type.OTHER { background: rgba(124,131,143,0.15); color: var(--text-secondary); }
+.badge-new {
+  font-size: 10px; font-weight: 700; color: #fff;
+  background: var(--accent); padding: 2px 6px; border-radius: 4px;
+  flex-shrink: 0;
+}
+.fda-brand { font-weight: 700; font-size: 13px; }
+.fda-generic { color: var(--text-secondary); font-size: 12px; }
+.fda-meta { font-size: 11px; color: var(--text-secondary); }
+.fda-date { font-size: 12px; color: var(--text-secondary); margin-left: auto; flex-shrink: 0; }
+.fda-link {
+  font-size: 11px; color: var(--accent); text-decoration: none;
+  padding: 2px 6px; border: 1px solid rgba(79,140,255,0.3);
+  border-radius: 4px; flex-shrink: 0;
+  transition: background 0.1s;
+}
+.fda-link:hover { background: rgba(79,140,255,0.1); }
+
+/* 비어있는 카드 */
+.fda-no-data {
+  padding: 14px 16px; color: var(--text-secondary); font-size: 13px;
+  font-style: italic;
+}
+
+/* 알림 안내 박스 */
+.fda-notify-box {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 14px;
+  font-size: 13px; display: flex; align-items: flex-start; gap: 12px;
+}
+.fda-notify-icon { font-size: 20px; flex-shrink: 0; }
+.fda-notify-text p { margin: 0 0 4px; }
+.fda-notify-text .hint { color: var(--text-secondary); font-size: 12px; }
+
+/* 로딩/에러 */
+.fda-loading { text-align: center; padding: 40px; color: var(--text-secondary); }
+.fda-error {
+  text-align: center; padding: 20px; color: var(--red);
+  background: rgba(239,68,68,0.06); border-radius: 8px;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+  .fda-approval-row { gap: 6px; }
+  .fda-date { margin-left: 0; width: 100%; }
+  .fda-link { margin-left: auto; }
+}
+</style>
+</head>
+<body class="page-about">
+
+<div class="topbar">
+  <header>
+    <div class="nav-left">
+      <a href="/" class="home-btn" aria-label="홈으로" title="홈">
+        <svg class="home-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M11.47 2.47a.75.75 0 0 1 1.06 0l9 9a.75.75 0 1 1-1.06 1.06l-.72-.72V20a2 2 0 0 1-2 2h-3.25a.75.75 0 0 1-.75-.75V16a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5.25a.75.75 0 0 1-.75.75H6a2 2 0 0 1-2-2v-8.19l-.72.72a.75.75 0 1 1-1.06-1.06l9-9z"/>
+        </svg>
+      </a>
+      <h1 class="brand-h1"><span class="brand-name"><span class="bc c1">세</span><span class="bc c2">콤</span><span class="bc c3">달</span><span class="bc c4">.</span><span class="bc c1">콤</span></span> <span class="brand-sub">주식<span class="brand-mat">맛</span>집</span></h1>
+      <span class="subtitle">FDA 허가 현황</span>
+    </div>
+    <div class="nav-right">
+      <div id="authSlot" class="auth-slot" aria-live="polite"></div><script src="/assets/auth-prerender.js"></script>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환" onclick="toggleTheme()">☀</button>
+      <button class="nav-toggle" aria-label="메뉴" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+</div>
+
+<nav class="nav-drawer" id="navDrawer">
+  <div class="nav-group">
+    <a href="/">Home</a>
+    <a href="/chart">Stock Chart</a>
+    <a href="/dart">📑 DART 공시</a>
+    <a href="/fda">💊 FDA 허가 알림</a>
+    <a href="/blog">Blog</a>
+  </div>
+  <details>
+    <summary>학습 가이드</summary>
+    <a href="/guide/technical-indicators">기술적 지표</a>
+    <a href="/guide/supply-demand">수급 가이드</a>
+    <a href="/guide/candle-patterns">캔들 가이드</a>
+    <a href="/guide/per-pbr-trap">PER · PBR 함정</a>
+    <a href="/guide/foreign-vs-institution">외국인 vs 기관</a>
+    <a href="/guide/preferred-vs-common">우선주 vs 보통주</a>
+    <a href="/guide/market-metrics">시총·거래량</a>
+    <a href="/guide/holidays">휴장일</a>
+  </details>
+  <div class="nav-group">
+    <div class="nav-group-label">참고자료</div>
+    <a href="/glossary">용어집</a>
+    <a href="/relations">📊 그룹사 관계도</a>
+    <a href="/ownership">계열사 관계도</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">정보</div>
+    <a href="/about">About</a>
+    <a href="/faq">FAQ</a>
+    <a href="/terms">이용약관</a>
+    <a href="/contact">Contact Us</a>
+    <a href="/admin/blog-request" class="admin-only">🔧 관리자</a>
+  </div>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+
+<main class="home-main" style="max-width:960px;margin:0 auto;padding:14px;">
+
+  <section class="fda-hero">
+    <h2>💊 국내 바이오기업 FDA 허가 현황</h2>
+    <p>셀트리온·삼성바이오에피스·SK바이오팜 등 국내 주요 기업의 미국 FDA <strong>NDA·BLA·ANDA</strong> 허가 이력.
+      데이터 출처: <a href="https://open.fda.gov/apis/drug/drugsfda/" target="_blank" rel="noopener">openFDA Drug Applications API</a>.
+      매일 장마감 후 자동 업데이트.</p>
+  </section>
+
+  <!-- 알림 안내 -->
+  <div class="fda-notify-box">
+    <div class="fda-notify-icon">🔔</div>
+    <div class="fda-notify-text">
+      <p><strong>신규 FDA 허가 카카오톡 알림</strong>을 받으려면 오른쪽 상단 카카오 로그인 후 <em>내 정보 → 카톡 알림</em>에서 <strong>FDA 허가 알림</strong>을 켜세요.</p>
+      <p class="hint">90일 이내 허가에는 <span style="background:var(--accent);color:#fff;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">NEW</span> 배지가 표시됩니다.</p>
+    </div>
+  </div>
+
+  <!-- 신규 허가 배너 -->
+  <div class="fda-alert-banner" id="fdaNewBanner"></div>
+
+  <!-- 요약 바 -->
+  <div class="fda-summary-bar" id="fdaSummary">
+    <div class="fda-loading">데이터 불러오는 중…</div>
+  </div>
+
+  <!-- 필터 툴바 -->
+  <div class="fda-toolbar" id="fdaToolbar" style="display:none;">
+    <input type="search" id="fdaSearch" placeholder="기업명·약품명 검색…" autocomplete="off" />
+    <select id="fdaTypeFilter">
+      <option value="">전체 유형</option>
+      <option value="BLA">BLA (바이오의약품)</option>
+      <option value="NDA">NDA (합성신약)</option>
+      <option value="ANDA">ANDA (제네릭)</option>
+    </select>
+    <select id="fdaSectorFilter">
+      <option value="">전체 분야</option>
+    </select>
+    <div class="fda-toolbar-right">
+      <span class="fda-count" id="fdaCount"></span>
+    </div>
+  </div>
+
+  <!-- 기업 카드 목록 -->
+  <div class="fda-grid" id="fdaGrid">
+    <div class="fda-loading">⏳ 데이터 불러오는 중…</div>
+  </div>
+
+  <!-- 면책 고지 -->
+  <section class="page-intro page-intro--compact" style="margin-top:20px;">
+    <h3>이 페이지 안내</h3>
+    <p>
+      openFDA drug applications API 를 통해 수집한 <strong>국내 주요 바이오·제약기업의 FDA 허가 이력</strong>입니다.
+      API 에 등재되지 않은 허가, 최신 업데이트 반영 지연이 있을 수 있습니다.
+      허가 현황은 FDA 공식 사이트(<a href="https://www.accessdata.fda.gov/scripts/cder/daf/" target="_blank" rel="noopener">Drugs@FDA</a>)를 최종 기준으로 하십시오.
+      <strong>투자 참고 목적으로만 활용하세요.</strong>
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  데이터 제공: openFDA · FDA Drugs@FDA &nbsp;|&nbsp;
+  <a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot;
+  <a href="/about">About</a> &middot; <a href="/contact">Contact</a>
+</footer>
+
+<script>
+(function () {
+  var DATA_URL = '/data/fda_approvals.json';
+  var _allCompanies = [];
+
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function formatDate(d) {
+    if (!d) return '-';
+    var parts = d.split('-');
+    if (parts.length === 3) return parts[0] + '.' + parts[1] + '.' + parts[2];
+    return d;
+  }
+
+  // 신규 허가 배너 렌더
+  function renderNewBanner(newApprovals) {
+    var el = document.getElementById('fdaNewBanner');
+    if (!el || !newApprovals || newApprovals.length === 0) return;
+    var items = newApprovals.map(function (a) {
+      return '<li>' +
+        '<span class="fda-alert-date">' + escHtml(formatDate(a.approval_date)) + '</span>' +
+        '<strong>' + escHtml(a.company_ko) + '</strong> &nbsp;' +
+        '<span class="badge-type ' + escHtml(a.app_type) + '">' + escHtml(a.app_type) + '</span> &nbsp;' +
+        escHtml(a.brand_name || a.generic_name || a.app_number) +
+        ' (' + escHtml(a.generic_name || '') + ')' +
+        (a.fda_url ? ' <a href="' + escHtml(a.fda_url) + '" target="_blank" rel="noopener" class="fda-link">FDA ↗</a>' : '') +
+        '</li>';
+    }).join('');
+    el.innerHTML =
+      '<strong>최근 90일 신규 FDA 허가 ' + newApprovals.length + '건</strong>' +
+      '<ul class="fda-alert-items">' + items + '</ul>';
+    el.classList.add('show');
+  }
+
+  // 요약 바 렌더
+  function renderSummary(data) {
+    var el = document.getElementById('fdaSummary');
+    if (!el) return;
+    var newCount = (data.new_approvals || []).length;
+    var updated = data.updated ? data.updated.replace('T', ' ').slice(0, 16) + ' KST' : '-';
+    el.innerHTML =
+      '<span class="stat"><strong>' + (data.total_companies_with_approvals || 0) + '</strong>개사 FDA 허가</span>' +
+      '<span class="stat">총 <strong>' + (data.total_approvals || 0) + '</strong>건</span>' +
+      (newCount > 0
+        ? '<span class="stat-new">★ 최근 90일 신규 ' + newCount + '건</span>'
+        : '') +
+      '<span class="fda-updated">업데이트: ' + escHtml(updated) + '</span>';
+  }
+
+  // 허가 행 렌더
+  function renderApprovalRow(app) {
+    var isNew = app.is_new;
+    var brandDisplay = app.brand_name || app.app_number;
+    var genericDisplay = app.generic_name ? '(' + app.generic_name + ')' : '';
+    var meta = [app.dosage_form, app.route].filter(Boolean).join(' · ');
+    var dateDisplay = formatDate(app.approval_date);
+    if (app.latest_suppl_date && app.latest_suppl_date !== app.approval_date) {
+      dateDisplay += ' <span title="최근 보충 허가">(보충 ' + formatDate(app.latest_suppl_date) + ')</span>';
+    }
+    return (
+      '<div class="fda-approval-row' + (isNew ? ' is-new' : '') + '">' +
+        '<span class="badge-type ' + escHtml(app.app_type) + '">' + escHtml(app.app_type) + '</span>' +
+        (isNew ? '<span class="badge-new">NEW</span>' : '') +
+        '<span class="fda-brand">' + escHtml(brandDisplay) + '</span>' +
+        (genericDisplay ? '<span class="fda-generic">' + escHtml(genericDisplay) + '</span>' : '') +
+        (meta ? '<span class="fda-meta">' + escHtml(meta) + '</span>' : '') +
+        '<span class="fda-date">' + dateDisplay + '</span>' +
+        (app.fda_url
+          ? '<a href="' + escHtml(app.fda_url) + '" target="_blank" rel="noopener" class="fda-link">FDA ↗</a>'
+          : '') +
+      '</div>'
+    );
+  }
+
+  // 기업 카드 렌더
+  function renderCompanyCard(company, open) {
+    var hasNew = company.new_count > 0;
+    var approvals = company.approvals || [];
+    var approvalRows = approvals.length > 0
+      ? approvals.map(renderApprovalRow).join('')
+      : '<div class="fda-no-data">허가 이력 없음</div>';
+
+    return (
+      '<div class="fda-company-card' + (hasNew ? ' has-new' : '') + (open ? ' open' : '') + '"' +
+          ' data-code="' + escHtml(company.code) + '"' +
+          ' data-name="' + escHtml((company.name_ko + ' ' + company.name_en).toLowerCase()) + '"' +
+          ' data-sector="' + escHtml(company.sector) + '">' +
+        '<div class="fda-company-header" onclick="fdaToggleCard(this)">' +
+          '<div>' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+              '<span class="fda-company-name">' + escHtml(company.name_ko) + '</span>' +
+              '<span class="fda-company-code">' + escHtml(company.code) + '</span>' +
+              (hasNew ? '<span class="badge-new">NEW</span>' : '') +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-top:2px;">' +
+              '<span class="fda-company-en">' + escHtml(company.name_en) + '</span>' +
+              '<span class="fda-company-sector">' + escHtml(company.sector) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="fda-company-stats">' +
+            '<div class="cnt">' + (company.total_approvals || 0) + '</div>' +
+            '<div class="cnt-label">FDA 허가</div>' +
+            (company.latest_approval
+              ? '<div style="font-size:11px;color:var(--text-secondary);">최근 ' + formatDate(company.latest_approval) + '</div>'
+              : '') +
+          '</div>' +
+          '<span class="fda-company-chevron">▼</span>' +
+        '</div>' +
+        '<div class="fda-approvals">' +
+          '<div class="fda-approvals-inner">' + approvalRows + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // 카드 토글
+  window.fdaToggleCard = function (headerEl) {
+    var card = headerEl.closest('.fda-company-card');
+    if (card) card.classList.toggle('open');
+  };
+
+  // 필터 적용
+  function applyFilter() {
+    var query = (document.getElementById('fdaSearch').value || '').toLowerCase().trim();
+    var typeFilter = document.getElementById('fdaTypeFilter').value;
+    var sectorFilter = document.getElementById('fdaSectorFilter').value;
+
+    var cards = document.querySelectorAll('.fda-company-card');
+    var visibleCount = 0;
+
+    cards.forEach(function (card) {
+      var name = (card.dataset.name || '').toLowerCase();
+      var sector = card.dataset.sector || '';
+      var rows = card.querySelectorAll('.fda-approval-row');
+      var anyRowVisible = false;
+
+      rows.forEach(function (row) {
+        var typeEl = row.querySelector('.badge-type');
+        var rowType = typeEl ? typeEl.textContent.trim() : '';
+        var rowText = row.textContent.toLowerCase();
+        var typeMatch = !typeFilter || rowType === typeFilter;
+        var queryMatch = !query || rowText.indexOf(query) >= 0;
+        row.style.display = (typeMatch && queryMatch) ? '' : 'none';
+        if (typeMatch && queryMatch) anyRowVisible = true;
+      });
+
+      var nameMatch = !query || name.indexOf(query) >= 0 || anyRowVisible;
+      var sectorMatch = !sectorFilter || sector === sectorFilter;
+      var visible = nameMatch && sectorMatch;
+
+      card.style.display = visible ? '' : 'none';
+      if (visible) visibleCount++;
+    });
+
+    var countEl = document.getElementById('fdaCount');
+    if (countEl) countEl.textContent = visibleCount + '개 기업';
+  }
+
+  // 섹터 필터 옵션 채우기
+  function populateSectorFilter(companies) {
+    var sectors = [];
+    companies.forEach(function (c) {
+      if (c.sector && sectors.indexOf(c.sector) < 0) sectors.push(c.sector);
+    });
+    var sel = document.getElementById('fdaSectorFilter');
+    if (!sel) return;
+    sectors.sort().forEach(function (s) {
+      var opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      sel.appendChild(opt);
+    });
+  }
+
+  // 메인 렌더
+  function render(data) {
+    _allCompanies = data.companies || [];
+
+    renderSummary(data);
+    renderNewBanner(data.new_approvals || []);
+
+    var grid = document.getElementById('fdaGrid');
+    if (!grid) return;
+
+    if (_allCompanies.length === 0) {
+      grid.innerHTML = '<div class="fda-error">데이터가 없습니다.</div>';
+      return;
+    }
+
+    // 허가 있는 기업 먼저, 신규 허가 기업 최상단
+    var sorted = _allCompanies.slice().sort(function (a, b) {
+      if (b.new_count !== a.new_count) return b.new_count - a.new_count;
+      if (b.total_approvals !== a.total_approvals) return b.total_approvals - a.total_approvals;
+      return (b.latest_approval || '').localeCompare(a.latest_approval || '');
+    });
+
+    grid.innerHTML = sorted.map(function (c, i) {
+      return renderCompanyCard(c, i === 0 && c.total_approvals > 0);
+    }).join('');
+
+    populateSectorFilter(sorted);
+
+    // 툴바 표시 + 이벤트
+    var toolbar = document.getElementById('fdaToolbar');
+    if (toolbar) toolbar.style.display = '';
+    var countEl = document.getElementById('fdaCount');
+    if (countEl) countEl.textContent = sorted.length + '개 기업';
+
+    document.getElementById('fdaSearch').addEventListener('input', applyFilter);
+    document.getElementById('fdaTypeFilter').addEventListener('change', applyFilter);
+    document.getElementById('fdaSectorFilter').addEventListener('change', applyFilter);
+  }
+
+  // 데이터 로드
+  fetch(DATA_URL)
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      render(data);
+    })
+    .catch(function (err) {
+      var grid = document.getElementById('fdaGrid');
+      if (grid) {
+        grid.innerHTML =
+          '<div class="fda-error">' +
+            '데이터를 불러오지 못했습니다.<br>' +
+            '<small style="color:var(--text-secondary)">' + escHtml(err.message) + '</small><br><br>' +
+            '배치가 아직 실행되지 않았을 수 있습니다.' +
+          '</div>';
+      }
+      var summary = document.getElementById('fdaSummary');
+      if (summary) summary.innerHTML = '<span style="color:var(--text-secondary)">데이터 없음</span>';
+    });
+})();
+</script>
+
+</body>
+</html>

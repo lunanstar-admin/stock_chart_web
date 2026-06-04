@@ -232,6 +232,13 @@ def run(output_dir: Path, limit: int | None, workers: int) -> None:
     except Exception as e:
         logger.warning("macro.build_macro 실패(무시): %s", e)
 
+    # 3.8 국내 바이오기업 FDA 허가 현황 → fda_approvals.json
+    try:
+        from batch import fda_approvals as _fda_mod
+        _fda_mod.build_fda(output_dir)
+    except Exception as e:
+        logger.warning("fda_approvals.build_fda 실패(무시): %s", e)
+
     # 4. 일간 포스트 생성 + 블로그 정적 빌드 (실패해도 배치 자체는 성공으로 본다)
     try:
         from batch import daily_post
