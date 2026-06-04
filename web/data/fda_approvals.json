@@ -1,54 +1,186 @@
 {
-  "updated": "2026-06-04T13:30:00+09:00",
+  "updated": "2026-06-05T02:38:53+09:00",
   "companies": [
     {
-      "name_ko": "셀트리온", "name_en": "Celltrion", "code": "068270", "sector": "바이오시밀러",
+      "name_ko": "셀트리온",
+      "name_en": "Celltrion",
+      "code": "068270",
+      "sector": "바이오시밀러",
       "approvals": [
-        {"app_number":"BLA761298","app_type":"BLA","brand_name":"Zymfentra","generic_name":"infliximab-dyyb","dosage_form":"SOLUTION","route":"SUBCUTANEOUS","approval_date":"2023-10-19","latest_suppl_date":"","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761298"},
-        {"app_number":"BLA761174","app_type":"BLA","brand_name":"Vegzelma","generic_name":"bevacizumab-adcd","dosage_form":"INJECTION","route":"INTRAVENOUS","approval_date":"2022-10-14","latest_suppl_date":"","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761174"},
-        {"app_number":"BLA761088","app_type":"BLA","brand_name":"Truxima","generic_name":"rituximab-abbs","dosage_form":"INJECTION","route":"INTRAVENOUS","approval_date":"2018-11-28","latest_suppl_date":"2019-07-18","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761088"},
-        {"app_number":"BLA761070","app_type":"BLA","brand_name":"Herzuma","generic_name":"trastuzumab-pkrb","dosage_form":"INJECTION, POWDER, LYOPHILIZED, FOR SOLUTION","route":"INTRAVENOUS","approval_date":"2018-12-14","latest_suppl_date":"","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761070"},
-        {"app_number":"BLA103948","app_type":"BLA","brand_name":"Inflectra","generic_name":"infliximab-dyyb","dosage_form":"INJECTION, POWDER, LYOPHILIZED, FOR SOLUTION","route":"INTRAVENOUS","approval_date":"2016-04-05","latest_suppl_date":"2023-04-04","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=103948"}
+        {
+          "app_number": "BLA761358",
+          "app_type": "BLA",
+          "brand_name": "Zymfentra",
+          "generic_name": "infliximab-dyyb",
+          "dosage_form": "INJECTABLE",
+          "route": "INJECTION",
+          "approval_date": "2023-10-20",
+          "latest_suppl_date": "2024-02-22",
+          "is_new": false,
+          "fda_url": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761358"
+        },
+        {
+          "app_number": "BLA761219",
+          "app_type": "BLA",
+          "brand_name": "Yuflyma",
+          "generic_name": "adalimumab-aaty",
+          "dosage_form": "INJECTABLE",
+          "route": "INJECTION",
+          "approval_date": "2023-05-23",
+          "latest_suppl_date": "2025-10-16",
+          "is_new": false,
+          "fda_url": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761219"
+        },
+        {
+          "app_number": "BLA761268",
+          "app_type": "BLA",
+          "brand_name": "Vegzelma",
+          "generic_name": "bevacizumab-adcd",
+          "dosage_form": "INJECTABLE",
+          "route": "INJECTION",
+          "approval_date": "2022-09-27",
+          "latest_suppl_date": "",
+          "is_new": false,
+          "fda_url": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761268"
+        }
       ],
-      "total_approvals": 5, "latest_approval": "2023-10-19", "new_count": 0
+      "total_approvals": 3,
+      "latest_approval": "2023-10-20",
+      "new_count": 0
     },
     {
-      "name_ko": "삼성바이오에피스", "name_en": "Samsung Bioepis", "code": "207940", "sector": "바이오시밀러",
-      "approvals": [
-        {"app_number":"BLA761279","app_type":"BLA","brand_name":"Epysqli","generic_name":"bevacizumab-maly","dosage_form":"INJECTION","route":"INTRAVENOUS","approval_date":"2023-05-26","latest_suppl_date":"","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761279"},
-        {"app_number":"BLA761167","app_type":"BLA","brand_name":"Byooviz","generic_name":"ranibizumab-nuna","dosage_form":"INJECTION","route":"INTRAVITREAL","approval_date":"2022-09-20","latest_suppl_date":"","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761167"},
-        {"app_number":"BLA761081","app_type":"BLA","brand_name":"Hadlima","generic_name":"adalimumab-bwwd","dosage_form":"INJECTION","route":"SUBCUTANEOUS","approval_date":"2019-07-23","latest_suppl_date":"2020-12-15","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761081"},
-        {"app_number":"BLA761036","app_type":"BLA","brand_name":"Renflexis","generic_name":"infliximab-abda","dosage_form":"INJECTION, POWDER, LYOPHILIZED, FOR SOLUTION","route":"INTRAVENOUS","approval_date":"2017-04-21","latest_suppl_date":"","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761036"}
-      ],
-      "total_approvals": 4, "latest_approval": "2023-05-26", "new_count": 0
+      "name_ko": "삼성바이오에피스",
+      "name_en": "Samsung Bioepis",
+      "code": "207940",
+      "sector": "바이오시밀러",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
     },
     {
-      "name_ko": "SK바이오팜", "name_en": "SK Biopharmaceuticals", "code": "326030", "sector": "CNS 신약",
-      "approvals": [
-        {"app_number":"NDA210208","app_type":"NDA","brand_name":"Xcopri","generic_name":"cenobamate","dosage_form":"TABLET","route":"ORAL","approval_date":"2019-11-21","latest_suppl_date":"2022-06-24","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=210208"}
-      ],
-      "total_approvals": 1, "latest_approval": "2019-11-21", "new_count": 0
+      "name_ko": "SK바이오팜",
+      "name_en": "SK Biopharmaceuticals",
+      "code": "326030",
+      "sector": "CNS 신약",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
     },
     {
-      "name_ko": "휴젤", "name_en": "Hugel", "code": "145020", "sector": "보툴리눔 톡신",
-      "approvals": [
-        {"app_number":"BLA761306","app_type":"BLA","brand_name":"Letybo","generic_name":"letibotulinumtoxina","dosage_form":"INJECTION, POWDER, LYOPHILIZED, FOR SOLUTION","route":"INTRAMUSCULAR","approval_date":"2023-09-08","latest_suppl_date":"","is_new":false,"fda_url":"https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761306"}
-      ],
-      "total_approvals": 1, "latest_approval": "2023-09-08", "new_count": 0
+      "name_ko": "휴젤",
+      "name_en": "Hugel",
+      "code": "145020",
+      "sector": "보툴리눔 톡신",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
     },
-    {"name_ko":"한미약품","name_en":"Hanmi Pharma","code":"128940","sector":"제약·바이오","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"대웅제약","name_en":"Daewoong Pharmaceutical","code":"069620","sector":"제약","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"메디톡스","name_en":"Medytox","code":"086900","sector":"보툴리눔 톡신","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"종근당","name_en":"Chong Kun Dang","code":"185750","sector":"제약","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"보령","name_en":"Boryung","code":"003850","sector":"제약","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"유한양행","name_en":"Yuhan","code":"000100","sector":"제약","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"동아에스티","name_en":"Dong-A ST","code":"170900","sector":"제약","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"에이치엘비","name_en":"HLB","code":"028300","sector":"항암제","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"오스코텍","name_en":"Oscotec","code":"039200","sector":"항암제","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0},
-    {"name_ko":"제넥신","name_en":"Genexine","code":"095700","sector":"바이오의약품","approvals":[],"total_approvals":0,"latest_approval":null,"new_count":0}
+    {
+      "name_ko": "한미약품",
+      "name_en": "Hanmi Pharma",
+      "code": "128940",
+      "sector": "제약·바이오",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "대웅제약",
+      "name_en": "Daewoong Pharmaceutical",
+      "code": "069620",
+      "sector": "제약",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "메디톡스",
+      "name_en": "Medytox",
+      "code": "086900",
+      "sector": "보툴리눔 톡신",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "종근당",
+      "name_en": "Chong Kun Dang",
+      "code": "185750",
+      "sector": "제약",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "보령",
+      "name_en": "Boryung",
+      "code": "003850",
+      "sector": "제약",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "유한양행",
+      "name_en": "Yuhan",
+      "code": "000100",
+      "sector": "제약",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "동아에스티",
+      "name_en": "Dong-A ST",
+      "code": "170900",
+      "sector": "제약",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "에이치엘비",
+      "name_en": "HLB",
+      "code": "028300",
+      "sector": "항암제",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "오스코텍",
+      "name_en": "Oscotec",
+      "code": "039200",
+      "sector": "항암제",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    },
+    {
+      "name_ko": "제넥신",
+      "name_en": "Genexine",
+      "code": "095700",
+      "sector": "바이오의약품",
+      "approvals": [],
+      "total_approvals": 0,
+      "latest_approval": null,
+      "new_count": 0
+    }
   ],
   "new_approvals": [],
   "total_companies": 14,
-  "total_companies_with_approvals": 4,
-  "total_approvals": 11
+  "total_companies_with_approvals": 1,
+  "total_approvals": 3
 }
