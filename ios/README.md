@@ -1,127 +1,205 @@
-# FDA 알리미 iOS 앱
+# FDA 알리미 — iOS 앱 설정 가이드
 
-국내 바이오기업 미국 FDA 허가 알림 서비스 — iOS Native App
+한국 바이오텍 기업의 FDA 허가를 추적하고 푸시 알림을 받는 iOS 앱입니다.
 
-## Xcode 프로젝트 설정
+---
 
-### 1. 프로젝트 생성
-1. Xcode 열기 → **File > New > Project**
-2. **App** 선택 → Next
-3. 설정:
-   - Product Name: `FDA알리미`
-   - Bundle Identifier: `com.secomdal.fdaalert` (또는 원하는 ID)
-   - Interface: **SwiftUI**
-   - Language: **Swift**
-   - Minimum Deployments: **iOS 16.0**
+## 요구사항
 
-### 2. 소스 파일 추가
-`ios/FDAAlert/` 폴더의 파일들을 Xcode 프로젝트에 추가:
+- Xcode 15 이상
+- iOS 16.0+
+- Swift 5.9+
+- Apple Developer Program 계정 (APNs 설정 필요)
+
+---
+
+## Xcode 프로젝트 생성
+
+1. Xcode → **File > New > Project** → **App** 선택
+2. 설정:
+   - **Product Name**: `FDAAlert`
+   - **Bundle Identifier**: `com.secomdal.fdaalert`
+   - **Interface**: SwiftUI
+   - **Language**: Swift
+   - **Minimum Deployments**: iOS 16.0
+3. 프로젝트 생성 후 `ios/FDAAlert/` 폴더의 Swift 파일을 Xcode 프로젝트에 추가:
+   - `Config.swift`
+   - `Models/Models.swift`
+   - `Services/FDAService.swift`
+   - `Services/NotificationService.swift`
+   - `App/FDAAlertApp.swift`
+   - `Views/HomeView.swift`
+   - `Views/CompanyDetailView.swift`
+   - `Views/SettingsView.swift`
+   - `Views/Components.swift`
+
+---
+
+## Bundle ID 설정
+
+`Config.swift`의 `bundleID`와 Xcode 프로젝트의 Bundle Identifier가 반드시 일치해야 합니다:
+
 ```
-Config.swift
-App/FDAAlertApp.swift
-App/AppDelegate.swift
-Models/Models.swift
-Services/FDAService.swift
-Services/NotificationService.swift
-Services/APIClient.swift
-Views/ContentView.swift
-Views/HomeView.swift
-Views/CompanyDetailView.swift
-Views/SettingsView.swift
-```
-
-### 3. Capabilities 추가
-Xcode → 프로젝트 선택 → **Signing & Capabilities** 탭:
-- **+ Capability** 클릭 → **Push Notifications** 추가
-- **+ Capability** 클릭 → **Background Modes** 추가 → **Remote notifications** 체크
-
-### 4. Config.swift 수정
-```swift
-static let supabaseURL = "https://axbbjjpxspvvxbxvuzsz.supabase.co"
-static let supabaseAnonKey = "YOUR_SUPABASE_ANON_KEY"  // ← Supabase Dashboard에서 확인
+com.secomdal.fdaalert
 ```
 
 ---
 
-## APNs (Push Notification) 설정
+## APNs (Apple Push Notification service) 설정
 
-### Apple Developer Console
-1. https://developer.apple.com 로그인
-2. **Certificates, Identifiers & Profiles** → **Keys**
-3. **+** 버튼 → Key Name: `FDA 알리미 APNs`
-4. **Apple Push Notifications service (APNs)** 체크 → Continue → Register
-5. **Download** → `.p8` 파일 저장 (한 번만 다운로드 가능!)
-6. Key ID 메모 (10자리)
-7. **Membership** → Team ID 메모 (10자리)
+### 1. Apple Developer Console에서 APNs Key 생성
 
-### Supabase Secrets 등록
-Supabase Dashboard → **Settings > Edge Functions > Secrets**:
+1. [developer.apple.com](https://developer.apple.com) → **Certificates, Identifiers & Profiles**
+2. **Keys** → **+** 버튼
+3. Key Name: `FDAAlert Push Key`
+4. **Apple Push Notifications service (APNs)** 체크
+5. **Continue** → **Register** → **Download** (`.p8` 파일, 한 번만 다운로드 가능)
+6. **Key ID** 메모 (10자리 영문숫자)
+7. **Team ID** 메모 (Apple Developer 계정 ID)
 
-| 키 | 값 |
-|----|----|
-| `APNS_KEY_P8` | `.p8` 파일 전체 내용 (`-----BEGIN PRIVATE KEY-----` 포함) |
-| `APNS_KEY_ID` | Apple Developer Key ID (10자리) |
-| `APNS_TEAM_ID` | Apple Developer Team ID (10자리) |
-| `APNS_BUNDLE_ID` | `com.secomdal.fdaalert` |
-| `APNS_ENV` | `production` (App Store) 또는 `sandbox` (개발) |
+### 2. App ID에 Push Notifications Capability 추가
 
-### GitHub Repository Secrets 등록
-GitHub → Settings → Secrets and variables → Actions:
+1. **Identifiers** → 앱 Bundle ID 선택
+2. **Push Notifications** 체크 → **Save**
 
-| 키 | 값 |
-|----|----|
-| `SUPABASE_URL` | `https://axbbjjpxspvvxbxvuzsz.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard → Settings → API → service_role key |
+### 3. Xcode Capabilities 추가
+
+1. Xcode → 프로젝트 타겟 선택
+2. **Signing & Capabilities** 탭
+3. **+ Capability** → **Push Notifications** 추가
+4. **Background Modes** 추가 → **Remote notifications** 체크
+
+### 4. URL Scheme 등록 (딥링크)
+
+1. **Info** 탭 → **URL Types** → **+** 버튼
+2. **URL Schemes**: `fdaalert`
+3. **Role**: Viewer
 
 ---
 
 ## Supabase 설정
 
-### 1. DB 마이그레이션 실행
-Supabase Dashboard → **SQL Editor**에서 실행:
-```
-supabase/migrations/20260604_ios_device_registrations.sql
-supabase/migrations/20260604_fda_notifications.sql
+### 1. Supabase 프로젝트 확인
+
+프로젝트 URL: `https://axbbjjpxspvvxbxvuzsz.supabase.co`
+
+### 2. Supabase Anon Key 설정
+
+`Config.swift`의 `supabaseAnonKey`를 실제 키로 교체:
+
+```swift
+static let supabaseAnonKey = "YOUR_ACTUAL_ANON_KEY_HERE"
 ```
 
-### 2. Edge Functions 배포
+Supabase Dashboard → **Settings > API > Project API keys > anon public**에서 확인
+
+### 3. Edge Functions
+
+앱에서 호출하는 Edge Functions:
+
+| Function | 용도 |
+|----------|------|
+| `register-device` | APNs 토큰 + 구독 설정 저장 |
+| `send-fda-push` | 신규 허가 발생 시 푸시 발송 (GitHub Actions 호출) |
+
+Edge Function 배포:
 ```bash
-cd stock_chart_web
-supabase functions deploy register-device --no-verify-jwt
+supabase functions deploy register-device
 supabase functions deploy send-fda-push
 ```
 
-또는 Supabase MCP로 자동 배포됨.
+### 4. register-device 페이로드 형식
 
----
-
-## 알림 흐름
-
-```
-앱 실행 → 알림 권한 요청 → APNs 토큰 획득
-→ Supabase register-device 저장
-→ (매일) GitHub Actions daily-batch 실행
-→ fda_approvals.py: 신규 허가 감지
-→ Supabase send-fda-push 호출
-→ APNs → iOS 푸시 알림
+```json
+{
+  "device_token": "APNs 토큰 hex 문자열",
+  "platform": "ios",
+  "subscribe_all": true,
+  "subscribed_codes": ["068270", "207940"]
+}
 ```
 
 ---
 
-## 배지 타입 설명
+## GitHub Actions Secrets 설정
 
-| 배지 | 의미 |
-|------|------|
-| **BLA** | Biologics License Application — 바이오의약품 (항체, 백신 등) |
-| **NDA** | New Drug Application — 합성 신약 |
-| **ANDA** | Abbreviated NDA — 제네릭 의약품 |
+GitHub Actions가 새 FDA 허가를 감지하면 `send-fda-push`를 호출합니다.
+
+Repository → **Settings > Secrets and variables > Actions** → **New repository secret**:
+
+| Secret 이름 | 값 |
+|-------------|-----|
+| `SUPABASE_URL` | `https://axbbjjpxspvvxbxvuzsz.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard의 service_role 키 |
+| `APNS_KEY_ID` | APNs Key ID (10자리) |
+| `APNS_TEAM_ID` | Apple Developer Team ID |
+| `APNS_BUNDLE_ID` | `com.secomdal.fdaalert` |
+| `APNS_KEY_P8` | `.p8` 파일의 전체 내용 |
 
 ---
 
-## App Store 배포
+## 딥링크 구조
 
-1. Xcode → **Product > Archive**
-2. **Distribute App** → **App Store Connect**
-3. App Store Connect에서 앱 정보 입력 후 심사 제출
-4. 보통 1-7일 소요
+알림 탭 시 특정 기업 상세 화면으로 이동:
 
+### 푸시 알림 payload
+
+```json
+{
+  "aps": {
+    "alert": {
+      "title": "셀트리온 FDA 허가",
+      "body": "Zymfentra (infliximab-dyyb) BLA 허가"
+    },
+    "sound": "default",
+    "badge": 1
+  },
+  "company_code": "068270"
+}
+```
+
+### URL Scheme
+
+```
+fdaalert://company/068270
+```
+
+---
+
+## 로컬 개발 & 시뮬레이터
+
+- APNs는 실기기에서만 작동합니다 (시뮬레이터 불가)
+- 시뮬레이터에서는 데이터 로드 및 UI만 테스트 가능
+- 실기기 테스트 시 **Development** 프로비저닝 프로파일 필요
+
+---
+
+## 주요 파일 구조
+
+```
+ios/FDAAlert/
+├── Config.swift                  # 전역 상수 (URL, 키, Bundle ID)
+├── App/
+│   └── FDAAlertApp.swift         # @main, AppDelegate, ContentView
+├── Models/
+│   └── Models.swift              # FDAData, Company, Approval, DeepLink
+├── Services/
+│   ├── FDAService.swift          # 데이터 fetch (FDAStore ObservableObject)
+│   └── NotificationService.swift # APNs 등록, 구독 관리
+└── Views/
+    ├── HomeView.swift            # 메인 기업 목록 화면
+    ├── CompanyDetailView.swift   # 기업 상세 + 허가 목록
+    ├── SettingsView.swift        # 알림 설정 + 구독 관리
+    └── Components.swift          # AppTypeBadge, NewBadge, CompanyRow 등
+```
+
+---
+
+## 서드파티 의존성
+
+없음 — Swift 표준 라이브러리 및 Apple 프레임워크만 사용:
+- `SwiftUI`
+- `UserNotifications`
+- `SafariServices`
+- `Foundation`
+- `Combine`

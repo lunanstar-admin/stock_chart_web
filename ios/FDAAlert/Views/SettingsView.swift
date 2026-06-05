@@ -1,38 +1,65 @@
+// SettingsView.swift — FDA 알리미
+// 알림 토글 및 구독 관리 화면.
+
 import SwiftUI
 import UserNotifications
 
 struct SettingsView: View {
-    @AppStorage("notifyAll") private var notifyAll = true
-    @AppStorage("subscribedCodes") private var subscribedCodesRaw = "all"
-    @State private var authStatus: UNAuthorizationStatus = .notDetermined
-    @EnvironmentObject var store: FDAStore
+    @EnvironmentObject private var store: FDAStore
+    @EnvironmentObject private var notificationService: NotificationService
 
-    var subscribedCodes: Set<String> {
-        Set(subscribedCodesRaw.split(separator: ",").map(String.init))
-    }
+    // MARK: - Body
 
     var body: some View {
         NavigationStack {
-            Form {
+            List {
+                // 알림 섹션
                 notificationSection
-                subscriptionSection
-                infoSection
+
+                // 구독 관리 섹션
+                if notificationService.notificationsEnabled {
+                    subscriptionSection
+                }
+
+                // 앱 정보 섹션
+                appInfoSection
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("설정")
+            .navigationBarTitleDisplayMode(.large)
+            .refreshable {
+                await notificationService.refreshAuthorizationStatus()
+            }
         }
-        .task { await checkAuthStatus() }
     }
+
+    // MARK: - Notification Section
 
     private var notificationSection: some View {
         Section {
-            if authStatus == .denied {
-                HStack {
-                    Image(systemName: "bell.slash.fill").foregroundStyle(.red)
-                    VStack(alignment: .leading) {
-                        Text("알림 권한 없음").bold()
-                        Text("설정 앱에서 알림을 허용해주세요")
-                            .font(.caption).foregroundStyle(.secondary)
-                    }
+            // 알림 마스터 토글
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("FDA 허가 알림")
+                        .font(.body)
+                    Text(statusDescription)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Toggle("", isOn: $notificationService.notificationsEnabled)
+                    .labelsHidden()
+            }
+            .padding(.vertical, 2)
+
+            // 시스템 알림 허용 필요 안내
+            if notificationService.authorizationStatus == .denied {
+                HStack(spacing: 10) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                    Text("시스템 설정에서 알림을 허용해야 합니다.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Spacer()
                     Button("설정 열기") {
                         if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -40,99 +67,161 @@ struct SettingsView: View {
                         }
                     }
                     .font(.caption)
-                }
-            } else {
-                Toggle(isOn: $notifyAll) {
-                    Label("신규 FDA 허가 알림", systemImage: "bell.fill")
-                }
-                .onChange(of: notifyAll) { _, enabled in
-                    if enabled { Task { await enableNotifications() } }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
                 }
             }
+
+            // 등록 오류 표시
+            if let error = notificationService.registrationError {
+                HStack(spacing: 8) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.red)
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
         } header: {
             Text("알림")
         } footer: {
-            Text("국내 바이오기업의 미국 FDA 신규 허가 시 카카오톡 알림을 받습니다.")
+            Text("새로운 FDA 허가가 발생하면 푸시 알림을 받을 수 있습니다.")
         }
     }
+
+    private var statusDescription: String {
+        switch notificationService.authorizationStatus {
+        case .authorized:
+            return notificationService.notificationsEnabled ? "알림이 활성화되어 있습니다" : "알림이 비활성화되어 있습니다"
+        case .denied:
+            return "시스템에서 알림이 차단되어 있습니다"
+        case .notDetermined:
+            return "알림 권한을 아직 요청하지 않았습니다"
+        case .provisional:
+            return "임시 알림 권한이 부여되어 있습니다"
+        case .ephemeral:
+            return "임시 알림이 허용되어 있습니다"
+        @unknown default:
+            return "알림 상태를 확인할 수 없습니다"
+        }
+    }
+
+    // MARK: - Subscription Section
 
     private var subscriptionSection: some View {
         Section {
-            Toggle(isOn: Binding(
-                get: { subscribedCodes.contains("all") },
-                set: { all in
-                    subscribedCodesRaw = all ? "all" : ""
-                    saveSubscription(all ? ["all"] : [])
+            // 전체 구독 토글
+            Toggle(isOn: $notificationService.subscribeAll) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("모든 기업 구독")
+                        .font(.body)
+                    Text("새 허가가 발생한 모든 기업의 알림을 받습니다")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-            )) {
-                Label("전체 기업 구독", systemImage: "building.2.fill")
             }
 
-            if !subscribedCodes.contains("all") {
-                ForEach(store.data?.companies ?? []) { company in
-                    Toggle(isOn: Binding(
-                        get: { subscribedCodes.contains(company.code) },
-                        set: { on in
-                            var codes = subscribedCodes
-                            if on { codes.insert(company.code) } else { codes.remove(company.code) }
-                            subscribedCodesRaw = codes.joined(separator: ",")
-                            saveSubscription(Array(codes))
-                        }
-                    )) {
-                        HStack {
-                            Text(company.nameKo)
-                            Spacer()
+            // 개별 구독 (전체 구독이 꺼진 경우)
+            if !notificationService.subscribeAll,
+               let companies = store.data?.companies {
+                ForEach(companies) { company in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 6) {
+                                Text(company.nameKo)
+                                    .font(.body)
+                                if company.hasNewApprovals {
+                                    NewBadge()
+                                }
+                            }
                             Text(company.sector)
-                                .font(.caption).foregroundStyle(.secondary)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
+                        Spacer()
+                        Toggle(
+                            "",
+                            isOn: Binding(
+                                get: { notificationService.subscribedCodes.contains(company.code) },
+                                set: { _ in notificationService.toggleSubscription(code: company.code) }
+                            )
+                        )
+                        .labelsHidden()
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+
+        } header: {
+            Text("구독 관리")
+        } footer: {
+            if notificationService.subscribeAll {
+                Text("전체 구독 중: 모든 한국 바이오텍 기업의 새 FDA 허가 알림을 받습니다.")
+            } else {
+                let count = notificationService.subscribedCodes.count
+                Text("\(count)개 기업을 구독 중입니다.")
+            }
+        }
+    }
+
+    // MARK: - App Info Section
+
+    private var appInfoSection: some View {
+        Section {
+            // 데이터 새로 고침
+            Button {
+                Task { await store.refresh() }
+            } label: {
+                HStack {
+                    Label("데이터 새로 고침", systemImage: "arrow.clockwise")
+                    Spacer()
+                    if store.isLoading {
+                        ProgressView()
+                            .scaleEffect(0.8)
                     }
                 }
             }
+            .disabled(store.isLoading)
+
+            // 데이터 출처
+            HStack {
+                Label("데이터 출처", systemImage: "doc.text")
+                Spacer()
+                Text("secomdal.com")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            // 버전 정보
+            HStack {
+                Label("버전", systemImage: "info.circle")
+                Spacer()
+                Text(appVersion)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
         } header: {
-            Text("구독 기업")
-        } footer: {
-            Text("특정 기업만 선택하면 해당 기업의 허가만 알림으로 받습니다.")
+            Text("앱 정보")
         }
     }
 
-    private var infoSection: some View {
-        Section("정보") {
-            LabeledContent("데이터 출처", value: "openFDA API")
-            LabeledContent("업데이트 주기", value: "매일 장마감 후")
-            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                LabeledContent("앱 버전", value: version)
-            }
-            Link(destination: URL(string: "https://secomdal.com/fda")!) {
-                Label("secomdal.com FDA 페이지", systemImage: "arrow.up.right.square")
-            }
-        }
-    }
+    // MARK: - Helpers
 
-    private func checkAuthStatus() async {
-        authStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
-    }
-
-    private func enableNotifications() async {
-        let granted = await NotificationService.shared.requestAuthorization()
-        if granted {
-            await NotificationService.shared.registerIfAuthorized()
-        }
-        await checkAuthStatus()
-    }
-
-    private func saveSubscription(_ codes: [String]) {
-        Task {
-            guard let token = UserDefaults.standard.string(forKey: "apnsToken") else { return }
-            #if DEBUG
-            let env = "sandbox"
-            #else
-            let env = "production"
-            #endif
-            try? await APIClient.registerDevice(
-                apnsToken: token,
-                environment: env,
-                subscriptions: codes.isEmpty ? ["all"] : codes
-            )
-        }
+    private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
     }
 }
+
+// MARK: - Preview
+
+#if DEBUG
+#Preview {
+    SettingsView()
+        .environmentObject(FDAStore.shared)
+        .environmentObject(NotificationService.shared)
+}
+#endif
