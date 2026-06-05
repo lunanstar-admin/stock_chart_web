@@ -96,6 +96,9 @@ jobs:
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
           # 주말 강제 실행 토글 (workflow_dispatch 의 force_brief=true 일 때)
           FORCE_BRIEF: ${{ github.event.inputs.force_brief || 'false' }}
+          # iOS 푸시 알림 (신규 FDA 허가 시 Supabase Edge Function 호출)
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           ARGS=""
           if [ -n "${{ github.event.inputs.limit }}" ]; then

@@ -325,7 +325,56 @@ def build_fda(output_dir: Path) -> bool:
         "wrote %s (기업=%d, 허가=%d, 신규=%d)",
         out, len(companies_data), total_approvals, len(new_approvals),
     )
+
+    # 신규 허가 발생 시 iOS 푸시 알림 트리거
+    if new_approvals:
+        _trigger_push_notification(new_approvals)
+
     return True
+
+
+def _trigger_push_notification(new_approvals: list[dict]) -> None:
+    """신규 허가 목록을 Supabase Edge Function 으로 전달해 iOS 푸시 발송."""
+    import os
+    supabase_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    service_role_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+
+    if not supabase_url or not service_role_key:
+        logger.info("푸시 알림 스킵 (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY 미설정)")
+        return
+
+    url = f"{supabase_url}/functions/v1/send-fda-push"
+    payload = {
+        "new_approvals": [
+            {
+                "company_ko": a.get("company_ko", ""),
+                "company_en": a.get("company_en", ""),
+                "code": a.get("code", ""),
+                "app_number": a.get("app_number", ""),
+                "app_type": a.get("app_type", ""),
+                "brand_name": a.get("brand_name", ""),
+                "generic_name": a.get("generic_name", ""),
+                "approval_date": a.get("approval_date", ""),
+            }
+            for a in new_approvals
+        ]
+    }
+    try:
+        r = requests.post(
+            url,
+            json=payload,
+            headers={
+                "Authorization": f"Bearer {service_role_key}",
+                "Content-Type": "application/json",
+            },
+            timeout=15,
+        )
+        if r.status_code == 200:
+            logger.info("푸시 알림 전송 완료: %s", r.json())
+        else:
+            logger.warning("푸시 알림 응답 오류: %d %s", r.status_code, r.text[:200])
+    except Exception as e:
+        logger.warning("푸시 알림 전송 실패(무시): %s", e)
 
 
 if __name__ == "__main__":
