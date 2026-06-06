@@ -37,6 +37,12 @@
       ]
     },
     {
+      "source": "/data/fda_alerts.json",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=30, s-maxage=60, must-revalidate" }
+      ]
+    },
+    {
       "source": "/assets/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800" }

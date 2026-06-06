@@ -3,15 +3,15 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 /**
  * POST /functions/v1/send-fda-push
- * GitHub Actions 배치에서 신규 FDA 허가 발생 시 호출.
- * Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>
+ * 신규 FDA 소식 발생 시 호출. Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY>
  *
- * Body (JSON):
- *   new_approvals: Array<{
- *     company_ko: string, company_en: string, code: string,
- *     app_number: string, app_type: string,
- *     brand_name: string, generic_name: string,
- *     approval_date: string
+ * Body (JSON) — 둘 중 하나(또는 둘 다):
+ *   new_approvals: Array<{                     // openFDA 배치(매일·확정 허가)
+ *     company_ko, company_en, code,
+ *     app_number, app_type, brand_name, generic_name, approval_date
+ *   }>
+ *   alerts: Array<{                            // 실시간(DART/RSS) 속보
+ *     company_ko, company_en, code, title, url, source, published
  *   }>
  *
  * 환경변수 (Supabase Secrets):
@@ -27,16 +27,17 @@ Deno.serve(async (req: Request) => {
   }
 
   // service_role 키로만 호출 허용 (Edge Function verify_jwt=true 로 설정)
-  let body: { new_approvals?: ApprovalItem[] };
+  let body: { new_approvals?: ApprovalItem[]; alerts?: AlertItem[] };
   try {
     body = await req.json();
   } catch {
     return json({ error: "Invalid JSON" }, 400);
   }
 
-  const newApprovals = body.new_approvals ?? [];
-  if (newApprovals.length === 0) {
-    return json({ ok: true, sent: 0, skipped: "no new approvals" });
+  // 두 입력(확정 허가 / 실시간 속보)을 단일 알림 모델로 정규화
+  const items: NotifyItem[] = normalizeItems(body);
+  if (items.length === 0) {
+    return json({ ok: true, sent: 0, skipped: "no items" });
   }
 
   const supabase = createClient(
@@ -45,8 +46,8 @@ Deno.serve(async (req: Request) => {
     { auth: { persistSession: false } },
   );
 
-  // 신규 허가된 company_code 목록
-  const newCodes = [...new Set(newApprovals.map((a) => a.code))];
+  // 관련 company_code 목록
+  const newCodes = [...new Set(items.map((a) => a.code).filter(Boolean))];
 
   // 해당 기업 구독 or 'all' 구독 디바이스 조회
   const { data: watchlist, error: wErr } = await supabase
@@ -90,13 +91,13 @@ Deno.serve(async (req: Request) => {
 
   const apnsJwt = await generateAPNsJWT(keyP8, keyId, teamId);
 
-  // 알림 메시지 구성 (첫 번째 허가 기준)
-  const first = newApprovals[0];
-  const title = "FDA 신규 허가";
+  // 알림 메시지 구성 (첫 번째 항목 기준)
+  const first = items[0];
+  const title = first.title;
   const body2 =
-    newApprovals.length === 1
-      ? `${first.company_ko} ${first.brand_name || first.app_number} (${first.app_type}) 허가 완료`
-      : `${first.company_ko} 등 ${newApprovals.length}건의 신규 FDA 허가`;
+    items.length === 1
+      ? first.body
+      : `${first.company_ko} 등 ${items.length}건의 FDA 관련 소식`;
 
   const payload = {
     aps: {
@@ -105,7 +106,9 @@ Deno.serve(async (req: Request) => {
       badge: 1,
       "content-available": 1,
     },
-    new_approvals: newApprovals.slice(0, 5), // 최대 5건만 포함
+    // 탭 시 딥링크용 — 첫 항목의 회사 코드
+    company_code: first.code,
+    items: items.slice(0, 5), // 최대 5건만 포함
   };
 
   let sentCount = 0;
@@ -154,7 +157,7 @@ Deno.serve(async (req: Request) => {
   return json({ ok: true, sent: sentCount, errors: errors.slice(0, 10) });
 });
 
-// ── APNs JWT 생성 (ES256) ─────────────────────────────────────────────────
+// ── 입력 정규화 ────────────────────────────────────────────────────────────
 
 interface ApprovalItem {
   company_ko: string;
@@ -166,6 +169,62 @@ interface ApprovalItem {
   generic_name: string;
   approval_date: string;
 }
+
+interface AlertItem {
+  company_ko: string;
+  company_en: string;
+  code: string;
+  title: string;
+  url: string;
+  source: string;
+  published: string;
+}
+
+/** 푸시 발송용 정규화 모델 — 두 입력 형태를 통합. */
+interface NotifyItem {
+  company_ko: string;
+  company_en: string;
+  code: string;
+  title: string; // 알림 제목
+  body: string; // 알림 본문
+  url: string;
+  source: string;
+}
+
+function normalizeItems(
+  body: { new_approvals?: ApprovalItem[]; alerts?: AlertItem[] },
+): NotifyItem[] {
+  const out: NotifyItem[] = [];
+
+  for (const a of body.new_approvals ?? []) {
+    out.push({
+      company_ko: a.company_ko,
+      company_en: a.company_en,
+      code: a.code,
+      title: "FDA 신규 허가",
+      body: `${a.company_ko} ${a.brand_name || a.app_number} (${a.app_type}) 허가 완료`,
+      url: "",
+      source: "openFDA",
+    });
+  }
+
+  for (const a of body.alerts ?? []) {
+    const tag = a.source === "DART" ? "공시 속보" : "FDA 속보";
+    out.push({
+      company_ko: a.company_ko,
+      company_en: a.company_en,
+      code: a.code,
+      title: `${a.company_ko} ${tag}`,
+      body: a.title,
+      url: a.url ?? "",
+      source: a.source ?? "",
+    });
+  }
+
+  return out;
+}
+
+// ── APNs JWT 생성 (ES256) ─────────────────────────────────────────────────
 
 function pemToArrayBuffer(pem: string): ArrayBuffer {
   const b64 = pem
