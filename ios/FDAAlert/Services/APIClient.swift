@@ -13,9 +13,8 @@ enum APIClient {
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue("Bearer \(Config.supabaseAnonKey)", forHTTPHeaderField: "Authorization")
 
-        let info = Bundle.main.infoDictionary
-        let appVersion = info?["CFBundleShortVersionString"] as? String ?? ""
-        let osVersion = UIDevice.current.systemVersion
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let osVersion = await MainActor.run { UIDevice.current.systemVersion }
 
         let body: [String: Any] = [
             "apns_token": apnsToken,
