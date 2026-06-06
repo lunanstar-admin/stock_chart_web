@@ -20,6 +20,8 @@
 		0D0D0D0D0D0D0D0D0D0D000B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0C0C0C0C0C0C0C0C0C000B /* HomeView.swift */; };
 		0D0D0D0D0D0D0D0D0D0D000C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0C0C0C0C0C0C0C0C0C000C /* SettingsView.swift */; };
 		0D0D0D0D0D0D0D0D0D0D000D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C0C0C0C0C0C0C0C0C0C000D /* Assets.xcassets */; };
+		0D0D0D0D0D0D0D0D0D0D000E /* AlertsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0C0C0C0C0C0C0C0C0C0010 /* AlertsStore.swift */; };
+		0D0D0D0D0D0D0D0D0D0D000F /* AlertsFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0C0C0C0C0C0C0C0C0C0011 /* AlertsFeedView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +41,8 @@
 		0C0C0C0C0C0C0C0C0C0C000D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C0C0C0C0C0C0C0C0C0C000E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C0C0C0C0C0C0C0C0C0C000F /* FDAAlert.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FDAAlert.entitlements; sourceTree = "<group>"; };
+		0C0C0C0C0C0C0C0C0C0C0010 /* AlertsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsStore.swift; sourceTree = "<group>"; };
+		0C0C0C0C0C0C0C0C0C0C0011 /* AlertsFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsFeedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +110,7 @@
 				0C0C0C0C0C0C0C0C0C0C0005 /* APIClient.swift */,
 				0C0C0C0C0C0C0C0C0C0C0006 /* FDAService.swift */,
 				0C0C0C0C0C0C0C0C0C0C0007 /* NotificationService.swift */,
+				0C0C0C0C0C0C0C0C0C0C0010 /* AlertsStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -118,6 +123,7 @@
 				0C0C0C0C0C0C0C0C0C0C000A /* ContentView.swift */,
 				0C0C0C0C0C0C0C0C0C0C000B /* HomeView.swift */,
 				0C0C0C0C0C0C0C0C0C0C000C /* SettingsView.swift */,
+				0C0C0C0C0C0C0C0C0C0C0011 /* AlertsFeedView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -204,6 +210,8 @@
 				0D0D0D0D0D0D0D0D0D0D000A /* ContentView.swift in Sources */,
 				0D0D0D0D0D0D0D0D0D0D000B /* HomeView.swift in Sources */,
 				0D0D0D0D0D0D0D0D0D0D000C /* SettingsView.swift in Sources */,
+				0D0D0D0D0D0D0D0D0D0D000E /* AlertsStore.swift in Sources */,
+				0D0D0D0D0D0D0D0D0D0D000F /* AlertsFeedView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

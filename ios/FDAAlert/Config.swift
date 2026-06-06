@@ -27,6 +27,9 @@ enum Config {
     /// FDA 허가 JSON 데이터 URL
     static let fdaDataURL = URL(string: "https://secomdal.com/data/fda_approvals.json")!
 
+    /// DART + FDA RSS 실시간 속보 JSON URL
+    static let fdaAlertsURL = URL(string: "https://secomdal.com/data/fda_alerts.json")!
+
     // MARK: - App
 
     /// 앱 이름

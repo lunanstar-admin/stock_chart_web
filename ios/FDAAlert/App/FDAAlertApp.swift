@@ -10,6 +10,7 @@ import UserNotifications
 struct FDAAlertApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var store = FDAStore.shared
+    @StateObject private var alertsStore = AlertsStore.shared
     @StateObject private var notificationService = NotificationService.shared
     @State private var pendingCompanyCode: String?
 
@@ -17,6 +18,7 @@ struct FDAAlertApp: App {
         WindowGroup {
             ContentView(pendingCompanyCode: $pendingCompanyCode)
                 .environmentObject(store)
+                .environmentObject(alertsStore)
                 .environmentObject(notificationService)
                 .task { await store.refresh() }
                 .onOpenURL { url in

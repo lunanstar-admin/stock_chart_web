@@ -215,6 +215,66 @@ struct NewApproval: Codable, Identifiable {
     }
 }
 
+// MARK: - AlertsData
+
+struct AlertsData: Codable {
+    let updated: String
+    let total: Int
+    let newCount: Int
+    let alerts: [FDAAlert]
+
+    enum CodingKeys: String, CodingKey {
+        case updated, total, alerts
+        case newCount = "new_count"
+    }
+}
+
+struct FDAAlert: Codable, Identifiable {
+    let id: String
+    let source: String
+    let companyKo: String
+    let companyEn: String
+    let code: String
+    let title: String
+    let url: String
+    let published: String
+    let tier: String
+    let matchedKeyword: String?
+    let flrNm: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, source, code, title, url, published, tier
+        case companyKo      = "company_ko"
+        case companyEn      = "company_en"
+        case matchedKeyword = "matched_keyword"
+        case flrNm          = "flr_nm"
+    }
+
+    var isDart: Bool { source == "DART" }
+    var isStrong: Bool { tier == "strong" }
+    var openURL: URL? { URL(string: url) }
+
+    var publishedDate: Date? {
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime]
+        if let d = iso.date(from: published) { return d }
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        fmt.locale = Locale(identifier: "en_US_POSIX")
+        return fmt.date(from: published)
+    }
+
+    var publishedDisplayText: String {
+        guard let d = publishedDate else { return published }
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "ko_KR")
+        fmt.timeZone = TimeZone(identifier: "Asia/Seoul")
+        let hours = Calendar.current.dateComponents([.hour], from: d, to: Date()).hour ?? 999
+        fmt.dateFormat = hours < 24 ? "HH:mm" : (hours < 168 ? "M/d HH:mm" : "M월 d일")
+        return fmt.string(from: d)
+    }
+}
+
 // MARK: - DeepLink
 
 /// 푸시 알림 tap → 앱 내 특정 화면으로 이동
