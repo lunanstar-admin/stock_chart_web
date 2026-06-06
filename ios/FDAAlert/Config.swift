@@ -10,9 +10,9 @@ enum Config {
     /// Supabase 프로젝트 URL
     static let supabaseURL = "https://axbbjjpxspvvxbxvuzsz.supabase.co"
 
-    /// Supabase anon (publishable) key — RLS 로 INSERT/SELECT 만 허용
-    /// 배포 전 실제 키로 교체 필요
-    static let supabaseAnonKey = "YOUR_SUPABASE_ANON_KEY"
+    /// Supabase anon (publishable) key — RLS 로 INSERT/SELECT 만 허용.
+    /// 공개되어도 안전한 클라이언트 키 (service_role 과 다름).
+    static let supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YmJqanB4c3B2dnhieHZ1enN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MzQyOTUsImV4cCI6MjA5MjExMDI5NX0.z_XWmVLb1j6AqrGgbTCA3cxIlj2MDm8LUXZIY_knNak"
 
     // MARK: - Edge Functions
 
