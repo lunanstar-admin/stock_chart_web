@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 08 Jun 2026 14:16:42 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 08 Jun 2026 16:39:04 +0900</lastBuildDate>
+    <item>
+      <title>2026년 06월 08일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260608</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260608</guid>
+      <pubDate>Mon, 08 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 08일 한국 주식시장 시황 분석 — 급등 주도주: ACE SK하이닉스단일종목레버리지 · SK네트웍스 · 오브젠. 오늘의 부각 테마: 반도체 · AI · 반도체 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 06월 08일 시가총액 상위 10 종목 — 대장주 흐름</title>
+      <link>https://secomdal.com/blog/daily-mcap-20260608</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260608</guid>
+      <pubDate>Mon, 08 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 08일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
+    </item>
     <item>
       <title>2026년 06월 05일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260605</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260526</guid>
       <pubDate>Tue, 26 May 2026 00:00:00 +0900</pubDate>
       <description>2026년 05월 26일 종가 기준 상승률 상위 10 종목. 상위 3종목은 포톤(+30.0%) · 시지트로닉스(+30.0%) · 네이처셀(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
-    </item>
-    <item>
-      <title>2026년 05월 25일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260525</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260525</guid>
-      <pubDate>Mon, 25 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 25일 한국 주식시장 시황 분석 — 급등 주도주: 포톤 · 시지트로닉스 · 네이처셀. 오늘의 부각 테마: AI · 반도체 · 반도체 · 금융.</description>
-    </item>
-    <item>
-      <title>2026년 05월 25일 시가총액 상위 10 종목 — 대장주 흐름</title>
-      <link>https://secomdal.com/blog/daily-mcap-20260525</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260525</guid>
-      <pubDate>Mon, 25 May 2026 00:00:00 +0900</pubDate>
-      <description>2026년 05월 25일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · SK스퀘어 중심으로 대형주 흐름 정리.</description>
     </item>
   </channel>
 </rss>
