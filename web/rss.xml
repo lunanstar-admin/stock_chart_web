@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 23 Jun 2026 01:14:55 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 23 Jun 2026 05:20:09 +0900</lastBuildDate>
+    <item>
+      <title>2026년 06월 23일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260623</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260623</guid>
+      <pubDate>Tue, 23 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 23일 한국 주식시장 시황 분석 — 급등 주도주: 키스트론 · 유니드비티플러스 · 에이테크솔루션. 오늘의 부각 테마: 금융 · AI · 반도체 · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 06월 23일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20260623</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260623</guid>
+      <pubDate>Tue, 23 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 23일 종가 기준 상승률 상위 10 종목. 상위 3종목은 키스트론(+30.0%) · 유니드비티플러스(+30.0%) · 에이테크솔루션(+29.9%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 06월 22일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260622</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20260610</guid>
       <pubDate>Wed, 10 Jun 2026 00:00:00 +0900</pubDate>
       <description>2026년 06월 10일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · KODEX SK하이닉스단일종목레버리지 중심으로 관찰된 자금 유입.</description>
-    </item>
-    <item>
-      <title>2026년 06월 09일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260609</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260609</guid>
-      <pubDate>Tue, 09 Jun 2026 00:00:00 +0900</pubDate>
-      <description>2026년 06월 09일 한국 주식시장 시황 분석 — 급등 주도주: TIGER SK하이닉스단일종목레버리지 · 미래에셋 레버리지 SK하이닉스 단일종목ETN · RISE SK하이닉스단일종목레버리지. 오늘의 부각 테마: 반도체 · 금융 · AI · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 06월 09일 KOSPI·KOSDAQ 상승률 Top 10</title>
-      <link>https://secomdal.com/blog/daily-gainer-20260609</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260609</guid>
-      <pubDate>Tue, 09 Jun 2026 00:00:00 +0900</pubDate>
-      <description>2026년 06월 09일 종가 기준 상승률 상위 10 종목. 상위 3종목은 TIGER SK하이닉스단일종목레버리지(+33.9%) · 미래에셋 레버리지 SK하이닉스 단일종목ETN(+31.7%) · RISE SK하이닉스단일종목레버리지(+31.4%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
     </item>
   </channel>
 </rss>
