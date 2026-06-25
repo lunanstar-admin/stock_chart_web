@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 26 Jun 2026 00:28:28 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 26 Jun 2026 02:05:16 +0900</lastBuildDate>
+    <item>
+      <title>2026년 06월 26일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260626</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260626</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 26일 한국 주식시장 시황 분석 — 급등 주도주: 금호전기 · 삼기에너지솔루션즈 · 파루. 오늘의 부각 테마: 반도체 · AI · 반도체 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 06월 26일 마켓 랩업 — KOSPI·KOSDAQ 상승/하락 Top 5</title>
+      <link>https://secomdal.com/blog/daily-wrap-20260626</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-wrap-20260626</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 +0900</pubDate>
+      <description>2026년 06월 26일 장마감 마켓 랩업. KOSPI 상승 1246·하락 1087, KOSDAQ 상승 400·하락 1280.</description>
+    </item>
     <item>
       <title>2026년 06월 25일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260625</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260615</guid>
       <pubDate>Mon, 15 Jun 2026 00:00:00 +0900</pubDate>
       <description>2026년 06월 15일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · SK스퀘어 중심으로 대형주 흐름 정리.</description>
-    </item>
-    <item>
-      <title>2026년 06월 12일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260612</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260612</guid>
-      <pubDate>Fri, 12 Jun 2026 00:00:00 +0900</pubDate>
-      <description>2026년 06월 12일 한국 주식시장 시황 분석 — 급등 주도주: HL만도 · 원익IPS · HPSP. 오늘의 부각 테마: 반도체 · AI · 반도체 · 금융.</description>
-    </item>
-    <item>
-      <title>2026년 06월 12일 마켓 랩업 — KOSPI·KOSDAQ 상승/하락 Top 5</title>
-      <link>https://secomdal.com/blog/daily-wrap-20260612</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-wrap-20260612</guid>
-      <pubDate>Fri, 12 Jun 2026 00:00:00 +0900</pubDate>
-      <description>2026년 06월 12일 장마감 마켓 랩업. KOSPI 상승 1894·하락 439, KOSDAQ 상승 1318·하락 371.</description>
     </item>
   </channel>
 </rss>
