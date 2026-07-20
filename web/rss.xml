@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 21 Jul 2026 00:18:09 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 21 Jul 2026 01:25:06 +0900</lastBuildDate>
+    <item>
+      <title>2026년 07월 21일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260721</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260721</guid>
+      <pubDate>Tue, 21 Jul 2026 00:00:00 +0900</pubDate>
+      <description>2026년 07월 21일 한국 주식시장 시황 분석 — 급등 주도주: 고려산업 · 손오공 · 레몬헬스케어. 오늘의 부각 테마: 반도체 · 금융 · AI · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 07월 21일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20260721</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260721</guid>
+      <pubDate>Tue, 21 Jul 2026 00:00:00 +0900</pubDate>
+      <description>2026년 07월 21일 종가 기준 상승률 상위 10 종목. 상위 3종목은 고려산업(+30.0%) · 손오공(+30.0%) · 레몬헬스케어(+29.9%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 07월 20일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260720</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20260708</guid>
       <pubDate>Wed, 08 Jul 2026 00:00:00 +0900</pubDate>
       <description>2026년 07월 08일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · SOL SK하이닉스선물단일종목인버스2X 중심으로 관찰된 자금 유입.</description>
-    </item>
-    <item>
-      <title>2026년 07월 07일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260707</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260707</guid>
-      <pubDate>Tue, 07 Jul 2026 00:00:00 +0900</pubDate>
-      <description>2026년 07월 07일 한국 주식시장 시황 분석 — 급등 주도주: 레몬헬스케어 · 에스와이 · 서산. 오늘의 부각 테마: 금융 · 반도체 · AI · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 07월 07일 KOSPI·KOSDAQ 상승률 Top 10</title>
-      <link>https://secomdal.com/blog/daily-gainer-20260707</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260707</guid>
-      <pubDate>Tue, 07 Jul 2026 00:00:00 +0900</pubDate>
-      <description>2026년 07월 07일 종가 기준 상승률 상위 10 종목. 상위 3종목은 레몬헬스케어(+30.0%) · 에스와이(+29.9%) · 서산(+29.9%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
     </item>
   </channel>
 </rss>
