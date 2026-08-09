@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지원 — 건설공수노트</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 20px 80px;
+    font: 16px/1.75 -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    color: #1c1c1e; background: #fff;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  h2 { font-size: 19px; margin: 40px 0 12px; letter-spacing: -0.01em; }
+  .meta { color: #6b7280; font-size: 14px; margin: 0 0 28px; }
+  .lead {
+    background: #eef4fb; border-radius: 12px;
+    padding: 16px 18px; margin: 0 0 8px; font-size: 15px;
+  }
+  details {
+    border-bottom: 1px solid #e5e7eb; padding: 14px 2px;
+  }
+  summary {
+    cursor: pointer; font-weight: 600; list-style: none;
+    display: flex; justify-content: space-between; gap: 12px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: #9ca3af; font-weight: 400; }
+  details[open] summary::after { content: "−"; }
+  details p, details ol { margin: 12px 0 2px; font-size: 15px; }
+  ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+  .warn {
+    background: #fff7e6; border-radius: 10px; padding: 12px 14px;
+    font-size: 14px; margin: 12px 0 2px;
+  }
+  a { color: #1f5fa9; }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #e5e7eb;
+           color: #6b7280; font-size: 14px; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e8e8ea; background: #111214; }
+    .lead { background: #17233166; }
+    .warn { background: #3a2f1466; }
+    details, footer { border-color: #2a2c31; }
+    .meta, footer, summary::after { color: #9ca3af; }
+    a { color: #7fb2f0; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>건설공수노트 지원</h1>
+  <p class="meta">건설 현장 근로자를 위한 출역·공수 기록 앱</p>
+
+  <p class="lead">
+    달력에 출역을 눌러 기록하면 공수와 예상 급여가 자동으로 계산됩니다.
+    계정도 로그인도 없고, 인터넷이 끊긴 현장에서도 그대로 씁니다.
+  </p>
+
+  <h2>자주 묻는 질문</h2>
+
+  <details open>
+    <summary>기록이 사라졌어요 / 폰을 바꾸면 어떻게 되나요?</summary>
+    <p>
+      모든 기록은 휴대폰 안에만 저장됩니다. 앱을 지우거나 폰을 바꾸면 기록도 함께
+      사라지며, 저희가 가진 사본이 없어 복구해 드릴 수 없습니다.
+    </p>
+    <p>
+      중요한 기록은 <strong>내 정보 → 내보내기</strong>에서 미리 꺼내 두시기 바랍니다.
+      자동 클라우드 백업은 다음 버전에서 준비하고 있습니다.
+    </p>
+  </details>
+
+  <details>
+    <summary>노션에 어떻게 옮기나요?</summary>
+    <p><strong>폰에서 바로 하려면</strong></p>
+    <ol>
+      <li>내 정보 → 달을 골라 <em>노션에 붙여넣기</em>를 누릅니다.</li>
+      <li>노션 앱에서 기록할 페이지를 엽니다.</li>
+      <li>본문을 길게 눌러 붙여넣기를 고르면 표가 만들어집니다.</li>
+    </ol>
+    <p><strong>PC·웹에서 데이터베이스로 만들려면</strong></p>
+    <ol>
+      <li>내 정보 → <em>CSV 파일로 내보내기</em>로 파일을 메일이나 메신저로 보냅니다.</li>
+      <li>PC나 웹 브라우저에서 노션을 열고 사이드바 설정 → 가져오기 → CSV를 고릅니다.</li>
+      <li>파일을 올리고 각 열을 노션 속성에 맞춥니다.</li>
+    </ol>
+    <p class="warn">
+      노션의 CSV 가져오기는 데스크톱과 웹에서만 됩니다.
+      폰의 노션 앱에는 가져오기 메뉴가 없으니, 폰만 쓰신다면 붙여넣기를 이용하세요.
+    </p>
+  </details>
+
+  <details>
+    <summary>계산된 급여가 실제 지급액과 달라요</summary>
+    <p>
+      앱이 보여 주는 금액은 <strong>참고용 예상치</strong>이며 급여명세서를 대체하지 않습니다.
+      일용근로자 원천징수(소득세·지방소득세)와 4대보험 요율을 기준으로 계산하지만,
+      실제 지급액은 소속 업체의 지급 주기와 공제 항목에 따라 달라집니다.
+    </p>
+    <p>
+      특히 국민연금·건강보험은 한 달에 8일 이상 일한 경우에만 공제하도록 계산하는데,
+      이 판단은 사업장마다 다를 수 있습니다.
+    </p>
+  </details>
+
+  <details>
+    <summary>단가가 올랐는데 지난달 금액까지 바뀌면 안 됩니다</summary>
+    <p>
+      바뀌지 않습니다. 출역을 등록할 때의 단가가 그 기록에 그대로 저장되기 때문입니다.
+    </p>
+    <p>
+      단가가 오르면 <strong>설정 → 단가</strong>에서 기존 줄을 고치지 말고
+      <strong>새 적용 시작일로 한 줄 더</strong> 추가하세요. 그 날짜부터의 출역에만
+      새 단가가 적용됩니다.
+    </p>
+  </details>
+
+  <details>
+    <summary>하루에 두 현장(또는 두 공종)에서 일했어요</summary>
+    <p>
+      같은 날에 여러 건을 올릴 수 있습니다. 날짜를 누르고 <em>이 날 출역 추가</em>를
+      선택해 공종이나 현장을 다르게 등록하세요.
+    </p>
+    <p>
+      다만 날짜·현장·공종·등급이 모두 같은 기록은 중복으로 막습니다.
+      실수로 두 번 올려 공수가 두 배가 되는 일을 막기 위해서입니다.
+    </p>
+  </details>
+
+  <details>
+    <summary>반공수나 잔업은 어떻게 넣나요?</summary>
+    <p>
+      출역 입력 화면에서 공수를 0.5 · 1 · 1.5 · 2 중에 고르거나,
+      <em>직접입력</em>으로 원하는 값을 넣을 수 있습니다.
+      메모란에 "오전 반공수", "잔업 4시간"처럼 적어 두면 나중에 알아보기 좋습니다.
+    </p>
+  </details>
+
+  <details>
+    <summary>일비(식대·교통비)는 어떻게 반영되나요?</summary>
+    <p>
+      <strong>설정 → 일비</strong>에서 켠 항목이 출역한 날 수만큼 급여에 더해집니다.
+      비과세 항목은 월 한도까지 세금에서 빠지고, 한도를 넘는 초과분은 과세로 잡힙니다.
+      처음에는 식대만 켜져 있으니 실제 지급 조건에 맞게 바꿔 쓰세요.
+    </p>
+  </details>
+
+  <h2>문의</h2>
+  <p>
+    위에서 해결되지 않는 문제나 개선 의견은 아래로 보내 주세요.<br>
+    이메일: <a href="mailto:support@secomdal.com">support@secomdal.com</a>
+  </p>
+  <p>
+    기기 종류와 앱 버전, 어떤 화면에서 무엇을 눌렀을 때 생긴 일인지 적어 주시면
+    훨씬 빨리 확인할 수 있습니다.
+  </p>
+
+  <footer>
+    <a href="./privacy.html">개인정보처리방침</a>
+  </footer>
+</main>
+</body>
+</html>
