@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-07T18:01:06+09:00",
+  "updated": "2026-08-10T16:29:14+09:00",
   "companies": [
     {
       "name_ko": "셀트리온",
@@ -27,7 +27,7 @@
           "dosage_form": "INJECTABLE",
           "route": "INJECTION",
           "approval_date": "2023-05-23",
-          "latest_suppl_date": "2025-10-16",
+          "latest_suppl_date": "2025-10-28",
           "is_new": false,
           "fda_url": "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761219"
         },
