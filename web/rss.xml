@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 11 Aug 2026 16:20:13 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 11 Aug 2026 18:37:48 +0900</lastBuildDate>
+    <item>
+      <title>2026년 08월 11일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260811</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260811</guid>
+      <pubDate>Tue, 11 Aug 2026 00:00:00 +0900</pubDate>
+      <description>2026년 08월 11일 한국 주식시장 시황 분석 — 급등 주도주: 본느 · 금호건설 · 남화토건. 오늘의 부각 테마: 반도체 · 금융 · AI · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 08월 11일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20260811</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260811</guid>
+      <pubDate>Tue, 11 Aug 2026 00:00:00 +0900</pubDate>
+      <description>2026년 08월 11일 종가 기준 상승률 상위 10 종목. 상위 3종목은 본느(+30.0%) · 금호건설(+30.0%) · 남화토건(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 08월 10일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260810</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20260729</guid>
       <pubDate>Wed, 29 Jul 2026 00:00:00 +0900</pubDate>
       <description>2026년 07월 29일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · KODEX SK하이닉스단일종목레버리지 중심으로 관찰된 자금 유입.</description>
-    </item>
-    <item>
-      <title>2026년 07월 28일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260728</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260728</guid>
-      <pubDate>Tue, 28 Jul 2026 00:00:00 +0900</pubDate>
-      <description>2026년 07월 28일 한국 주식시장 시황 분석 — 급등 주도주: 포톤 · 셀리드 · 뉴엔AI. 오늘의 부각 테마: 반도체 · 금융 · AI · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 07월 28일 KOSPI·KOSDAQ 상승률 Top 10</title>
-      <link>https://secomdal.com/blog/daily-gainer-20260728</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260728</guid>
-      <pubDate>Tue, 28 Jul 2026 00:00:00 +0900</pubDate>
-      <description>2026년 07월 28일 종가 기준 상승률 상위 10 종목. 상위 3종목은 포톤(+30.0%) · 셀리드(+30.0%) · 뉴엔AI(+29.9%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
     </item>
   </channel>
 </rss>
