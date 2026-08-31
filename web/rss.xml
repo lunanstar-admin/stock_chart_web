@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 31 Aug 2026 15:00:15 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 31 Aug 2026 16:41:27 +0900</lastBuildDate>
+    <item>
+      <title>2026년 08월 31일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260831</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260831</guid>
+      <pubDate>Mon, 31 Aug 2026 00:00:00 +0900</pubDate>
+      <description>2026년 08월 31일 한국 주식시장 시황 분석 — 급등 주도주: 티케이지애강 · LK삼양 · 강동씨앤엘. 오늘의 부각 테마: 반도체 · 금융 · 바이오 · 헬스케어.</description>
+    </item>
+    <item>
+      <title>2026년 08월 31일 시가총액 상위 10 종목 — 대장주 흐름</title>
+      <link>https://secomdal.com/blog/daily-mcap-20260831</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260831</guid>
+      <pubDate>Mon, 31 Aug 2026 00:00:00 +0900</pubDate>
+      <description>2026년 08월 31일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
+    </item>
     <item>
       <title>2026년 08월 28일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260828</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260818</guid>
       <pubDate>Tue, 18 Aug 2026 00:00:00 +0900</pubDate>
       <description>2026년 08월 18일 종가 기준 상승률 상위 10 종목. 상위 3종목은 인제니아테라퓨틱스(Reg.S)(+49.9%) · 코데즈컴바인(+30.0%) · 좋은사람들(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
-    </item>
-    <item>
-      <title>2026년 08월 17일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260817</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260817</guid>
-      <pubDate>Mon, 17 Aug 2026 00:00:00 +0900</pubDate>
-      <description>2026년 08월 17일 한국 주식시장 시황 분석 — 급등 주도주: 알트 · 유티아이 · 새빗켐. 오늘의 부각 테마: 금융 · 반도체 · 실적 · 어닝.</description>
-    </item>
-    <item>
-      <title>2026년 08월 17일 시가총액 상위 10 종목 — 대장주 흐름</title>
-      <link>https://secomdal.com/blog/daily-mcap-20260817</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260817</guid>
-      <pubDate>Mon, 17 Aug 2026 00:00:00 +0900</pubDate>
-      <description>2026년 08월 17일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
     </item>
   </channel>
 </rss>
