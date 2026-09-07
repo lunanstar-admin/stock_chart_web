@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 07 Sep 2026 13:17:55 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 07 Sep 2026 16:34:25 +0900</lastBuildDate>
+    <item>
+      <title>2026년 09월 07일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20260907</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260907</guid>
+      <pubDate>Mon, 07 Sep 2026 00:00:00 +0900</pubDate>
+      <description>2026년 09월 07일 한국 주식시장 시황 분석 — 급등 주도주: 스카이랩스 · 우리바이오 · 네오오토. 오늘의 부각 테마: AI · 반도체 · 금융 · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 09월 07일 시가총액 상위 10 종목 — 대장주 흐름</title>
+      <link>https://secomdal.com/blog/daily-mcap-20260907</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260907</guid>
+      <pubDate>Mon, 07 Sep 2026 00:00:00 +0900</pubDate>
+      <description>2026년 09월 07일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
+    </item>
     <item>
       <title>2026년 09월 04일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20260904</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260825</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0900</pubDate>
       <description>2026년 08월 25일 종가 기준 상승률 상위 10 종목. 상위 3종목은 비트플래닛(+30.0%) · 이건산업(+30.0%) · 금호에이치티(+29.9%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
-    </item>
-    <item>
-      <title>2026년 08월 24일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260824</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260824</guid>
-      <pubDate>Mon, 24 Aug 2026 00:00:00 +0900</pubDate>
-      <description>2026년 08월 24일 한국 주식시장 시황 분석 — 급등 주도주: 셀리드 · 한미약품 · SV인베스트먼트. 오늘의 부각 테마: 금융 · 반도체 · 실적 · 어닝.</description>
-    </item>
-    <item>
-      <title>2026년 08월 24일 시가총액 상위 10 종목 — 대장주 흐름</title>
-      <link>https://secomdal.com/blog/daily-mcap-20260824</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20260824</guid>
-      <pubDate>Mon, 24 Aug 2026 00:00:00 +0900</pubDate>
-      <description>2026년 08월 24일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
     </item>
   </channel>
 </rss>
