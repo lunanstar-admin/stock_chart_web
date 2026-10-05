@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지원 — 전선관 벤딩 계산기</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 20px 80px;
+    font: 16px/1.75 -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    color: #1c1c1e; background: #fff;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  h2 { font-size: 19px; margin: 40px 0 12px; letter-spacing: -0.01em; }
+  .meta { color: #6b7280; font-size: 14px; margin: 0 0 28px; }
+  .lead {
+    background: #eef4fb; border-radius: 12px;
+    padding: 16px 18px; margin: 0 0 8px; font-size: 15px;
+  }
+  details {
+    border-bottom: 1px solid #e5e7eb; padding: 14px 2px;
+  }
+  summary {
+    cursor: pointer; font-weight: 600; list-style: none;
+    display: flex; justify-content: space-between; gap: 12px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: #9ca3af; font-weight: 400; }
+  details[open] summary::after { content: "−"; }
+  details p, details ol { margin: 12px 0 2px; font-size: 15px; }
+  ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+  .warn {
+    background: #fff7e6; border-radius: 10px; padding: 12px 14px;
+    font-size: 14px; margin: 12px 0 2px;
+  }
+  a { color: #1f5fa9; }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #e5e7eb;
+           color: #6b7280; font-size: 14px; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e8e8ea; background: #111214; }
+    .lead { background: #17233166; }
+    .warn { background: #3a2f1466; }
+    details, footer { border-color: #2a2c31; }
+    .meta, footer, summary::after { color: #9ca3af; }
+    a { color: #7fb2f0; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>전선관 벤딩 계산기 지원</h1>
+  <p class="meta">금속 전선관을 굽힐 때 표시 위치와 각도를 알려주는 앱</p>
+
+  <p class="lead">
+    관 규격(19·25·31·39·51mm)과 벤더(손벤더·시카고벤더), 접는 모양을 고르고 치수를 넣으면
+    관 끝에서 몇 mm에 표시해 벤더 어디에 맞추고 몇 도로 굽히는지 알려 줍니다.
+    계정도 로그인도 없고, 인터넷이 없어도 계산은 그대로 됩니다.
+  </p>
+
+  <h2>자주 묻는 질문</h2>
+
+  <details open>
+    <summary>계산대로 굽혔는데 치수가 조금 달라요</summary>
+    <p>
+      벤더마다 굽힘 반경이 달라서 <strong>테이크업</strong>(표시선에서 세움 등까지 줄어드는 양)이
+      다릅니다. 앱에 들어 있는 값은 처음 쓰기 위한 기본값입니다.
+    </p>
+    <ol>
+      <li>오른쪽 위 보정 버튼을 누릅니다.</li>
+      <li>쓰는 관과 벤더를 고른 상태에서, 관 끝에서 300mm에 표시하고 90°로 굽힙니다.</li>
+      <li>바닥에서 관 끝까지 잰 세움 높이를 <em>실측 세움</em>에 넣고 저장합니다.</li>
+    </ol>
+    <p>그 뒤로는 그 관·벤더 조합의 모든 계산에 실측값이 쓰입니다.</p>
+  </details>
+
+  <details>
+    <summary>S 접기 뒤에 관이 짧아지는 건 어떻게 하나요?</summary>
+    <p>
+      S 접기와 새들은 굽히면 관이 조금 짧아집니다(수축). 치수 입력의
+      <em>관 끝 → 커플링/커넥터 총 길이</em>에 벽을 따라 잰 길이를 넣으면,
+      수축을 더한 <strong>자를 위치</strong>를 알려 줍니다.
+    </p>
+  </details>
+
+  <details>
+    <summary>어떤 모양을 계산할 수 있나요?</summary>
+    <p>노멀(90° 세움), ㄷ자(백투백), 킥, S 접기(오프셋), 3점 새들, 4점 새들입니다.</p>
+  </details>
+
+  <details>
+    <summary>계산 결과를 믿어도 되나요?</summary>
+    <p>
+      현장에서 널리 쓰는 오프셋 배수·수축 공식을 따르지만, 실제 관의 반경과
+      벤더 상태에 따라 오차가 생길 수 있는 <strong>참고값</strong>입니다.
+      중요한 작업은 시험 굽힘으로 먼저 확인해 주세요.
+    </p>
+  </details>
+
+  <details>
+    <summary>광고가 나와요</summary>
+    <p>
+      무료로 제공하기 위해 화면 맨 아래에 배너 광고 한 개를 표시합니다.
+      입력한 치수와 보정값은 광고와 무관하며 휴대폰 밖으로 나가지 않습니다.
+      자세한 내용은 <a href="./privacy.html">개인정보처리방침</a>을 확인해 주세요.
+    </p>
+  </details>
+
+  <h2>문의</h2>
+  <p>
+    오류 제보나 추가했으면 하는 모양이 있으면 메일로 보내 주세요.<br>
+    이메일: <a href="mailto:my.lunanstar@gmail.com">my.lunanstar@gmail.com</a>
+  </p>
+
+  <footer>
+    <a href="./privacy.html">개인정보처리방침</a>
+  </footer>
+</main>
+</body>
+</html>
