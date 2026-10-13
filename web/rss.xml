@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 13 Oct 2026 18:16:41 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 14 Oct 2026 01:47:42 +0900</lastBuildDate>
+    <item>
+      <title>2026년 10월 14일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20261014</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261014</guid>
+      <pubDate>Wed, 14 Oct 2026 00:00:00 +0900</pubDate>
+      <description>2026년 10월 14일 한국 주식시장 시황 분석 — 급등 주도주: 서산 · SOL SK하이닉스선물단일종목인버스2X · 야스. 오늘의 부각 테마: 반도체 · 금융 · AI · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 10월 14일 거래량 상위 10 종목 — 자금이 몰린 주식</title>
+      <link>https://secomdal.com/blog/daily-volume-20261014</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20261014</guid>
+      <pubDate>Wed, 14 Oct 2026 00:00:00 +0900</pubDate>
+      <description>2026년 10월 14일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
+    </item>
     <item>
       <title>2026년 10월 13일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20261013</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20260929</guid>
       <pubDate>Tue, 29 Sep 2026 00:00:00 +0900</pubDate>
       <description>2026년 09월 29일 종가 기준 상승률 상위 10 종목. 상위 3종목은 빅웨이브로보틱스(+50.6%) · 글로벌테크놀로지(+45.0%) · 테라뷰(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
-    </item>
-    <item>
-      <title>2026년 09월 25일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20260925</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20260925</guid>
-      <pubDate>Fri, 25 Sep 2026 00:00:00 +0900</pubDate>
-      <description>2026년 09월 25일 한국 주식시장 시황 분석 — 급등 주도주: 와이즈플래닛컴퍼니 · 씨싸이트 · HT로보틱스. 오늘의 부각 테마: AI · 반도체 · 반도체 · 금융.</description>
-    </item>
-    <item>
-      <title>2026년 09월 25일 마켓 랩업 — KOSPI·KOSDAQ 상승/하락 Top 5</title>
-      <link>https://secomdal.com/blog/daily-wrap-20260925</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-wrap-20260925</guid>
-      <pubDate>Fri, 25 Sep 2026 00:00:00 +0900</pubDate>
-      <description>2026년 09월 25일 장마감 마켓 랩업. KOSPI 상승 1219·하락 1052, KOSDAQ 상승 982·하락 668.</description>
     </item>
   </channel>
 </rss>
