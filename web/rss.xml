@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Wed, 21 Oct 2026 02:28:38 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 21 Oct 2026 04:21:08 +0900</lastBuildDate>
+    <item>
+      <title>2026년 10월 21일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20261021</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261021</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 +0900</pubDate>
+      <description>2026년 10월 21일 한국 주식시장 시황 분석 — 급등 주도주: 플리토 · 에스팀 · 빅웨이브로보틱스. 오늘의 부각 테마: AI · 반도체 · 금융 · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 10월 21일 거래량 상위 10 종목 — 자금이 몰린 주식</title>
+      <link>https://secomdal.com/blog/daily-volume-20261021</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20261021</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 +0900</pubDate>
+      <description>2026년 10월 21일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
+    </item>
     <item>
       <title>2026년 10월 20일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20261020</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20261007</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0900</pubDate>
       <description>2026년 10월 07일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
-    </item>
-    <item>
-      <title>2026년 10월 06일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20261006</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261006</guid>
-      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
-      <description>2026년 10월 06일 한국 주식시장 시황 분석 — 급등 주도주: 샌즈랩 · 아티스트스튜디오 · 라온시큐어. 오늘의 부각 테마: 금융 · AI · 반도체 · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 10월 06일 KOSPI·KOSDAQ 상승률 Top 10</title>
-      <link>https://secomdal.com/blog/daily-gainer-20261006</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20261006</guid>
-      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
-      <description>2026년 10월 06일 종가 기준 상승률 상위 10 종목. 상위 3종목은 샌즈랩(+30.0%) · 아티스트스튜디오(+30.0%) · 라온시큐어(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
     </item>
   </channel>
 </rss>
