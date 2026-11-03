@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 03 Nov 2026 19:43:10 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 01:28:22 +0900</lastBuildDate>
+    <item>
+      <title>2026년 11월 04일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20261104</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261104</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 04일 한국 주식시장 시황 분석 — 급등 주도주: AP위성 · 한진칼 · 아시아경제. 오늘의 부각 테마: AI · 반도체 · 실적 · 어닝 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 11월 04일 거래량 상위 10 종목 — 자금이 몰린 주식</title>
+      <link>https://secomdal.com/blog/daily-volume-20261104</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20261104</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 04일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
+    </item>
     <item>
       <title>2026년 11월 03일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20261103</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20261021</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0900</pubDate>
       <description>2026년 10월 21일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
-    </item>
-    <item>
-      <title>2026년 10월 20일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20261020</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261020</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0900</pubDate>
-      <description>2026년 10월 20일 한국 주식시장 시황 분석 — 급등 주도주: 플리토 · 에스팀 · 빅웨이브로보틱스. 오늘의 부각 테마: AI · 반도체 · 금융 · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 10월 20일 KOSPI·KOSDAQ 상승률 Top 10</title>
-      <link>https://secomdal.com/blog/daily-gainer-20261020</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20261020</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0900</pubDate>
-      <description>2026년 10월 20일 종가 기준 상승률 상위 10 종목. 상위 3종목은 플리토(+30.0%) · 에스팀(+30.0%) · 빅웨이브로보틱스(+24.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
     </item>
   </channel>
 </rss>
