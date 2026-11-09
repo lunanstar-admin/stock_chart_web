@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 09 Nov 2026 20:16:33 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 10 Nov 2026 04:32:16 +0900</lastBuildDate>
+    <item>
+      <title>2026년 11월 10일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20261110</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261110</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 10일 한국 주식시장 시황 분석 — 급등 주도주: 아시아나IDT · 머큐리 · 박셀바이오. 오늘의 부각 테마: 금융 · 반도체 · AI · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 11월 10일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20261110</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20261110</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 10일 종가 기준 상승률 상위 10 종목. 상위 3종목은 아시아나IDT(+30.0%) · 머큐리(+30.0%) · 박셀바이오(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 11월 09일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20261109</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20261027</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0900</pubDate>
       <description>2026년 10월 27일 종가 기준 상승률 상위 10 종목. 상위 3종목은 씨티알모빌리티(+30.0%) · 멜콘(+30.0%) · 나무가(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
-    </item>
-    <item>
-      <title>2026년 10월 26일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20261026</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261026</guid>
-      <pubDate>Mon, 26 Oct 2026 00:00:00 +0900</pubDate>
-      <description>2026년 10월 26일 한국 주식시장 시황 분석 — 급등 주도주: 루닛 · 뷰노 · 컨텍. 오늘의 부각 테마: 금융 · 반도체 · AI · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 10월 26일 시가총액 상위 10 종목 — 대장주 흐름</title>
-      <link>https://secomdal.com/blog/daily-mcap-20261026</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20261026</guid>
-      <pubDate>Mon, 26 Oct 2026 00:00:00 +0900</pubDate>
-      <description>2026년 10월 26일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
     </item>
   </channel>
 </rss>
