@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 17 Nov 2026 19:36:44 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 18 Nov 2026 02:21:33 +0900</lastBuildDate>
+    <item>
+      <title>2026년 11월 18일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20261118</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261118</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 18일 한국 주식시장 시황 분석 — 급등 주도주: 옵토닉스 · 지슨 · 인디에프. 오늘의 부각 테마: 금융 · AI · 반도체 · 반도체.</description>
+    </item>
+    <item>
+      <title>2026년 11월 18일 거래량 상위 10 종목 — 자금이 몰린 주식</title>
+      <link>https://secomdal.com/blog/daily-volume-20261118</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20261118</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 18일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
+    </item>
     <item>
       <title>2026년 11월 17일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20261117</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-volume-20261104</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0900</pubDate>
       <description>2026년 11월 04일 KOSPI·KOSDAQ 거래량 상위 10 종목. KODEX 200선물인버스2X · KODEX 인버스 · TIGER 200선물인버스2X 중심으로 관찰된 자금 유입.</description>
-    </item>
-    <item>
-      <title>2026년 11월 03일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20261103</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261103</guid>
-      <pubDate>Tue, 03 Nov 2026 00:00:00 +0900</pubDate>
-      <description>2026년 11월 03일 한국 주식시장 시황 분석 — 급등 주도주: AP위성 · 한진칼 · 한싹. 오늘의 부각 테마: 금융 · 실적 · 어닝 · AI · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 11월 03일 KOSPI·KOSDAQ 상승률 Top 10</title>
-      <link>https://secomdal.com/blog/daily-gainer-20261103</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20261103</guid>
-      <pubDate>Tue, 03 Nov 2026 00:00:00 +0900</pubDate>
-      <description>2026년 11월 03일 종가 기준 상승률 상위 10 종목. 상위 3종목은 AP위성(+30.0%) · 한진칼(+30.0%) · 한싹(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
     </item>
   </channel>
 </rss>
