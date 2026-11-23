@@ -5,7 +5,21 @@
     <link>https://secomdal.com/blog</link>
     <description>KOSPI·KOSDAQ 종목 분석과 시장 인사이트</description>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 23 Nov 2026 23:24:52 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 05:50:53 +0900</lastBuildDate>
+    <item>
+      <title>2026년 11월 24일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
+      <link>https://secomdal.com/blog/market-brief-20261124</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261124</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 24일 한국 주식시장 시황 분석 — 급등 주도주: 휴림로봇 · 금양그린파워 · 코스모로보틱스. 오늘의 부각 테마: AI · 반도체 · 반도체 · 금융.</description>
+    </item>
+    <item>
+      <title>2026년 11월 24일 KOSPI·KOSDAQ 상승률 Top 10</title>
+      <link>https://secomdal.com/blog/daily-gainer-20261124</link>
+      <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20261124</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0900</pubDate>
+      <description>2026년 11월 24일 종가 기준 상승률 상위 10 종목. 상위 3종목은 휴림로봇(+30.0%) · 금양그린파워(+30.0%) · 코스모로보틱스(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
+    </item>
     <item>
       <title>2026년 11월 23일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
       <link>https://secomdal.com/blog/market-brief-20261123</link>
@@ -131,20 +145,6 @@
       <guid isPermaLink="true">https://secomdal.com/blog/daily-gainer-20261110</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0900</pubDate>
       <description>2026년 11월 10일 종가 기준 상승률 상위 10 종목. 상위 3종목은 대한항공우(+30.0%) · 티앤이코리아(+30.0%) · 메타랩스(+30.0%). 거래량 5만주, 시총 300억 이상 필터 적용.</description>
-    </item>
-    <item>
-      <title>2026년 11월 09일 시장 주도주·급등주 분석 — 테마와 뉴스로 풀어본 오늘의 시황</title>
-      <link>https://secomdal.com/blog/market-brief-20261109</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/market-brief-20261109</guid>
-      <pubDate>Mon, 09 Nov 2026 00:00:00 +0900</pubDate>
-      <description>2026년 11월 09일 한국 주식시장 시황 분석 — 급등 주도주: 아시아나IDT · 머큐리 · 박셀바이오. 오늘의 부각 테마: 금융 · AI · 반도체 · 반도체.</description>
-    </item>
-    <item>
-      <title>2026년 11월 09일 시가총액 상위 10 종목 — 대장주 흐름</title>
-      <link>https://secomdal.com/blog/daily-mcap-20261109</link>
-      <guid isPermaLink="true">https://secomdal.com/blog/daily-mcap-20261109</guid>
-      <pubDate>Mon, 09 Nov 2026 00:00:00 +0900</pubDate>
-      <description>2026년 11월 09일 장마감 기준 KOSPI·KOSDAQ 시가총액 상위 10 종목 스냅샷. 삼성전자 · SK하이닉스 · 삼성전자우 중심으로 대형주 흐름 정리.</description>
     </item>
   </channel>
 </rss>
